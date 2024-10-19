@@ -56,6 +56,9 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
+
+$linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
+
 // Lấy danh sách cơ sở vật chất và phòng trọ
 $listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC");
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
@@ -75,6 +78,7 @@ function getRoomAndEquipmentList() {
 }
 
 $listRoomAndEquipment = getRoomAndEquipmentList();
+
 ?>
 
 <?php layout('navbar', 'admin', $data); ?>
@@ -122,7 +126,8 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                 </div>
             </div>
 
-            <div class="form-group">                 
+            <div class="form-group">     
+            <a style="margin-right: 20px " href="<?php echo $linkreturndistribite ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>                           
                 <button type="submit" class="btn btn-secondary">
                     <i class="fa fa-plus"></i> Phân bổ thiết bị
                 </button>

@@ -117,7 +117,7 @@ $old = getFlashData('old');
                 </div>
             </div>
             <div class="form-group">                 
-                <a style="margin-right: 20px" href="<?php echo getLinkAdmin('equipment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-trash"></i> Gỡ thiết bị</button>
             </div>
         </form>

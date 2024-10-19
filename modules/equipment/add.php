@@ -68,6 +68,9 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
+// Tạo URL quay về trang add
+$linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
+
 ?>
 
 <?php layout('navbar', 'admin', $data); ?>
@@ -102,7 +105,7 @@ $old = getFlashData('old');
             <div class="col-5">
             </div>
             <div class="form-group">                 
-                <a style="margin-right: 20px " href="<?php echo getLinkAdmin('equipment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <a style="margin-right: 20px " href="<?php echo $linkreturnlistequipment ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm thiết bị</button>
             </div>
         </form>

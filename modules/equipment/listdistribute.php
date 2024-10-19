@@ -47,9 +47,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
         <form action="" method="post" class="row">
 
             <div class="form-group">                 
-                <a style="margin-right: 10px;" href="<?php echo getLinkAdmin('equipment'); ?>" class="btn btn-secondary">
-                    <i class="fa fa-arrow-circle-left"></i> Quay lại
-                </a>
+
                 <a href="<?php echo getLinkAdmin('equipment', 'distribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Phân bổ </a>
                 <a href="<?php echo getLinkAdmin('equipment', 'removedistribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
                 </a>

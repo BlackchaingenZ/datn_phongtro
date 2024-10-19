@@ -269,16 +269,8 @@ function getLinkAdmin($module, $action='', $param= []) {
     return $url;
 }
 
-//getlink file con 
-function getLinkfileccon($folder, $file = '') {
-    $baseUrl = "http://localhost/admin";  // Đường dẫn cơ bản tới thư mục admin
-    // Nếu có file con, nối thêm nó vào đường dẫn
-    if ($file) {
-        return $baseUrl . '/' . $folder . '/' . $file . '.php';
-    }
-    // Nếu không có file con, trả về đường dẫn đến thư mục
-    return $baseUrl . '/' . $folder . '.php';
-}
+// // Tạo URL quay về trang add
+// $linkToAdd = getLinkAdmin('equipment', 'listequipment');
 
 // Format Date
 function getDateFormat($strDate, $format) {

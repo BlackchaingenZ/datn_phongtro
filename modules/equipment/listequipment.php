@@ -95,7 +95,7 @@ $msgType = getFlashData('msg_type');
     <div class="box-content">
         <form method="POST" action="">
             <table class="table table-bordered mt-3">
-                <a href="<?php echo getLinkAdmin('equipment'); ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+
                 <a href="<?php echo getLinkAdmin('equipment', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
                 <a href="<?php echo getLinkAdmin('equipment', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
                 <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
