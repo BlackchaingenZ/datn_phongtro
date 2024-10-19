@@ -24,12 +24,18 @@ if(isPost()) {
         $errors['room_id']['required'] = '** Bạn chưa chọn phòng trọ!';
     }
 
+    // Validate thời gian cấp
+    if(empty(trim($body['thoigiancap']))) {
+        $errors['thoigiancap']['required'] = '** Bạn chưa nhập thời gian cấp!';
+    }
+
     // Kiểm tra mảng error
     if(empty($errors)) {
         // Không có lỗi nào
         $dataInsert = [
             'equipment_id' => $body['equipment_id'],
             'room_id' => $body['room_id'],
+            'thoigiancap' => $body['thoigiancap'], // Thêm thời gian cấp vào mảng chèn
         ];
 
         $insertStatus = insert('equipment_room', $dataInsert); // Sử dụng bảng equipment_room để lưu thông tin phân bổ
@@ -50,6 +56,7 @@ if(isPost()) {
         redirect('?module=equipment&action=listdistribute'); 
     }
 }
+
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -124,6 +131,13 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
+                <div class="form-group">
+        <label for="">Thời gian cấp <span style="color: red">*</span></label>
+        <input type="date" name="thoigiancap" class="form-control" value="<?php echo isset($old['thoigiancap']) ? htmlspecialchars($old['thoigiancap'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+        <?php echo form_error('thoigiancap', $errors, '<span class="error">', '</span>'); ?>
+    </div>
+
             </div>
 
             <div class="form-group">     
