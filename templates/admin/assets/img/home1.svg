@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="body_1" width="34" height="34">
+
+<g transform="matrix(1.2142857 0 0 1.2142857 0 0)">
+	<g transform="matrix(0.97222227 0 0 0.97222227 1.9444445 1.9444445)">
+		<g>
+		</g>
+		<g>
+		</g>
+		<g>
+            <path d="M22 22L2 22" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <path d="M2 11L6.06296 7.74968L2 11zM22 11L13.8741 4.49931C 12.7784 3.62279 11.2216 3.62279 10.1259 4.49931L10.1259 4.49931L9.34398 5.12486" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <path d="M15.5 5.5L15.5 3.5C 15.5 3.22386 15.7239 3 16 3L16 3L18.5 3C 18.7761 3 19 3.22386 19 3.5L19 3.5L19 8.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <path d="M4 22L4 9.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <path d="M20 9.5L20 13.5L20 9.5zM20 22L20 17.5" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <path d="M15 22L15 17C 15 15.5858 15 14.8787 14.5607 14.4393C 14.1213 14 13.4142 14 12 14C 10.5858 14 9.87868 14 9.43934 14.4393M9 22L9 17" stroke="#1C274C" stroke-width="1.5" stroke-linecap="round" fill="none" />
+            <path d="M14 9.5C 14 10.6046 13.1046 11.5 12 11.5C 10.8954 11.5 10 10.6046 10 9.5C 10 8.39543 10.8954 7.5 12 7.5C 13.1046 7.5 14 8.39543 14 9.5z" stroke="#1C274C" stroke-width="1.5" fill="none" />
+		</g>
+	</g>
+</g>
+</svg>
