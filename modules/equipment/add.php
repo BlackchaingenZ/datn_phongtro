@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-if(!defined('_INCODE')) die('Access denied...');
+if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
     'pageTitle' => 'Thêm thiết bị'
@@ -10,32 +10,32 @@ layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
 // Xử lý thêm thiết bị
-if(isPost()) {
+if (isPost()) {
     // Validate form
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
-    
+
     // Validate tên thiết bị: Bắt buộc phải nhập, >=5 ký tự
-    if(empty(trim($body['tenthietbi']))) {
+    if (empty(trim($body['tenthietbi']))) {
         $errors['tenthietbi']['required'] = '** Bạn chưa nhập tên thiết bị!';
     } else {
-        if(strlen(trim($body['tenthietbi'])) < 5) {
+        if (strlen(trim($body['tenthietbi'])) < 5) {
             $errors['tenthietbi']['min'] = '** Tên thiết bị phải lớn hơn 5 ký tự!';
         }
     }
 
     // Validate giá thiết bị
-    if(empty(trim($body['giathietbi']))) {
+    if (empty(trim($body['giathietbi']))) {
         $errors['giathietbi']['required'] = '** Bạn chưa nhập giá thiết bị!';
     }
 
     // Validate ngày nhập
-    if(empty(trim($body['ngaynhap']))) {
+    if (empty(trim($body['ngaynhap']))) {
         $errors['ngaynhap']['required'] = '** Bạn chưa nhập ngày nhập!';
     }
 
     // Kiểm tra mảng error
-    if(empty($errors)) {
+    if (empty($errors)) {
         // không có lỗi nào
         $dataInsert = [
             'tenthietbi' => $body['tenthietbi'],
@@ -51,7 +51,7 @@ if(isPost()) {
         } else {
             setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');
-            redirect('?module=equipment&action=add'); 
+            redirect('?module=equipment&action=add');
         }
     } else {
         // Có lỗi xảy ra
@@ -59,7 +59,7 @@ if(isPost()) {
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
         setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lệ khi nhập vào
-        redirect('?module=equipment&action=add'); 
+        redirect('?module=equipment&action=add');
     }
 }
 
@@ -77,7 +77,7 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
 
 <div class="container">
     <div id="MessageFlash">
-        <?php getMsg($msg, $msgType); ?> 
+        <?php getMsg($msg, $msgType); ?>
     </div>
 
     <div class="box-content">
@@ -104,7 +104,7 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
 
             <div class="col-5">
             </div>
-            <div class="form-group">                 
+            <div class="form-group">
                 <a style="margin-right: 20px " href="<?php echo $linkreturnlistequipment ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm thiết bị</button>
             </div>

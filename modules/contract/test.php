@@ -1,6 +1,7 @@
 <?php
 // Lấy thông tin khách của hợp đồng
-function getTenantsByRoomId($roomId) {
+function getTenantsByRoomId($roomId)
+{
     return getRaw("SELECT tenkhach FROM tenant JOIN contract ON tenant.id = contract.tenant_id WHERE contract.room_id = $roomId");
 }
 
@@ -160,7 +161,7 @@ layout('navbar', 'admin', $data);
                             $tenants = getTenantsByRoomId($item['room_id']);
                     ?>
 
-                            <tr>
+                            <>
                                 <td>
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
@@ -183,4 +184,15 @@ layout('navbar', 'admin', $data);
                                         echo 'Chưa có ai';
                                     } ?>
                                 </td>
-                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td
+                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td>
+                                </tr>
+
+                        <?php
+                        endforeach;
+                    endif;
+                        ?>
+                </tbody>
+            </table>
+        </form>
+    </div>
+</div>

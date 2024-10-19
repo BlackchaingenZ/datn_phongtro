@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-if(!defined('_INCODE')) die('Access denied...');
+if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
     'pageTitle' => 'Gỡ thiết bị khỏi phòng'
@@ -13,7 +13,7 @@ layout('breadcrumb', 'admin', $data);
 require_once 'includes/pdo_connection.php'; // Đường dẫn tới file kết nối PDO
 
 // Xử lý gỡ thiết bị
-if(isPost()) {
+if (isPost()) {
     $body = getBody();
     $errors = [];
 
@@ -84,7 +84,7 @@ $old = getFlashData('old');
 
 <div class="container">
     <div id="MessageFlash">
-        <?php getMsg($msg, $msgType); ?> 
+        <?php getMsg($msg, $msgType); ?>
     </div>
 
     <div class="box-content">
@@ -116,8 +116,8 @@ $old = getFlashData('old');
                     <?php echo form_error('equipment_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
             </div>
-            <div class="form-group">                 
-                
+            <div class="form-group">
+
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-trash"></i> Gỡ thiết bị</button>
             </div>
         </form>

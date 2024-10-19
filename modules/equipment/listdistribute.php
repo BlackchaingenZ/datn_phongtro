@@ -1,6 +1,6 @@
-<?php 
+<?php
 
-if(!defined('_INCODE')) die('Access denied...');
+if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
     'pageTitle' => 'Phân bổ thiết bị'
@@ -20,7 +20,8 @@ $listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC");
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 
 // Hàm lấy danh sách phòng và thiết bị
-function getRoomAndEquipmentList() {
+function getRoomAndEquipmentList()
+{
     $sql = "
         SELECT r.id AS room_id, r.tenphong, GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
                GROUP_CONCAT(thoigiancap SEPARATOR ', ') AS thoigiancap
@@ -30,7 +31,7 @@ function getRoomAndEquipmentList() {
         GROUP BY r.id
         ORDER BY r.id ASC
     ";
-    
+
     return getRaw($sql); // Hàm getRaw() sẽ thực hiện truy vấn và trả về kết quả
 }
 
@@ -41,13 +42,13 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 
 <div class="container">
     <div id="MessageFlash">
-        <?php getMsg($msg, $msgType); ?> 
+        <?php getMsg($msg, $msgType); ?>
     </div>
 
     <div class="box-content">
         <form action="" method="post" class="row">
 
-            <div class="form-group">                 
+            <div class="form-group">
 
                 <a href="<?php echo getLinkAdmin('equipment', 'distribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Phân bổ </a>
                 <a href="<?php echo getLinkAdmin('equipment', 'removedistribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
@@ -56,35 +57,35 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
         </form>
 
         <div class="container mt-3">
-        <h2>Danh sách phòng và thiết bị</h2>
-        <table class="table table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>Mã phòng</th>
-                    <th>Tên Phòng</th>
-                    <th>Tên Thiết Bị</th>
-                    <th>Ngày cấp</th>                   
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if (!empty($listRoomAndEquipment)) {
-                    foreach ($listRoomAndEquipment as $item) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($item['room_id'], ENT_QUOTES, 'UTF-8') . "</td>";
-                        echo "<td>" . htmlspecialchars($item['tenphong'], ENT_QUOTES, 'UTF-8') . "</td>";
-                        echo "<td>" . htmlspecialchars($item['tenthietbi'], ENT_QUOTES, 'UTF-8') . "</td>"; // Sửa ở đây
-                        $ngayCap = explode(',', $item['thoigiancap']); // Tách các ngày cấp
-                        echo "<td>" . htmlspecialchars(implode(', ', $ngayCap), ENT_QUOTES, 'UTF-8') . "</td>"; // Thời gian cấp                       
-                        echo "</tr>";
+            <h2>Danh sách phòng và thiết bị</h2>
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>Mã phòng</th>
+                        <th>Tên Phòng</th>
+                        <th>Tên Thiết Bị</th>
+                        <th>Ngày cấp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (!empty($listRoomAndEquipment)) {
+                        foreach ($listRoomAndEquipment as $item) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($item['room_id'], ENT_QUOTES, 'UTF-8') . "</td>";
+                            echo "<td>" . htmlspecialchars($item['tenphong'], ENT_QUOTES, 'UTF-8') . "</td>";
+                            echo "<td>" . htmlspecialchars($item['tenthietbi'], ENT_QUOTES, 'UTF-8') . "</td>"; // Sửa ở đây
+                            $ngayCap = explode(',', $item['thoigiancap']); // Tách các ngày cấp
+                            echo "<td>" . htmlspecialchars(implode(', ', $ngayCap), ENT_QUOTES, 'UTF-8') . "</td>"; // Thời gian cấp                       
+                            echo "</tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='3'>Không có dữ liệu.</td></tr>"; // Sửa ở đây
                     }
-                } else {
-                    echo "<tr><td colspan='3'>Không có dữ liệu.</td></tr>"; // Sửa ở đây
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 
