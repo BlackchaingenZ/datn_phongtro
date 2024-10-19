@@ -24,37 +24,39 @@ layout('breadcrumb', 'admin', $data);
 function getRoomAndEquipmentList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, e.id AS equipment_id, e.tenthietbi
+        SELECT r.id AS room_id, r.tenphong, 
+               GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
+               GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
         FROM room r
         LEFT JOIN equipment_room er ON r.id = er.room_id
         LEFT JOIN equipment e ON er.equipment_id = e.id
-        ORDER BY r.id ASC, e.id ASC
+        GROUP BY r.id
+        ORDER BY r.id ASC
     ";
 
     return getRaw($sql); // Hàm getRaw() sẽ thực hiện truy vấn và trả về kết quả
 }
 
-// Xử lý tìm kiếm
-$searchKeyword = '';
-$filter = '';
-
-if (!empty($_POST['search_keyword'])) {
-    $searchKeyword = $_POST['search_keyword'];
-
-    // Kiểm tra xem có điều kiện WHERE chưa, nếu có thì dùng AND, nếu chưa thì dùng WHERE
-    if (!empty($filter) && strpos($filter, 'WHERE') >= 0) {
-        $operator = 'AND';
-    } else {
-        $operator = 'WHERE';
-    }
-
-    // Thêm điều kiện tìm kiếm vào câu truy vấn
-    $filter .= " $operator tenthietbi LIKE '%$searchKeyword%'";
+$searchTerm = ''; // Từ khóa tìm kiếm
+if (!empty($_POST['search_term'])) {
+    $searchTerm = $_POST['search_term'];
 }
 
-// Truy vấn thiết bị dựa trên điều kiện tìm kiếm
-$sqlSearch = "SELECT * FROM equipment $filter ORDER BY tenthietbi ASC";
-$searchResults = getRaw($sqlSearch);
+// Truy vấn để tìm tên phòng và thiết bị
+$sqlSearchRooms = "
+    SELECT r.id AS room_id, r.tenphong, 
+           GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
+           GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
+    FROM room r
+    JOIN equipment_room er ON r.id = er.room_id
+    JOIN equipment e ON er.equipment_id = e.id
+    WHERE r.tenphong LIKE '%$searchTerm%'
+    GROUP BY r.id
+    ORDER BY r.tenphong ASC
+";
+
+$searchResults = getRaw($sqlSearchRooms);
+$listRoomAndEquipment = getRoomAndEquipmentList();
 
 
 
@@ -121,6 +123,7 @@ $msgType = getFlashData('msg_type');
 
             <table class="table table-bordered mt-3">
                 <div class="row">
+                <div class="col-4"></div>  
                     <div class="col-4">
                         <input style="height: 50px" type="search" name="search_keyword" class="form-control" placeholder="Nhập tên thiết bị cần tìm" value="<?php echo (!empty($searchKeyword)) ? htmlspecialchars($searchKeyword) : ''; ?>">
                     </div>
