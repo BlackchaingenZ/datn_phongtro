@@ -9,7 +9,7 @@ const _ACTION_DEFAULT = 'lists'; //Action mặc định
 const _INCODE = true; //Ngăn chặn hành vi truy cập trực tiếp vào file
 
 //Thiết lập host
-define('_WEB_HOST_ROOT', 'http://'.$_SERVER['HTTP_HOST'].'/datn_phongtro_thaonguyen'); //Địa chỉ trang chủ
+define('_WEB_HOST_ROOT', 'http://'.$_SERVER['HTTP_HOST'].'/datn_phongtro'); //Địa chỉ trang chủ
 
 define('_WEB_HOST_ADMIN_TEMPLATE', _WEB_HOST_ROOT.'/templates/admin');
 
