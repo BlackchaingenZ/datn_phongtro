@@ -394,3 +394,22 @@ function checkEquipmentInRoomById($pdo, $roomId, $equipmentId) {
         return false;
     }
 }
+
+
+// Hàm thực hiện truy vấn thông tin cost
+function executeResult($query, $params = []) {
+    try {
+        // Sử dụng kết nối cơ sở dữ liệu có sẵn, giả sử nó được lưu trong biến $pdo
+        global $pdo;
+
+        // Chuẩn bị và thực hiện truy vấn
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+
+        // Lấy tất cả kết quả truy vấn
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        echo "Lỗi truy vấn cơ sở dữ liệu: " . $e->getMessage();
+        return [];
+    }
+}

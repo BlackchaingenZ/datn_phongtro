@@ -52,14 +52,16 @@ if (isPost()) {
         // Thêm giờ 00:00 vào thời gian cấp
         $thoigiancap = $body['thoigiancap'] . ' 00:00:00';
 
-        foreach ($body['equipment_ids'] as $equipmentId) {
-            $dataInsert = [
-                'room_id' => $roomId,
-                'equipment_id' => $equipmentId,
-                'thoigiancap' => $thoigiancap // Lưu thời gian cấp từ form
-            ];
-            insert('equipment_room', $dataInsert);
-        }
+// Chèn dữ liệu cho từng thiết bị được chọn
+foreach ($body['equipment_ids'] as $equipmentId) {
+    $dataInsert = [
+        'room_id' => $roomId,
+        'equipment_id' => $equipmentId,
+        'thoigiancap' => $thoigiancap // Lưu thời gian cấp từ form
+    ];
+    insert('equipment_room', $dataInsert);
+}
+
 
         setFlashData('msg', 'Cập nhật phân bổ thiết bị thành công!');
         setFlashData('msg_type', 'suc');

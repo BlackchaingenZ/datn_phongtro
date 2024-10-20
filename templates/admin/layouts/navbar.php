@@ -117,7 +117,7 @@
         </a>
 
                         <!-- Item 12 -->
-                        <a href="<?php echo getLinkAdmin(''); ?>" class="link__menu ">
+                        <a href="<?php echo getLinkAdmin('cost'); ?>" class="link__menu ">
           <div class="menu__item">
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/value.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Bảng giá phòng</p>
