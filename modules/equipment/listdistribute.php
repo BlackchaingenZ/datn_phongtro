@@ -9,7 +9,6 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -24,23 +23,22 @@ function getRoomAndEquipmentList()
 {
     $sql = "
         SELECT r.id AS room_id, r.tenphong, GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
-               GROUP_CONCAT(thoigiancap SEPARATOR ', ') AS thoigiancap
+               GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
         FROM room r
         LEFT JOIN equipment_room er ON r.id = er.room_id
         LEFT JOIN equipment e ON er.equipment_id = e.id
         GROUP BY r.id
         ORDER BY r.id ASC
     ";
-
-    return getRaw($sql); // Hàm getRaw() sẽ thực hiện truy vấn và trả về kết quả
+    return getRaw($sql); 
 }
 
-$searchTerm = ''; // Từ khóa tìm kiếm
+$searchTerm = ''; 
 if (!empty($_POST['search_term'])) {
     $searchTerm = $_POST['search_term'];
 }
 
-// Truy vấn để tìm tên phòng và thiết bị
+// Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
 $sqlSearchRooms = "
     SELECT r.id AS room_id, r.tenphong, e.tenthietbi, er.thoigiancap
     FROM room r
@@ -49,7 +47,6 @@ $sqlSearchRooms = "
     WHERE r.tenphong LIKE '%$searchTerm%'
     ORDER BY r.tenphong ASC
 ";
-
 $searchResults = getRaw($sqlSearchRooms);
 $listRoomAndEquipment = getRoomAndEquipmentList();
 
@@ -75,48 +72,67 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
-                <p></p>
             </div>
-            <div class="form-group">
-                <a style="margin-right: 20px " href="<?php echo getLinkAdmin('equipment', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</>
-                    <a href="<?php echo getLinkAdmin('equipment', 'distribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Phân bổ </a>
-                    <a href="<?php echo getLinkAdmin('equipment', 'listdistribute'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                    <a href="<?php echo getLinkAdmin('equipment', 'removedistribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
+            <div class="form-group mt-3">
+                <a style="margin-right: 10px" href="<?php echo getLinkAdmin('equipment', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <a href="<?php echo getLinkAdmin('equipment', 'distribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Phân bổ </a>
+                <a href="<?php echo getLinkAdmin('equipment', 'listdistribute'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+                <a href="<?php echo getLinkAdmin('equipment', 'removedistribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 
+        <form method="POST" action="">
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
+                        <th>Mã phòng</th>
+                        <th>Tên Phòng</th>
+                        <th>Tên Thiết Bị</th>
+                        <th>Ngày cấp</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="equipmentData">
+                    <?php
+                    $resultsToDisplay = !empty($searchTerm) ? $searchResults : $listRoomAndEquipment;
 
-        <h2>Danh sách phòng và thiết bị</h2>
-        <table class="table table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>Mã phòng</th>
-                    <th>Tên Phòng</th>
-                    <th>Tên Thiết Bị</th>
-                    <th>Ngày cấp</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Nếu có từ khóa tìm kiếm, sử dụng kết quả tìm kiếm
-                $resultsToDisplay = !empty($searchTerm) ? $searchResults : $listRoomAndEquipment;
-
-                if (!empty($resultsToDisplay)) {
-                    foreach ($resultsToDisplay as $row) {
-                        echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['room_id'], ENT_QUOTES, 'UTF-8') . "</td>";
-                        echo "<td>" . htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8') . "</td>";
-                        echo "<td>" . htmlspecialchars($row['tenthietbi'], ENT_QUOTES, 'UTF-8') . "</td>";
-                        echo "<td>" . htmlspecialchars($row['thoigiancap'], ENT_QUOTES, 'UTF-8') . "</td>";
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='4'>Không có dữ liệu.</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+                    if (!empty($resultsToDisplay)):
+                        foreach ($resultsToDisplay as $item):
+                    ?>
+                            <tr>
+                                <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td>
+                                <td><?php echo $item['room_id']; ?></td>
+                                <td><?php echo $item['tenphong']; ?></td>
+                                <td><b><?php echo $item['tenthietbi']; ?></b></td>
+                                <td><?php echo $item['thoigiancap']; ?></td>
+                                <td class="" style="width: 100px; height: 50px;">
+                                    <a href="<?php echo getLinkAdmin('equipment', 'editdistribute', ['id' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                    <a href="<?php echo getLinkAdmin('equipment', 'deletedistribute', ['id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
+                                </td>
+                            </tr>
+                    <?php endforeach;
+                    else: ?>
+                        <tr>
+                            <td colspan="6">
+                                <div class="alert alert-danger text-center">Không có dữ liệu.</div>
+                            </td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </form>
     </div>
 </div>
 
 <?php layout('footer', 'admin'); ?>
+
+<script>
+    function toggle(checkbox) {
+        let isChecked = checkbox.checked;
+        let checkboxes = document.querySelectorAll('input[name="records[]"]');
+        checkboxes.forEach(function(cb) {
+            cb.checked = isChecked;
+        });
+    }
+</script>

@@ -42,17 +42,20 @@ if (!empty($_POST['search_term'])) {
     $searchTerm = $_POST['search_term'];
 }
 
+
 // Truy vấn để tìm tên phòng và thiết bị
 $sqlSearchRooms = "
     SELECT r.id AS room_id, r.tenphong, 
-           GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
-           GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
+           e.id AS equipment_id,
+           e.tenthietbi, 
+           e.giathietbi,
+           e.ngaynhap
     FROM room r
     JOIN equipment_room er ON r.id = er.room_id
     JOIN equipment e ON er.equipment_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%'
-    GROUP BY r.id
-    ORDER BY r.tenphong ASC
+    WHERE e.tenthietbi LIKE '%$searchTerm%'
+    GROUP BY e.id
+    ORDER BY e.tenthietbi ASC
 ";
 
 $searchResults = getRaw($sqlSearchRooms);
@@ -63,6 +66,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 
 // Lấy danh sách thiết bị từ cơ sở dữ liệu
 $listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC");
+
 if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
     if (empty($numberCheckbox)) {
@@ -120,14 +124,12 @@ $msgType = getFlashData('msg_type');
     <!-- Hiển thị danh sách thiết bị -->
     <div class="box-content">
         <form method="POST" action="">
-
             <table class="table table-bordered mt-3">
                 <div class="row">
                     <div class="col-4"></div>
                     <div class="col-4">
-                        <input style="height: 50px" type="search" name="search_keyword" class="form-control" placeholder="Nhập tên thiết bị cần tìm" value="<?php echo (!empty($searchKeyword)) ? htmlspecialchars($searchKeyword) : ''; ?>">
+                        <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên thiết bị cần tìm" value="<?php echo (!empty($searchTerm)) ? htmlspecialchars($searchTerm) : ''; ?>">
                     </div>
-
                     <div class="col">
                         <button style="height: 50px; width: 50px" type="submit" name="search" class="btn btn-secondary">
                             <i class="fa fa-search"></i>
@@ -151,9 +153,16 @@ $msgType = getFlashData('msg_type');
                 </thead>
                 <tbody id="equipmentData">
                     <?php
-                    $equipmentList = !empty($searchKeyword) ? $searchResults : $listAllEquipment;
+                    // Lấy danh sách thiết bị dựa trên từ khóa tìm kiếm
+                    if (!empty($searchTerm)) {
+                        $equipmentList = $searchResults; // Kết quả tìm kiếm
+                    } else {
+                        $equipmentList = $listAllEquipment; // Danh sách tất cả thiết bị
+                    }
+
+                    // Hiển thị danh sách thiết bị
                     if (!empty($equipmentList)):
-                        $count = 0; // Hiển thị số thứ tự
+                        $count = 0;
                         foreach ($equipmentList as $item):
                             $count++;
                     ?>
@@ -177,10 +186,10 @@ $msgType = getFlashData('msg_type');
                         </tr>
                     <?php endif; ?>
                 </tbody>
-
             </table>
         </form>
     </div>
+
 
 </div>
 
@@ -191,7 +200,7 @@ $msgType = getFlashData('msg_type');
         let isChecked = __this.checked;
         let checkbox = document.querySelectorAll('input[name="records[]"]');
         for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked
+            checkbox[index].checked = isChecked;
         }
     }
 </script>

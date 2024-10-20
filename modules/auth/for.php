@@ -85,7 +85,7 @@ $old = getFlashData('old');
                 <input type="email" name="email" class="" placeholder="Email" value="<?php echo old('email', $old); ?>">
             </div>
             <button type="submit" class="btn-login">Gửi yêu cầu</button>
-            <button type="button" class="btn-login" onclick="window.location.href='http://localhost:85/datn_phongtro/?module=auth&action=login';">Trở về trang trước</button>
+            <button type="button" class="btn-login" onclick="window.location.href='http://localhost:85/datn/?module=auth&action=login';">Trở về trang trước</button>
 
         </form>
         </div>
