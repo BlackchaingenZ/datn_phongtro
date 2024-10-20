@@ -113,7 +113,7 @@ layout('navbar', 'admin', $data);
             </div>
 
             <div class="btn-row">
-                <a style="margin-right: 20px" href="<?php echo getLinkAdmin('equipment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <a style="margin-right: 20px" href="<?php echo getLinkAdmin('equipment','listequipment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Cập nhật</button>
             </div>
         </form>
