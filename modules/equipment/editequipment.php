@@ -69,7 +69,7 @@ if (isPost()) {
         setFlashData('old', $body); // Giữ lại dữ liệu đã nhập
     }
 
-    redirect('?module=equipment&action=editequipment&id=' . $equipmentId);
+    redirect('?module=equipment&action=listequipment' );
 }
 
 $msg = getFlashData('msg');
