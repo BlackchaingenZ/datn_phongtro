@@ -38,20 +38,25 @@ if (isPost()) {
         $errors['equipment_ids']['required'] = 'Bạn chưa chọn thiết bị nào!';
     }
 
+    // Kiểm tra thời gian cấp
+    if (empty($body['thoigiancap'])) {
+        $errors['thoigiancap']['required'] = 'Bạn chưa chọn thời gian cấp!';
+    }
+
     // Kiểm tra mảng error
     if (empty($errors)) {
         // Không có lỗi nào
         // Xóa tất cả các phân bổ cũ trước khi thêm mới
         delete('equipment_room', "room_id = $roomId");
 
-        // Cập nhật ngày cấp chỉ một lần
-        $thoigiancap = date('Y-m-d H:i:s'); // Hoặc giá trị khác nếu cần
+        // Thêm giờ 00:00 vào thời gian cấp
+        $thoigiancap = $body['thoigiancap'] . ' 00:00:00';
 
         foreach ($body['equipment_ids'] as $equipmentId) {
             $dataInsert = [
                 'room_id' => $roomId,
                 'equipment_id' => $equipmentId,
-                'thoigiancap' => $thoigiancap // Sử dụng cùng một thời gian cho tất cả thiết bị
+                'thoigiancap' => $thoigiancap // Lưu thời gian cấp từ form
             ];
             insert('equipment_room', $dataInsert);
         }
@@ -70,6 +75,7 @@ if (isPost()) {
     redirect('?module=equipment&action=editdistribute');
 }
 
+
 layout('navbar', 'admin', $data);
 ?>
 
@@ -79,7 +85,7 @@ layout('navbar', 'admin', $data);
     </div>
 
     <div class="box-content">
-        <h3>Chỉnh sửa phân bổ cho phòng: <?php echo $roomData['tenphong']; ?></h3>
+        <h3>Chỉnh sửa phân bổ: <?php echo $roomData['tenphong']; ?></h3>
 
         <form method="POST" action="">
             <div class="form-group">
@@ -94,6 +100,14 @@ layout('navbar', 'admin', $data);
                 </select>
 
                 <?php echo form_error('equipment_ids', $errors, '<span class="error">', '</span>'); ?>
+            </div>
+
+            <!-- Thêm trường nhập thời gian cấp -->
+            <div class="form-group">
+                <label for="thoigiancap">Chọn thời gian cấp:</label>
+                <input type="date" name="thoigiancap" class="form-control"style="width: 40%; height: auto;" required
+                    value="<?php echo isset($body['thoigiancap']) ? htmlspecialchars($body['thoigiancap']) : date('Y-m-d'); ?>">
+                <?php echo form_error('thoigiancap', $errors, '<span class="error">', '</span>'); ?>
             </div>
 
             <div class="btn-row">
