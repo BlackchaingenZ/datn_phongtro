@@ -123,7 +123,7 @@ $msgType = getFlashData('msg_type');
 
             <table class="table table-bordered mt-3">
                 <div class="row">
-                <div class="col-4"></div>  
+                    <div class="col-4"></div>
                     <div class="col-4">
                         <input style="height: 50px" type="search" name="search_keyword" class="form-control" placeholder="Nhập tên thiết bị cần tìm" value="<?php echo (!empty($searchKeyword)) ? htmlspecialchars($searchKeyword) : ''; ?>">
                     </div>
@@ -146,6 +146,7 @@ $msgType = getFlashData('msg_type');
                         <th>Tên thiết bị</th>
                         <th>Giá thiết bị</th>
                         <th>Ngày nhập</th>
+                        <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="equipmentData">
@@ -162,6 +163,10 @@ $msgType = getFlashData('msg_type');
                                 <td><b><?php echo $item['tenthietbi']; ?></b></td>
                                 <td><?php echo number_format($item['giathietbi'], 0, ',', '.'); ?> VND</td>
                                 <td><?php echo getDateFormat($item['ngaynhap'], 'd-m-Y'); ?></td>
+                                <td class="" style="width: 100px; height: 50px;">
+                                    <a href="<?php echo getLinkAdmin('equipment', 'editequipment', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
+                                    <a href="<?php echo getLinkAdmin('equipment', 'deleteequipment', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                                </td>
                             </tr>
                         <?php endforeach;
                     else: ?>
