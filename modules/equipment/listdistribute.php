@@ -30,25 +30,31 @@ function getRoomAndEquipmentList()
         GROUP BY r.id
         ORDER BY r.id ASC
     ";
-    return getRaw($sql); 
+    return getRaw($sql);
 }
 
-$searchTerm = ''; 
+$searchTerm = '';
 if (!empty($_POST['search_term'])) {
     $searchTerm = $_POST['search_term'];
 }
 
 // Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, r.tenphong, e.tenthietbi, er.thoigiancap
+    SELECT r.id AS room_id, 
+           r.tenphong, 
+           GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
+           GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
     FROM room r
     JOIN equipment_room er ON r.id = er.room_id
     JOIN equipment e ON er.equipment_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%'
+    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tenthietbi LIKE '%$searchTerm%'
+    GROUP BY r.id, r.tenphong
     ORDER BY r.tenphong ASC
 ";
+
 $searchResults = getRaw($sqlSearchRooms);
 $listRoomAndEquipment = getRoomAndEquipmentList();
+
 
 ?>
 
@@ -86,6 +92,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
+                        <th>STT</th>
                         <th>Mã phòng</th>
                         <th>Tên Phòng</th>
                         <th>Tên Thiết Bị</th>
@@ -98,10 +105,13 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                     $resultsToDisplay = !empty($searchTerm) ? $searchResults : $listRoomAndEquipment;
 
                     if (!empty($resultsToDisplay)):
+                        $count = 0;
                         foreach ($resultsToDisplay as $item):
+                            $count++;
                     ?>
                             <tr>
                                 <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td>
+                                <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
                                 <td><b><?php echo $item['tenthietbi']; ?></b></td>
@@ -111,7 +121,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                                     <a href="<?php echo getLinkAdmin('equipment', 'deletedistribute', ['id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
                                 </td>
                             </tr>
-                    <?php endforeach;
+                        <?php endforeach;
                     else: ?>
                         <tr>
                             <td colspan="6">
