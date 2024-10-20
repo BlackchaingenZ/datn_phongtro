@@ -2,6 +2,7 @@
 
 if (!defined('_INCODE')) die('Access denied...');
 
+
 // Ngăn chặn quyền truy cập nếu người dùng không thuộc nhóm có quyền
 $userId = isLogin()['user_id'];
 $userDetail = getUserInfo($userId);
@@ -21,6 +22,7 @@ $data = [
 
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
+
 function getRoomAndEquipmentList()
 {
     $sql = "
@@ -65,7 +67,8 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 
 
 // Lấy danh sách thiết bị từ cơ sở dữ liệu
-$listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC");
+$listAllEquipment = getRaw("SELECT id AS equipment_id, tenthietbi, giathietbi, ngaynhap FROM equipment ORDER BY tenthietbi ASC");
+
 
 if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
@@ -152,40 +155,38 @@ $msgType = getFlashData('msg_type');
                     </tr>
                 </thead>
                 <tbody id="equipmentData">
-                    <?php
-                    // Lấy danh sách thiết bị dựa trên từ khóa tìm kiếm
-                    if (!empty($searchTerm)) {
-                        $equipmentList = $searchResults; // Kết quả tìm kiếm
-                    } else {
-                        $equipmentList = $listAllEquipment; // Danh sách tất cả thiết bị
-                    }
+    <?php
+    // Lấy danh sách thiết bị dựa trên từ khóa tìm kiếm
+    $resultsToDisplay = !empty($searchTerm) ? $searchResults : $listAllEquipment;
 
-                    // Hiển thị danh sách thiết bị
-                    if (!empty($equipmentList)):
-                        $count = 0;
-                        foreach ($equipmentList as $item):
-                            $count++;
-                    ?>
-                            <tr>
-                                <td><input type="checkbox" name="records[]" value="<?php echo $item['id']; ?>"></td>
-                                <td><?php echo $count; ?></td>
-                                <td><b><?php echo $item['tenthietbi']; ?></b></td>
-                                <td><?php echo number_format($item['giathietbi'], 0, ',', '.'); ?> VND</td>
-                                <td><?php echo getDateFormat($item['ngaynhap'], 'd-m-Y'); ?></td>
-                                <td class="" style="width: 100px; height: 50px;">
-                                    <a href="<?php echo getLinkAdmin('equipment', 'editequipment', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
-                                    <a href="<?php echo getLinkAdmin('equipment', 'deleteequipment', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
-                                </td>
-                            </tr>
-                        <?php endforeach;
-                    else: ?>
-                        <tr>
-                            <td colspan="6">
-                                <div class="alert alert-danger text-center">Không tìm thấy kết quả nào</div>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
+    // Hiển thị danh sách thiết bị
+    if (!empty($resultsToDisplay)):
+        $count = 0;
+        foreach ($resultsToDisplay as $item):
+            $count++;
+    ?>
+            <tr>
+            <td><input type="checkbox" name="records[]" value="<?php echo $item['equipment_id']; ?>"></td>
+
+                <td><?php echo $count; ?></td>
+                <td><b><?php echo $item['tenthietbi']; ?></b></td>
+                <td><?php echo number_format($item['giathietbi'], 0, ',', '.'); ?> VND</td>
+                <td><?php echo getDateFormat($item['ngaynhap'], 'd-m-Y'); ?></td>
+                <td class="" style="width: 100px; height: 50px;">
+                    <a href="<?php echo getLinkAdmin('equipment', 'editequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
+                    <a href="<?php echo getLinkAdmin('equipment', 'deleteequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                </td>
+            </tr>
+        <?php endforeach;
+    else: ?>
+        <tr>
+            <td colspan="6">
+                <div class="alert alert-danger text-center">Không tìm thấy kết quả nào</div>
+            </td>
+        </tr>
+    <?php endif; ?>
+</tbody>
+
             </table>
         </form>
     </div>
