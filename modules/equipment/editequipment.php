@@ -23,6 +23,10 @@ if (!empty($id)) {
     }
 }
 
+// Lấy danh sách phòng
+$equipmentId = $_GET['id'];
+$equipmentData = firstRaw("SELECT * FROM equipment WHERE id = $equipmentId");
+
 // Xử lý sửa thiết bị
 if (isPost()) {
     // Validate form
@@ -69,7 +73,7 @@ if (isPost()) {
         setFlashData('old', $body); // Giữ lại dữ liệu đã nhập
     }
 
-    redirect('?module=equipment&action=listequipment' );
+    redirect('?module=equipment&action=listequipment');
 }
 
 $msg = getFlashData('msg');
@@ -90,7 +94,7 @@ layout('navbar', 'admin', $data);
     <hr />
 
     <div class="box-content">
-
+        <h3>Chỉnh sửa thiết bị : <?php echo $equipmentData['tenthietbi']; ?></h3>
         <form action="" method="post" class="row">
             <div class="col-5">
                 <div class="form-group">
@@ -113,7 +117,7 @@ layout('navbar', 'admin', $data);
             </div>
 
             <div class="btn-row">
-                <a style="margin-right: 20px" href="<?php echo getLinkAdmin('equipment','listequipment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <a style="margin-right: 20px" href="<?php echo getLinkAdmin('equipment', 'listequipment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Cập nhật</button>
             </div>
         </form>

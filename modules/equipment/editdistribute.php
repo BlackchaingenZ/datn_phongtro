@@ -84,7 +84,7 @@ layout('navbar', 'admin', $data);
         <form method="POST" action="">
             <div class="form-group">
                 <label for="equipment">Chọn thiết bị:</label>
-                <select multiple name="equipment_ids[]" class="form-control" required>
+                <select multiple name="equipment_ids[]" class="form-control" style="width: 40%; height: auto;" size="9" required>
                     <?php foreach ($listAllEquipment as $equipment): ?>
                         <option value="<?php echo $equipment['equipment_id']; ?>"
                             <?php if (in_array($equipment['equipment_id'], array_column($equipmentData, 'equipment_id'))) echo 'selected'; ?>>
@@ -92,6 +92,7 @@ layout('navbar', 'admin', $data);
                         </option>
                     <?php endforeach; ?>
                 </select>
+
                 <?php echo form_error('equipment_ids', $errors, '<span class="error">', '</span>'); ?>
             </div>
 
