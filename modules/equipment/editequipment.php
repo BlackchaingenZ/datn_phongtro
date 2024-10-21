@@ -94,7 +94,7 @@ layout('navbar', 'admin', $data);
     <hr />
 
     <div class="box-content">
-        <h3>Chỉnh sửa thiết bị : <?php echo $equipmentData['tenthietbi']; ?></h3>
+        <!-- <h3>Chỉnh sửa thiết bị : <?php echo $equipmentData['tenthietbi']; ?></h3> -->
         <form action="" method="post" class="row">
             <div class="col-5">
                 <div class="form-group">

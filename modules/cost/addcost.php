@@ -2,99 +2,121 @@
 
 if (!defined('_INCODE')) die('Access denied...');
 
-// Bao gồm tệp chứa hàm executeResult
-require_once 'includes/functions.php'; // Đường dẫn tới tệp kết nối và hàm executeResult
-
-// Ngăn chặn quyền truy cập nếu người dùng không thuộc nhóm có quyền
-$userId = isLogin()['user_id'];
-$userDetail = getUserInfo($userId);
-$groupId = $userDetail['group_id'];
-
-// Kiểm tra nếu người dùng không thuộc nhóm 7 thì chặn truy cập
-if ($groupId != 7) {
-    setFlashData('msg', 'Bạn không được truy cập vào trang này');
-    setFlashData('msg_type', 'err');
-    redirect('admin/?module=dashboard');
-}
-
 $data = [
-    'pageTitle' => 'Thêm bảng giá mới'
+    'pageTitle' => 'Thêm danh mục bảng giá'
 ];
 
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-$msg = getFlashData('msg');
-$msgType = getFlashData('msg_type');
+// Xử lý thêm danh mục chi phí
+if (isPost()) {
+    // Validate form
+    $body = getBody(); // lấy tất cả dữ liệu trong form
+    $errors = [];  // mảng lưu trữ các lỗi
 
-// Kiểm tra nếu người dùng đã gửi form
-if (isset($_POST['addcost'])) {
-    $tengia = trim($_POST['tengia']);
-    $giathue = $_POST['giathue'];
-    $ngaybatdau = $_POST['ngaybatdau'];
-    $ngayketthuc = $_POST['ngayketthuc'];
+    // Validate tên giá
+    if (empty(trim($body['tengia']))) {
+        $errors['tengia']['required'] = '** Bạn chưa nhập tên giá!';
+    }
 
-    // Kiểm tra nếu các trường không rỗng
-    if (!empty($tengia) && !empty($giathue) && !empty($ngaybatdau) && !empty($ngayketthuc)) {
+    // Validate giá thuê
+    if (empty(trim($body['giathue']))) {
+        $errors['giathue']['required'] = '** Bạn chưa nhập giá thuê!';
+    }
 
-        // Truy vấn thêm bảng giá mới vào cơ sở dữ liệu
-        $query = "INSERT INTO cost (tengia, giathue, ngaybatdau, ngayketthuc) VALUES (:tengia, :giathue, :ngaybatdau, :ngayketthuc)";
-        $params = [
-            ':tengia' => $tengia,
-            ':giathue' => $giathue,
-            ':ngaybatdau' => $ngaybatdau,
-            ':ngayketthuc' => $ngayketthuc
+    // Validate ngày bắt đầu
+    if (empty(trim($body['ngaybatdau']))) {
+        $errors['ngaybatdau']['required'] = '** Bạn chưa nhập ngày bắt đầu!';
+    }
+
+    // Validate ngày kết thúc
+    if (empty(trim($body['ngayketthuc']))) {
+        $errors['ngayketthuc']['required'] = '** Bạn chưa nhập ngày kết thúc!';
+    }
+
+    // Kiểm tra mảng error
+    if (empty($errors)) {
+        // không có lỗi nào
+        $dataInsert = [
+            'tengia' => $body['tengia'],
+            'giathue' => $body['giathue'],
+            'ngaybatdau' => $body['ngaybatdau'],
+            'ngayketthuc' => $body['ngayketthuc'],
         ];
-        $isInserted = executeResult($query, $params);
 
-        if ($isInserted) {
-            setFlashData('msg', 'Thêm bảng giá thất bại');
+        $insertStatus = insert('cost', $dataInsert); // Giả định bạn có hàm insert để thêm dữ liệu vào bảng cost
+        if ($insertStatus) {
+            setFlashData('msg', 'Thêm thông tin bảng giá thành công');
+            setFlashData('msg_type', 'suc');
+            redirect('?module=cost&action=costroom'); // Đường dẫn đến danh sách danh mục chi phí
+        } else {
+            setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');
             redirect('?module=cost&action=addcost');
-        } else {
-            setFlashData('msg', 'Thêm bảng giá thành công');
-            setFlashData('msg_type', 'success');
-            redirect('?module=cost&action=costroom');
         }
     } else {
-        setFlashData('msg', 'Vui lòng điền đầy đủ thông tin');
+        // Có lỗi xảy ra
+        setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
         setFlashData('msg_type', 'err');
+        setFlashData('errors', $errors);
+        setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lệ khi nhập vào
+        redirect('?module=cost&action=addcost');
     }
 }
 
+$msg = getFlashData('msg');
+$msgType = getFlashData('msg_type');
+$errors = getFlashData('errors');
+$old = getFlashData('old');
+
+// Tạo URL quay về trang danh sách bảng giá
+$linkreturnlist = getLinkAdmin('cost', 'list');
+
 ?>
 
-<div class="container-fluid">
+<?php layout('navbar', 'admin', $data); ?>
 
+<div class="container">
     <div id="MessageFlash">
         <?php getMsg($msg, $msgType); ?>
     </div>
 
-    <!-- Form thêm bảng giá mới -->
-    <div class="container">
-        <div class="box-content">
+    <div class="box-content">
+        <form action="" method="post" class="row">
+            <div class="col-5">
+                <div class="form-group">
+                    <label for="">Tên giá <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Tên giá" name="tengia" class="form-control" value="<?php echo old('tengia', $old); ?>">
+                    <?php echo form_error('tengia', $errors, '<span class="error">', '</span>'); ?>
+                </div>
 
-            <form action="" method="post" class="row">
-                
                 <div class="form-group">
-                    <label for="tengia">Tên giá:</label>
-                    <input type="text" name="tengia" class="form-control" required>
+                    <label for="">Giá thuê <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Giá thuê (VND)" name="giathue" class="form-control" value="<?php echo old('giathue', $old); ?>">
+                    <?php echo form_error('giathue', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
                 <div class="form-group">
-                    <label for="giathue">Giá thuê:</label>
-                    <input type="number" name="giathue" class="form-control" required>
+                    <label for="">Ngày bắt đầu <span style="color: red">*</span></label>
+                    <input type="date" name="ngaybatdau" class="form-control" value="<?php echo old('ngaybatdau', $old); ?>">
+                    <?php echo form_error('ngaybatdau', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
                 <div class="form-group">
-                    <label for="ngaybatdau">Ngày bắt đầu:</label>
-                    <input type="date" name="ngaybatdau" class="form-control" required>
+                    <label for="">Ngày kết thúc <span style="color: red">*</span></label>
+                    <input type="date" name="ngayketthuc" class="form-control" value="<?php echo old('ngayketthuc', $old); ?>">
+                    <?php echo form_error('ngayketthuc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-                <div class="form-group">
-                    <label for="ngayketthuc">Ngày kết thúc:</label>
-                    <input type="date" name="ngayketthuc" class="form-control" required>
-                </div>
-                <button type="submit" name="addcost" class="btn btn-primary">Thêm bảng giá</button>
-            </form>
-        </div>
+            </div>
+
+            <div class="col-5">
+            </div>
+            <div class="form-group">
+                <a style="margin-right: 20px" href="<?php echo $linkreturnlist ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm mới </button>
+            </div>
+        </form>
     </div>
 </div>
 

@@ -98,8 +98,8 @@ if (isset($_POST['search'])) {
                                 <td><?php echo getDateFormat($item['ngaybatdau'], 'd-m-Y'); ?></td>
                                 <td><?php echo getDateFormat($item['ngayketthuc'], 'd-m-Y'); ?></td>
                                 <td class="" style="width: 100px; height: 50px;">
-                                    <a href="<?php echo getLinkAdmin('room', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm" style="margin-right: 9px;"><i class="fa fa-edit"></i> </a>
-                                    <a href="<?php echo getLinkAdmin('room', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                                    <a href="<?php echo getLinkAdmin('cost', 'editcostroom', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm" style="margin-right: 9px;"><i class="fa fa-edit"></i> </a>
+                                    <a href="<?php echo getLinkAdmin('', '', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
                             </tr>
                         <?php endforeach;
