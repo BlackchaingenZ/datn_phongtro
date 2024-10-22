@@ -8,9 +8,20 @@ if (!empty($body['id'])) {
     // Kiểm tra Id có tồn tại trong hệ thống hay không
     $roomDetail = getRows("SELECT id FROM room WHERE id=$roomId");
     $countTenant = getRows("SELECT id FROM tenant WHERE tenant.room_id = $roomId");
+    $countCost = getRows("SELECT id FROM cost_room WHERE room_id = $roomId");
+    $countEquipment = getRows("SELECT id FROM equipment_room WHERE room_id = $roomId");
 
+    
     if ($countTenant > 0) {
         setFlashData('msg', 'Phòng này còn khách đang thuê nên không thể xoá');
+        setFlashData('msg_type', 'err');
+        redirect('?module=room');
+    }elseif ($countCost > 0) {
+        setFlashData('msg', 'Không thể xóa phòng này vì còn dữ liệu liên quan');
+        setFlashData('msg_type', 'err');
+        redirect('?module=room');
+    }elseif ($countEquipment > 0) {
+        setFlashData('msg', 'Không thể xóa phòng này vì còn dữ liệu liên quan');
         setFlashData('msg_type', 'err');
         redirect('?module=room');
     }
