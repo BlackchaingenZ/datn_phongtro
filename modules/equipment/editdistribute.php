@@ -87,8 +87,8 @@ layout('navbar', 'admin', $data);
     </div>
 
     <div class="box-content">
-        <h3>Chỉnh sửa phân bổ: <?php echo $roomData['tenphong']; ?></h3>
-
+    <label for="">Thông tin phòng:</label>
+        <p><?php echo $roomData['tenphong']; ?></p>
         <form method="POST" action="">
             <div class="form-group">
                 <label for="equipment">Chọn thiết bị:</label>

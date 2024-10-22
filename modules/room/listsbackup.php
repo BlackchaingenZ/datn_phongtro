@@ -77,17 +77,7 @@ if(!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-//lấy thông tin giá thuê từ bảng cost và tên thiết bị từ bảng equipment
-$listAllroom = getRaw("SELECT room.*, cost.giathue, GROUP_CONCAT(equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
-                      FROM room 
-                      LEFT JOIN cost_room ON room.id = cost_room.room_id 
-                      LEFT JOIN cost ON cost_room.cost_id = cost.id
-                      LEFT JOIN equipment_room ON room.id = equipment_room.room_id
-                      LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
-                      $filter 
-                      GROUP BY room.id
-                      ORDER BY tenphong ASC LIMIT $offset, $perPage");
-
+$listAllroom = getRaw("SELECT * FROM room $filter ORDER BY tenphong ASC LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;
@@ -182,12 +172,11 @@ layout('navbar', 'admin', $data);
                         <th>Giá thuê</th>
                         <th>Giá tiền cọc</th>
                         <th>Khách thuê</th>
-                        <th style="width: 6%; text-align: center;">Ngày lập hoá đơn</th>
+                        <th>Ngày lập hóa đơn</th>
                         <th>Chu kỳ thu tiền</th>
                         <th>Ngày vào ở</th>
                         <th>Ngày hết hạn</th>
                         <th>Trạng thái</th>
-                        <th>Cơ sở vật chất</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -226,7 +215,7 @@ layout('navbar', 'admin', $data);
                                  echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>':'<span class="btn-status-err">Đang trống</span>';
                             ?>                          
                         </td>
-                        <td><b><?php echo $item['tenthietbi']; ?></b></td>
+                
                         <td class="">
                             <a href="<?php echo getLinkAdmin('room','edit',['id' => $item['id']]); ?>" class="btn btn-primary btn-sm" ><i class="fa fa-edit"></i> </a>
                             <a href="<?php echo getLinkAdmin('room','delete',['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>

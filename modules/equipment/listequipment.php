@@ -142,7 +142,7 @@ $msgType = getFlashData('msg_type');
                 <input type="hidden" name="module" value="equipment">
                 <p></p>
                 <a href="<?php echo getLinkAdmin('equipment', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
-                <a href="<?php echo getLinkAdmin('equipment', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+                <a href="<?php echo getLinkAdmin('equipment', 'listequipment'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
                 <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
                     <tr>

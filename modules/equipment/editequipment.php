@@ -23,9 +23,14 @@ if (!empty($id)) {
     }
 }
 
+// Lấy thông tin equipmetn,lấy tenthietbi
+
+
 // Lấy danh sách phòng
 $equipmentId = $_GET['id'];
-$equipmentData = firstRaw("SELECT * FROM equipment WHERE id = $equipmentId");
+// Lấy thông tin thiết bị cũ
+$equipmentData = firstRaw("SELECT *, tenthietbi FROM equipment WHERE id = $equipmentId");
+
 
 // Xử lý sửa thiết bị
 if (isPost()) {
@@ -97,6 +102,8 @@ layout('navbar', 'admin', $data);
         <!-- <h3>Chỉnh sửa thiết bị : <?php echo $equipmentData['tenthietbi']; ?></h3> -->
         <form action="" method="post" class="row">
             <div class="col-5">
+                <label for="">Thông tin thiết bị:</label>
+                <p><?php echo $equipmentData['tenthietbi']; ?></p>
                 <div class="form-group">
                     <label for="">Tên thiết bị <span style="color: red">*</span></label>
                     <input type="text" name="tenthietbi" class="form-control" value="<?php echo old('tenthietbi', $old); ?>">

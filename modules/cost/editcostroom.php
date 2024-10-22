@@ -12,8 +12,8 @@ layout('breadcrumb', 'admin', $data);
 // Lấy ID bảng giá từ URL
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Lấy thông tin bảng giá cũ
-$costDetail = firstRaw("SELECT * FROM cost WHERE id = $id");
+// Lấy thông tin bảng giá cũ lấy thêm cả tengia cost
+$costDetail = firstRaw("SELECT *, tengia FROM cost WHERE id = $id");
 if (empty($costDetail)) {
     redirect('?module=cost&action=costroom');
 }
@@ -98,6 +98,10 @@ layout('navbar', 'admin', $data);
     <div class="box-content">
         <form action="" method="post" class="row">
             <div class="col-5">
+            <div class="form-group">
+                    <label for="">Thông tin bảng giá:</label>
+                    <p><?php echo htmlspecialchars($costDetail['tengia'], ENT_QUOTES, 'UTF-8'); ?></p>
+                </div>
                 <div class="form-group">
                     <label for="tengia">Tên giá <span style="color: red">*</span></label>
                     <input type="text" name="tengia" class="form-control" value="<?php echo old('tengia', $old); ?>">

@@ -44,10 +44,6 @@ if (isPost()) {
         }
     }
 
-    if (empty(trim($body['giathue']))) {
-        $errors['giathue']['required'] = '** Bạn chưa nhập giá phòng!';
-    }
-
     if (empty(trim($body['tiencoc']))) {
         $errors['tiencoc']['required'] = '** Bạn chưa nhập giá tiền cọc!';
     }
@@ -60,7 +56,6 @@ if (isPost()) {
             'tenphong' => $body['tenphong'],
             'image' => $body['image'],
             'dientich' => $body['dientich'],
-            'giathue' => $body['giathue'],
             'tiencoc' => $body['tiencoc'],
             'ngaylaphd' => $body['ngaylaphd'],
             'chuky' => $body['chuky'],
@@ -130,12 +125,6 @@ layout('navbar', 'admin', $data);
                     <label for="">Diện tích</label>
                     <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>">
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Giá thuê <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Giá thuê (đ)" name="giathue" id="" class="form-control" value="<?php echo old('giathue', $old); ?>">
-                    <?php echo form_error('giathue', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
                 <div class="form-group">

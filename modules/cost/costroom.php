@@ -68,14 +68,14 @@ if (isset($_POST['search'])) {
                 </div>
                 <input type="hidden" name="module" value="cost">
                 <p></p>
-                <a href="<?php echo getLinkAdmin('cost', 'addcost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
-                <a href="<?php echo getLinkAdmin('cost', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+                <a href="<?php echo getLinkAdmin('cost', 'addcost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm loại giá mới </a>
+                <a href="<?php echo getLinkAdmin('cost', 'costroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
                 <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
                     <tr>
                         <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
                         <th>STT</th>
-                        <th>Tên giá</th>
+                        <th>Tên loại giá</th>
                         <th>Giá thuê</th>
                         <th>Ngày bắt đầu</th>
                         <th>Ngày kết thúc</th>

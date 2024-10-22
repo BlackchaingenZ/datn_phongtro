@@ -17,17 +17,27 @@ if (isset($_GET['id'])) {
     $checkCost = getRow("SELECT id FROM cost WHERE id = $id");
 
     if ($checkCost) {
-        // Xóa bản ghi trong bảng cost
-        $deleteStatus = delete('cost', "id = $id"); // Giả định bạn có hàm delete để xóa dữ liệu trong bảng cost
+        // Kiểm tra xem loại giá này đã liên kết với phòng nào chưa
+        $checkLinkedRoom = getRow("SELECT room_id FROM cost_room WHERE cost_id = $id");
 
-        if ($deleteStatus) {
-            setFlashData('msg', 'Xóa thông tin bảng giá thành công');
-            setFlashData('msg_type', 'suc');
-            redirect('?module=cost&action=costroom'); // Điều hướng đến danh sách danh mục chi phí sau khi xóa
-        } else {
-            setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+        if ($checkLinkedRoom) {
+            // Nếu loại giá này đã được liên kết với phòng
+            setFlashData('msg', ' Không thể xoá vì loại giá này đang có phòng sử dụng');
             setFlashData('msg_type', 'err');
             redirect('?module=cost&action=costroom');
+        } else {
+            // Xóa bản ghi trong bảng cost nếu không liên kết với phòng nào
+            $deleteStatus = delete('cost', "id = $id");
+
+            if ($deleteStatus) {
+                setFlashData('msg', 'Xóa thông tin bảng giá thành công');
+                setFlashData('msg_type', 'suc');
+                redirect('?module=cost&action=costroom');
+            } else {
+                setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+                setFlashData('msg_type', 'err');
+                redirect('?module=cost&action=costroom');
+            }
         }
     } else {
         // Không tìm thấy bản ghi cần xóa
