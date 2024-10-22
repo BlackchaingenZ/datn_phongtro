@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Gỡ thiết bị khỏi phòng'
+    'pageTitle' => 'Gỡ bảng giá khỏi phòng'
 ];
 
 layout('header', 'admin', $data);
@@ -20,65 +20,70 @@ if (isPost()) {
     if (empty(trim($body['room_id']))) {
         $errors['room_id']['required'] = '** Bạn chưa chọn phòng!';
     }
+    if (empty(trim($body['cost_id']))) {
+        $errors['cost_id']['required'] = '** Bạn chưa chọn tên giá';
+    }
 
     if (empty($errors)) {
         $roomId = $body['room_id'];
 
-        // Kiểm tra xem phòng có thiết bị hay không
-        $equipmentCount = checkEquipmentInRoom($pdo, $roomId);
-        if ($equipmentCount == 0) {
-            setFlashData('msg', 'Phòng này chưa có thiết bị');
+        // Kiểm tra xem phòng có bảng giá hay không
+        $CostCount = checkCostInRoom($pdo, $roomId);
+        if ($CostCount == 0) {
+            setFlashData('msg', 'Phòng này chưa có loại giá');
             setFlashData('msg_type', 'err');
-            redirect('?module=equipment&action=removedistribute');
+            redirect('?module=cost&action=applyroom');
         }
 
-        if (empty(trim($body['equipment_id']))) {
-            $errors['equipment_id']['required'] = '** Bạn chưa chọn thiết bị để gỡ!';
+        if (empty(trim($body['cost_id']))) {
+            $errors['cost_id']['required'] = '** Bạn chưa chọn giá để gỡ!';
         }
 
         if (empty($errors)) {
-            $equipmentId = $body['equipment_id'];
+            $costId = $body['cost_id'];
 
-            // Kiểm tra xem thiết bị có trong phòng hay không
-            $isEquipmentInRoom = checkEquipmentInRoomById($pdo, $roomId, $equipmentId);
-            if (!$isEquipmentInRoom) {
-                setFlashData('msg', 'Thiết bị này chưa có trong phòng');
+            // Kiểm tra xem giá có trong phòng hay không
+            $isCostInRoom = checkCostInRoomById($pdo, $roomId, $costId);
+            if (!$isCostInRoom) {
+                setFlashData('msg', 'Loại giá này chưa có trong phòng');
                 setFlashData('msg_type', 'err');
-                redirect('?module=equipment&action=removedistribute');
+                redirect('?module=cost&action=applyroom');
             }
 
-            // Tiến hành gỡ thiết bị nếu tồn tại
-            $deleteStatus = deleteEquipmentFromRoom($pdo, $roomId, $equipmentId);
+            // Tiến hành gỡ loại giá nếu tồn tại
+            $deleteStatus = deleteCostFromRoom($pdo, $roomId, $costId);
             if ($deleteStatus) {
-                setFlashData('msg', 'Gỡ thiết bị thành công');
+                setFlashData('msg', 'Gỡ loại giá thành công');
                 setFlashData('msg_type', 'suc');
             } else {
                 setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
                 setFlashData('msg_type', 'err');
             }
-            redirect('?module=equipment&action=listdistribute');
+            redirect('?module=cost&action=applyroom');
         } else {
             setFlashData('errors', $errors);
             setFlashData('old', $body);
-            redirect('?module=equipment&action=removedistribute');
+            redirect('?module=cost&action=applyroom');
         }
     } else {
+        // Nếu có lỗi, xử lý thông báo lỗi
+        setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
+        setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
         setFlashData('old', $body);
-        redirect('?module=equipment&action=removedistribute');
+        redirect('?module=cost&action=removecost');
     }
 }
 
-// Lấy danh sách phòng và thiết bị
+// Lấy danh sách phòng và cost
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC"); // Lấy tất cả phòng
-$listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC"); // Lấy tất cả thiết bị
-
+$listAllCost = getRaw("SELECT * FROM cost ORDER BY tengia ASC"); // Lấy tất cả giá
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-$linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
+$linkreturndistribite = getLinkAdmin('cost', 'applyroom');
 
 ?>
 
@@ -106,21 +111,21 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
                 </div>
 
                 <div class="form-group">
-                    <label for="">Chọn thiết bị <span style="color: red">*</span></label>
-                    <select name="equipment_id" class="form-control">
-                        <option value="">Chọn thiết bị</option>
-                        <?php foreach ($listAllEquipment as $equipment): ?>
-                            <option value="<?php echo $equipment['id']; ?>" <?php echo old('equipment_id', $old) == $equipment['id'] ? 'selected' : ''; ?>>
-                                <?php echo $equipment['tenthietbi']; ?>
+                    <label for="">Chọn loại giá <span style="color: red">*</span></label>
+                    <select name="cost_id" class="form-control">
+                        <option value="">Chọn loại giá</option>
+                        <?php foreach ($listAllCost as $cost): ?>
+                            <option value="<?php echo $cost['id']; ?>" <?php echo old('cost_id', $old) == $cost['id'] ? 'selected' : ''; ?>>
+                                <?php echo $cost['tengia']; ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <?php echo form_error('equipment_id', $errors, '<span class="error">', '</span>'); ?>
+                    <?php echo form_error('cost_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
             </div>
             <div class="form-group">
-            <a style="margin-right: 20px " href="<?php echo $linkreturndistribite ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                <button type="submit" class="btn btn-secondary"><i class="fa fa-trash"></i> Gỡ thiết bị</button>
+                <a style="margin-right: 20px " href="<?php echo $linkreturndistribite ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <button type="submit" class="btn btn-secondary"><i class="fa fa-trash"></i> Gỡ loại giá</button>
             </div>
         </form>
     </div>

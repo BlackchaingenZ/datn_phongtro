@@ -77,16 +77,22 @@ if(!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-//lấy thông tin giá thuê từ bảng cost và tên thiết bị từ bảng equipment
-$listAllroom = getRaw("SELECT room.*, cost.giathue, GROUP_CONCAT(equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
-                      FROM room 
-                      LEFT JOIN cost_room ON room.id = cost_room.room_id 
-                      LEFT JOIN cost ON cost_room.cost_id = cost.id
-                      LEFT JOIN equipment_room ON room.id = equipment_room.room_id
-                      LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
-                      $filter 
-                      GROUP BY room.id
-                      ORDER BY tenphong ASC LIMIT $offset, $perPage");
+//lấy thông tin giá thuê từ bảng cost và tên thiết bị từ bảng equipment( distint lấy thông tin mới ,ko trùng)
+$listAllroom = getRaw("
+    SELECT room.*, 
+           cost.giathue, 
+           GROUP_CONCAT(DISTINCT equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
+    FROM room 
+    LEFT JOIN cost_room ON room.id = cost_room.room_id 
+    LEFT JOIN cost ON cost_room.cost_id = cost.id
+    LEFT JOIN equipment_room ON room.id = equipment_room.room_id
+    LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
+    $filter 
+    GROUP BY room.id
+    ORDER BY tenphong ASC 
+    LIMIT $offset, $perPage
+");
+
 
 
 // Xử lý query string tìm kiếm với phân trang
@@ -183,11 +189,11 @@ layout('navbar', 'admin', $data);
                         <th>Giá tiền cọc</th>
                         <th>Khách thuê</th>
                         <th style="width: 6%; text-align: center;">Ngày lập hoá đơn</th>
-                        <th>Chu kỳ thu tiền</th>
+                        <th >Chu kỳ thu tiền</th>
                         <th>Ngày vào ở</th>
                         <th>Ngày hết hạn</th>
                         <th>Trạng thái</th>
-                        <th>Cơ sở vật chất</th>
+                        <th style="width: 6%; text-align: center;" >Cơ sở vật chất</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>

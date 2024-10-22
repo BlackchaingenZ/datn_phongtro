@@ -364,10 +364,31 @@ function deleteEquipmentFromRoom($pdo, $roomId, $equipmentId) {
     return $stmt->execute(); // Trả về true nếu xóa thành công
 }
 
+// Hàm thực hiện xóa loại giá khỏi phòng, với đối tượng $pdo truyền vào
+function deleteCostFromRoom($pdo, $roomId, $costId) {
+    // Truy vấn để xóa thiết bị khỏi phòng dựa trên room_id và cost_id
+    $stmt = $pdo->prepare("DELETE FROM cost_room WHERE room_id = :roomId AND cost_id = :costId");
+    $stmt->bindParam(':roomId', $roomId);
+    $stmt->bindParam(':costId', $costId);
+    
+    return $stmt->execute(); // Trả về true nếu xóa thành công
+}
+
 // kiểm tra thiết bị có ở trong phòng không(lấy toàn bộ chưa check)
 function checkEquipmentInRoom($pdo, $roomId) {
     // Truy vấn để kiểm tra xem phòng có thiết bị không
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM equipment_room WHERE room_id = :roomId");
+    $stmt->bindParam(':roomId', $roomId);
+    $stmt->execute();
+    
+    // Trả về số lượng thiết bị trong phòng
+    return $stmt->fetchColumn();
+}
+
+// kiểm tra bảng giá có ở trong phòng hay không
+function checkcostInRoom($pdo, $roomId) {
+    // Truy vấn để kiểm tra xem phòng có thiết bị không
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM cost_room WHERE room_id = :roomId");
     $stmt->bindParam(':roomId', $roomId);
     $stmt->execute();
     
@@ -382,6 +403,26 @@ function checkEquipmentInRoomById($pdo, $roomId, $equipmentId) {
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM equipment_room WHERE room_id = :room_id AND equipment_id = :equipment_id");
         $stmt->bindParam(':room_id', $roomId, PDO::PARAM_INT);
         $stmt->bindParam(':equipment_id', $equipmentId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Lấy kết quả đếm
+        $count = $stmt->fetchColumn();
+
+        // Nếu kết quả lớn hơn 0, thiết bị tồn tại trong phòng
+        return $count > 0;
+    } catch (PDOException $e) {
+        // Xử lý lỗi nếu có vấn đề với cơ sở dữ liệu
+        return false;
+    }
+}
+
+
+function checkCostInRoomById($pdo, $roomId, $costId) {
+    try {
+        // Câu truy vấn kiểm tra bảng giá có trong phòng hay không
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM cost_room WHERE room_id = :room_id AND cost_id = :cost_id");
+        $stmt->bindParam(':room_id', $roomId, PDO::PARAM_INT);
+        $stmt->bindParam(':cost_id', $costId, PDO::PARAM_INT);
         $stmt->execute();
 
         // Lấy kết quả đếm

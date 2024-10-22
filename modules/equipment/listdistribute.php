@@ -91,7 +91,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
+                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Mã phòng</th>
                         <th>Tên Phòng</th>
@@ -110,7 +110,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                             $count++;
                     ?>
                             <tr>
-                                <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td>
+                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
@@ -137,7 +137,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 </div>
 
 <?php layout('footer', 'admin'); ?>
-
+<!-- 
 <script>
     function toggle(checkbox) {
         let isChecked = checkbox.checked;
@@ -146,4 +146,4 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
             cb.checked = isChecked;
         });
     }
-</script>
+</script> -->

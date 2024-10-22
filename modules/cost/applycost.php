@@ -198,7 +198,9 @@ $listRoomAndCost = getRoomAndCostList();
             </div>
 
             <div class="form-group">
-                <a style="margin-right: 20px " href="<?php echo $linkreturndistribite ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+            <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary">
+                    <i class="fa fa-arrow-circle-left"></i> Quay lại
+                </a>
                 <button type="submit" class="btn btn-secondary">
                     <i class="fa fa-plus"></i> Áp dụng giá
                 </button>

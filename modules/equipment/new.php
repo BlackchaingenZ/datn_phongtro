@@ -56,7 +56,7 @@ if (isPost()) {
                 setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
                 setFlashData('msg_type', 'err');
             }
-            redirect('?module=equipment&action=listdistribute');
+            redirect('?module=equipment&action=removedistribute');
         } else {
             setFlashData('errors', $errors);
             setFlashData('old', $body);

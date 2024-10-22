@@ -23,7 +23,7 @@ $roomData = firstRaw("SELECT * FROM room WHERE id = $roomId");
 $equipmentData = getRaw("SELECT * FROM equipment_room WHERE room_id = $roomId");
 
 if (empty($equipmentData)) {
-    setFlashData('msg', 'Phòng này chưa được phân bổ thiết bị!');
+    setFlashData('msg', 'Hãy phân bổ thiết bị cho phòng này trước!');
     setFlashData('msg_type', 'err');
     redirect('?module=equipment&action=listdistribute');
 }

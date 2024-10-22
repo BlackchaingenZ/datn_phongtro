@@ -71,7 +71,7 @@ $listRoomAndCost = getRoomAndCostList();
             <div class="row">
                 <div class="col-4"></div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng cần tìm thiết bị" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng cần tìm loại giá" value="<?php echo htmlspecialchars($searchTerm); ?>">
                 </div>
 
                 <div class="col">
@@ -82,9 +82,9 @@ $listRoomAndCost = getRoomAndCostList();
             </div>
             <div class="form-group mt-3">
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('cost', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm áp dụng </a>
+                <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng  </a>
                 <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('', '') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
+                <a href="<?php echo getLinkAdmin('cost', 'removecost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 
@@ -92,7 +92,7 @@ $listRoomAndCost = getRoomAndCostList();
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
+                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Mã phòng</th>
                         <th>Tên Phòng</th>
@@ -111,7 +111,7 @@ $listRoomAndCost = getRoomAndCostList();
                             $count++;
                     ?>
                             <tr>
-                                <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td>
+                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
@@ -120,7 +120,7 @@ $listRoomAndCost = getRoomAndCostList();
                                 <td class="" style="width: 100px; height: 50px;">
                                 <a href="<?php echo getLinkAdmin('cost', 'editapplycost', ['applycost' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
 
-                                    <a href="<?php echo getLinkAdmin('equipment', 'deletedistribute', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
+                                    <a href="<?php echo getLinkAdmin('cost', 'deleteapplycost', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
 
                                 </td>
                             </tr>
@@ -140,7 +140,7 @@ $listRoomAndCost = getRoomAndCostList();
 
 <?php layout('footer', 'admin'); ?>
 
-<script>
+<!-- <script>
     function toggle(checkbox) {
         let isChecked = checkbox.checked;
         let checkboxes = document.querySelectorAll('input[name="records[]"]');
@@ -148,4 +148,4 @@ $listRoomAndCost = getRoomAndCostList();
             cb.checked = isChecked;
         });
     }
-</script>
+</script> -->

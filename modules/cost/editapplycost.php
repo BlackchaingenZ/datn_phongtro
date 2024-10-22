@@ -12,9 +12,17 @@ layout('breadcrumb', 'admin', $data);
 $roomId = isset($_GET['applycost']) ? (int)$_GET['applycost'] : 0;
 
 // Lấy thông tin phòng, lấy tên phòng
-$roomDetail = firstRaw("SELECT r.* FROM room r WHERE r.id = $roomId");
+$roomDetail = firstRaw("SELECT * FROM room WHERE id = $roomId");
 if (empty($roomDetail)) {
     redirect('?module=cost&action=applycost');
+}
+
+// Kiểm tra xem phòng đã có giá chưa
+$costCheck = firstRaw("SELECT * FROM cost_room WHERE room_id = $roomId");
+if (empty($costCheck)) {
+    setFlashData('msg', 'Hãy thêm loại giá cho phòng trước!');
+    setFlashData('msg_type', 'err');
+    redirect('?module=cost&action=applyroom');
 }
 
 // Xử lý sửa thông tin khi gửi biểu mẫu
@@ -41,25 +49,25 @@ if (isPost()) {
             'room_id' => $body['room_id'],
             'thoigianapdung' => $body['thoigianapdung']
         ];
-
         // Chạy câu lệnh cập nhật
         $updateStatus = update('cost_room', $dataUpdate, "room_id = $roomId");
         if ($updateStatus) {
             setFlashData('msg', 'Cập nhật loại giá thành công');
             setFlashData('msg_type', 'suc');
-            redirect('?module=cost&action=applycost&applycost=' . $roomId); // Redirect với tham số applycost
+            redirect('?module=cost&action=applyroom');
         } else {
             setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');
-            redirect('?module=cost&action=applycost&applycost=' . $roomId); // Redirect với tham số applycost
+            redirect('?module=cost&action=applyroom');
         }
+        
     } else {
         // Nếu có lỗi, xử lý thông báo lỗi
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
         setFlashData('old', $body);
-        redirect('?module=cost&action=editcost&applycost=' . $roomId); // Redirect với tham số applycost
+        redirect('?module=cost&action=editapplycost&applycost=' . $roomId); // Redirect với tham số applycost
     }
 }
 
@@ -71,9 +79,8 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-// Nếu không có dữ liệu cũ, gán bằng thông tin phòng hiện tại
-if (empty($old)) {
-    $old = $roomDetail;
+if (!empty($costDetail) && empty($old)) {
+    $old = $costDetail;
 }
 ?>
 
@@ -122,7 +129,7 @@ if (empty($old)) {
             </div>
 
             <div class="form-group">
-            <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary">
+                <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary">
                     <i class="fa fa-arrow-circle-left"></i> Quay lại
                 </a>
                 <button type="submit" class="btn btn-secondary">
