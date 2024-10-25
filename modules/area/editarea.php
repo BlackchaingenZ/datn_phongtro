@@ -59,7 +59,7 @@ if (isPost()) {
             setFlashData('msg_type', 'err');
             setFlashData('errors', ['update' => 'Có lỗi xảy ra khi cập nhật!']);
             setFlashData('old', $body); 
-            redirect('?module=cost&action=editarea&id=' . $id); // Giữ lại dữ liệu
+            redirect('?module=area&action=editarea&id=' . $id); // Giữ lại dữ liệu
         }
     } else {
         // Có lỗi xảy ra
@@ -67,7 +67,7 @@ if (isPost()) {
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors); // Lưu trữ lỗi
         setFlashData('old', $body); // Giữ lại dữ liệu đã nhập
-        redirect('?module=cost&action=editarea&id=' . $id); // Giữ lại dữ liệu
+        redirect('?module=area&action=editarea&id=' . $id); // Giữ lại dữ liệu
     }
 }
 
