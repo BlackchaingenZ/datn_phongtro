@@ -102,8 +102,8 @@ layout('navbar', 'admin', $data);
 
 <div class="container-fluid">
 
-    <div id="MessageFlash">          
-        <?php getMsg($msg, $msgType);?>          
+    <div id="MessageFlash">
+        <?php getMsg($msg, $msgType); ?>
     </div>
 
     <!-- Thêm/Sửa -->
@@ -123,16 +123,16 @@ layout('navbar', 'admin', $data);
                     <select name="donvitinh" id="donvitinh" class="form-select">
                         <!-- <option value="">Chọn đơn vị</option> -->
                         <option value="KWh">KWh</option>
-                        <option value="khoi">Khối</option>
-                        <option value="nguoi">Người</option>
-                        <option value="thang">Tháng</option>
+                        <option value="khối">Khối</option>
+                        <option value="người">Người</option>
+                        <option value="tháng">Tháng</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="giadichvu">Giá dịch vụ <span style="color: red">*</span></label>
                     <input type="text" placeholder="Giá dịch vụ" name="giadichvu" id="giadichvu" class="form-control">
                 </div>
-                <div class="form-group">                    
+                <div class="form-group">
                     <div class="btn-row">
                         <button style="margin-right: 10px" type="submit" class="btn btn-secondary"><i class="fa fa-save"></i> Lưu</button>
                         <button type="button" class="btn btn-secondary" onclick="closeServiceModal()">Hủy</button>
@@ -149,65 +149,68 @@ layout('navbar', 'admin', $data);
                     <h3>Quản lý dịch vụ</h3>
                     <i>Các dịch vụ khách sử dụng</i>
                 </div>
-                <!--<button class="service-btn" style="border: none; color: #fff" onclick="return alert('Chức năng này đang được mở rộng')"><i class="fa fa-plus"></i></button>-->
+                <d>
+                    <a href="<?php echo getLinkAdmin('services', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
             </div>
+            </d>
+            <div class="scroll-container">
+                <?php
 
-            <?php 
-                foreach($allService as $item) {
-                    ?>
-                        <!-- Item 1 -->
-                        <div class="service-item">
-                            <div class="service-item_left">
-                                <div class="service-item_icon">
-                                    <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-icon.svg" alt="">
-                                </div>
-
-                                <div>
-                                    <h6><?php echo $item['tendichvu'] ?></h6>
-                                    <p><?php echo  number_format($item['giadichvu'], 0, ',', '.')?>đ/<?php echo $item['donvitinh'] ?></p>
-                                    <i>Đang áp dụng cho các phòng</i>
-                                </div>
+                foreach ($allService as $item) {
+                ?>
+                    <!-- Item  -->
+                    <div class="service-item">
+                        <div class="service-item_left">
+                            <div class="service-item_icon">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-icon.svg" alt="">
                             </div>
 
-                            <div class="service-item_right">
-                                <div class="edit">
-                                    <a href="javascript:void(0)" onclick="openServiceModal('<?php echo $item['id']; ?>', '<?php echo $item['tendichvu']; ?>', '<?php echo $item['donvitinh']; ?>', '<?php echo $item['giadichvu']; ?>')"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-edit.svg" alt=""></a>
-                                </div>
-                                <div class="del">
-                                    <a href="<?php echo getLinkAdmin('services','delete',['id' => $item['id']]); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa dịch vụ không ?')"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-delete.svg" alt=""></a>
-                                </div>
+                            <div>
+                                <h6><?php echo $item['tendichvu'] ?></h6>
+                                <p><?php echo  number_format($item['giadichvu'], 0, ',', '.') ?>đ/<?php echo $item['donvitinh'] ?></p>
                             </div>
                         </div>
-                    <?php
+
+                        <div class="service-item_right">
+                            <div class="edit">
+                                <a href="javascript:void(0)" onclick="openServiceModal('<?php echo $item['id']; ?>', '<?php echo $item['tendichvu']; ?>', '<?php echo $item['donvitinh']; ?>', '<?php echo $item['giadichvu']; ?>')"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-edit.svg" alt=""></a>
+                            </div>
+                            <div class="del">
+                                <a href="<?php echo getLinkAdmin('services', 'delete', ['id' => $item['id']]); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa dịch vụ không ?')"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-delete.svg" alt=""></a>
+                            </div>
+                        </div>
+                    </div>
+                <?php
                 }
-             ?>
+                ?>
+            </div>
         </div>
 
         <div class="service-right">
-                <div class="right-inner">
-                    <div class="inner-left">
-                        <h3>Khách thuê sử dụng trong tháng</h3>
-                        <i>Thống kê mỗi tháng khách thuê sử dụng</i>
-                    </div>
-
-                    <div class="inner-right">
-                        <!-- Tìm kiếm -->
-                        <form action="" method="get">
-                            <div class="row">
-                                <div class="col-8">
-                                    <input style="height: 50px" type="month" class="form-control" name="datebill" id="" value="<?php echo (!empty($datebill))? $datebill:$currentMonthYear; ?>">
-                                </div>
-
-                                <div class="col">
-                                        <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary"> <i class="fa fa-search"></i></button>
-                                 </div>   
-                            </div>
-                            <input type="hidden" name="module" value="services">
-                        </form>
-                    </div>
+            <div class="right-inner">
+                <div class="inner-left">
+                    <h3>Khách thuê sử dụng trong tháng</h3>
+                    <i>Thống kê mỗi tháng khách thuê sử dụng</i>
                 </div>
 
-                <table class="table table-bordered mt-3">
+                <div class="inner-right">
+                    <!-- Tìm kiếm -->
+                    <form action="" method="get">
+                        <div class="row">
+                            <div class="col-8">
+                                <input style="height: 50px" type="month" class="form-control" name="datebill" id="" value="<?php echo (!empty($datebill)) ? $datebill : $currentMonthYear; ?>">
+                            </div>
+
+                            <div class="col">
+                                <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary"> <i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <input type="hidden" name="module" value="services">
+                    </form>
+                </div>
+            </div>
+
+            <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
                         <th width="3%" rowspan="2"></th>
@@ -231,33 +234,34 @@ layout('navbar', 'admin', $data);
                     </tr>
                 </thead>
                 <tbody id="roomData">
-        
+
                     <?php
-                        if (!empty($listAllBill)):
-                            $count = 0; // Hiển thi số thứ tự
-                            foreach ($listAllBill as $item):
-                                $count ++;
+                    if (!empty($listAllBill)):
+                        $count = 0; // Hiển thi số thứ tự
+                        foreach ($listAllBill as $item):
+                            $count++;
                     ?>
-                     <tr>
-                        <td>
-                            <div class="image__bill">
-                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill-icon.svg" class="image__bill-img" alt="">
-                            </div>
-                        </td>
-                        <td><?php echo $item['tenphong']; ?></td>
-                        <td><?php echo $item['sodiencu']; ?></td>
-                        <td><?php echo $item['sodienmoi']; ?></td>
-                        <td style="color: #13ae38"><b><?php echo number_format($item['tiendien'], 0, ',', '.') ?> đ</b></td>
-                        <td><?php echo $item['sonuoccu']; ?></td>
-                        <td><?php echo $item['sonuocmoi']; ?></td>
-                        <td style="color: #13ae38"><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
-                        <td><?php echo $item['songuoi']; ?></td>
-                        <td style="color: #13ae38"><b><?php echo number_format($item['tienrac'], 0, ',', '.') ?> đ</b></td>
-                        <td><?php echo $item['chuky']; ?></td>
-                        <td style="color: #13ae38"><b><?php echo number_format($item['tienmang'], 0, ',', '.') ?> đ</b></td>
-                    </tr>                
-                         
-                    <?php endforeach; else: ?>
+                            <tr>
+                                <td>
+                                    <div class="image__bill">
+                                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill-icon.svg" class="image__bill-img" alt="">
+                                    </div>
+                                </td>
+                                <td><?php echo $item['tenphong']; ?></td>
+                                <td><?php echo $item['sodiencu']; ?></td>
+                                <td><?php echo $item['sodienmoi']; ?></td>
+                                <td style="color: #13ae38"><b><?php echo number_format($item['tiendien'], 0, ',', '.') ?> đ</b></td>
+                                <td><?php echo $item['sonuoccu']; ?></td>
+                                <td><?php echo $item['sonuocmoi']; ?></td>
+                                <td style="color: #13ae38"><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
+                                <td><?php echo $item['songuoi']; ?></td>
+                                <td style="color: #13ae38"><b><?php echo number_format($item['tienrac'], 0, ',', '.') ?> đ</b></td>
+                                <td><?php echo $item['chuky']; ?></td>
+                                <td style="color: #13ae38"><b><?php echo number_format($item['tienmang'], 0, ',', '.') ?> đ</b></td>
+                            </tr>
+
+                        <?php endforeach;
+                    else: ?>
                         <tr>
                             <td colspan="19">
                                 <div class="alert alert-danger text-center">Không có dữ liệu dịch vụ</div>
@@ -274,9 +278,9 @@ layout('navbar', 'admin', $data);
 layout('footer', 'admin');
 ?>
 <script>
-    function toggle(__this){
-       let isChecked = __this.checked;
-       let checkbox = document.querySelectorAll('input[name="records[]"]');
+    function toggle(__this) {
+        let isChecked = __this.checked;
+        let checkbox = document.querySelectorAll('input[name="records[]"]');
         for (let index = 0; index < checkbox.length; index++) {
             checkbox[index].checked = isChecked
         }

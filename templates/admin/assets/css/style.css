@@ -1,4 +1,5 @@
-body, .main-footer {
+body,
+.main-footer {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #e4eef5;
 }
@@ -42,17 +43,20 @@ a {
     text-decoration: none;
 }
 
-.form-group input, select {
+.form-group input,
+select {
     height: 50px;
 }
 
 .btn-secondary {
     transition: transform 0.3s ease;
-    margin: 0 5px; /* Thêm hiệu ứng chuyển tiếp */
+    margin: 0 5px;
+    /* Thêm hiệu ứng chuyển tiếp */
 }
 
 .btn-secondary:hover {
-    transform: scale(1.1); /* Phóng to nút lên 10% khi di chuột qua */
+    transform: scale(1.1);
+    /* Phóng to nút lên 10% khi di chuột qua */
 }
 
 .btn-status-err {
@@ -160,6 +164,7 @@ th {
     width: 160px;
     text-align: center;
 }
+
 /* danh sách menu*/
 .menu__item-image {
     width: 55px;
@@ -179,7 +184,7 @@ th {
 .menu__list {
     padding: 2px 0;
     display: flex;
-    justify-content: space-evenly; /* Chia đều khoảng cách giữa các phần tử */
+    /* Chia đều khoảng cách giữa các phần tử */
     flex-wrap: wrap;
     row-gap: 20px;
     overflow-x: hidden;
@@ -187,8 +192,10 @@ th {
 
 
 .menu__list-item {
-    flex-basis: calc(25% - 20px); /* Kích thước cơ bản là 25% */
-    flex-grow: 1; /* Cho phép mục mở rộng ra để lấp đầy không gian trống */
+    flex-basis: calc(25% - 20px);
+    /* Kích thước cơ bản là 25% */
+    flex-grow: 1;
+    /* Cho phép mục mở rộng ra để lấp đầy không gian trống */
     margin-bottom: 10px;
 }
 
@@ -262,14 +269,18 @@ th {
     margin: 10px 5px;
     font-size: 13px;
     padding: 12px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .nav__item:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .image__room {
@@ -308,7 +319,7 @@ th {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color:#cacaca;
+    background-color: #cacaca;
     border-radius: 50%;
 }
 
@@ -330,7 +341,8 @@ th {
     height: 40px;
     background-color: #a4a4a4;
     border-radius: 50%;
-    flex-direction: column; /* Sắp xếp các khối theo cột */
+    flex-direction: column;
+    /* Sắp xếp các khối theo cột */
     gap: 20px;
 }
 
@@ -351,6 +363,7 @@ th {
     border-radius: 15px;
     padding: 20px 20px;
 }
+
 .modal {
     display: none;
     position: fixed;
@@ -359,11 +372,11 @@ th {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-  }
-  
-  .modal-content {
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
     background-color: #fefefe;
     margin: 8% auto;
     padding: 20px;
@@ -371,22 +384,22 @@ th {
     border-radius: 12px;
     width: 30%;
     height: auto;
-  }
-  
-  .close {
+}
+
+.close {
     color: #7f7d7d;
     float: left;
     font-size: 28px;
     font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
+}
+
+.close:hover,
+.close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
-  }
-  
+}
+
 .btn-kyhopdong-err {
     font-size: 10px;
     padding: 6px 8px;
@@ -455,14 +468,19 @@ th {
     border-radius: 12px;
     height: 120px;
     color: #000000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 .total-room:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
+
 .content-left-title {
     display: flex;
     align-items: center;
@@ -504,14 +522,18 @@ th {
     height: 120px;
     background: #979593;
     border-radius: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-one:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .child-two {
@@ -520,14 +542,18 @@ th {
     width: 50%;
     background-color: #979593;
     border-radius: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-two:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .child-three {
@@ -536,14 +562,18 @@ th {
     width: 50%;
     background-color: #979593;
     border-radius: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-three:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .child-four {
@@ -552,14 +582,18 @@ th {
     width: 50%;
     background-color: #979593;
     border-radius: 14px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-four:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .child-five {
@@ -569,14 +603,18 @@ th {
     background: #979593;
     border-radius: 14px;
     color: rgb(0, 0, 0);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-five:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .child-six {
@@ -587,14 +625,18 @@ th {
     background: #979593;
     border-radius: 14px;
     color: #000000 !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-six:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .child-seven {
@@ -605,14 +647,18 @@ th {
     background: #979593;
     border-radius: 14px;
     color: #000000 !important;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .child-seven:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 /*viền bo góc*/
@@ -632,7 +678,8 @@ th {
 }
 
 .active {
-    background-color: #f0f0f0; /* Màu nền khi mục menu được kích hoạt */
+    background-color: #f0f0f0;
+    /* Màu nền khi mục menu được kích hoạt */
     /* Các thuộc tính CSS khác cho mục menu được kích hoạt */
 }
 
@@ -660,14 +707,18 @@ th {
     padding: 20px 20px;
     border-radius: 12px;
     width: 30%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .collect-item:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 
@@ -701,11 +752,13 @@ th {
     justify-content: center;
     border-radius: 50%;
     transition: all 0.3s;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Thêm bóng */
 }
 
 .service-btn:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Bóng lớn hơn khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Bóng lớn hơn khi hover */
 }
 
 
@@ -716,14 +769,19 @@ th {
     border: 1px solid #ccc;
     padding: 10px 10px;
     border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Thêm bóng */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 .service-item:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Bóng lớn hơn khi hover */
-    transform: scale(1.05); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Bóng lớn hơn khi hover */
+    transform: scale(1.05);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 
@@ -769,14 +827,19 @@ th {
     height: 50px;
     border-radius: 50%;
     background: #43b0fd;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Thêm bóng */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 .service-item_right .edit:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Bóng lớn hơn khi hover */
-    transform: scale(1.09); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Bóng lớn hơn khi hover */
+    transform: scale(1.09);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 
@@ -788,14 +851,19 @@ th {
     height: 50px;
     border-radius: 50%;
     background: #ee3a4e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Thêm bóng */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Thêm bóng */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 .service-item_right .del:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Bóng lớn hơn khi hover */
-    transform: scale(1.09); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Bóng lớn hơn khi hover */
+    transform: scale(1.09);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 
@@ -831,14 +899,18 @@ th {
     border-radius: 10px;
     width: 250px;
     padding: 10px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .report-receipt:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .report-spend {
@@ -846,14 +918,18 @@ th {
     border-radius: 10px;
     width: 250px;
     padding: 10px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .report-spend:hover {
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
 
 .report-sumary {
@@ -873,7 +949,7 @@ th {
     gap: 10px;
 }
 
-.report-ts p { 
+.report-ts p {
     font-size: 20px;
     font-weight: bold;
     color: #198754;
@@ -892,6 +968,7 @@ th {
     border-radius: 8px;
     padding: 0 8px;
 }
+
 #date_input_container input {
     width: 200px;
     height: 50px;
@@ -918,7 +995,7 @@ th {
     width: 100%;
     height: auto;
     padding: 30px 40px;
-    background-color:#dbdada;
+    background-color: #dbdada;
     border-radius: 8px;
 }
 
@@ -999,7 +1076,7 @@ th {
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    cursor: pointer; 
+    cursor: pointer;
 }
 
 .box-action {
@@ -1010,7 +1087,7 @@ th {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 1px 1px 8px #ccc;
-    top: 100%; 
+    top: 100%;
     right: 0px;
     z-index: 999;
 }
@@ -1021,12 +1098,14 @@ th {
 
 .alert-hover {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
+}
+
 .alert-hover:hover {
-    transform: scale(1.01); /* Phóng to nhẹ */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Tăng hiệu ứng đổ bóng */
-  }
+    transform: scale(1.01);
+    /* Phóng to nhẹ */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    /* Tăng hiệu ứng đổ bóng */
+}
 
 
 .category-container {
@@ -1042,13 +1121,31 @@ th {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng mượt mà */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
 }
 
 /* Hiệu ứng khi di chuột vào */
 .category:hover {
-    color: black; /* Đặt màu chữ không thay đổi khi di chuột vào */
-    transform: scale(1.02); /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Tăng bóng đổ khi hover */
+    color: black;
+    /* Đặt màu chữ không thay đổi khi di chuột vào */
+    transform: scale(1.02);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
+}
+
+.scroll-container {
+    width: 400px;
+    /* Chiều rộng của khung chứa */
+    height: 400px;
+    /* Chiều cao của khung chứa */
+    overflow-y: auto;
+    /* Bật thanh cuộn dọc */
+    border: 1px solid #ccc;
+    /* Đường viền cho khung chứa */
+    padding: 20px;
+    /* Khoảng cách giữa nội dung và đường viền */
 }

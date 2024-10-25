@@ -77,7 +77,7 @@ if(!isLogin()) { // Khi CSDL không còn dữ liệu trùng khớp thì tự đ�
                   <span>Tài khoản</span>
                 </a>
 
-                <a href="<?php echo getLinkAdmin('auth','logout'); ?>" class="nav__item">
+                <a href="<?php echo getLinkAdmin('auth',action: 'logout'); ?>" class="nav__item">
                   <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logout.svg" alt="">
                   <span>Đăng xuất</span>
                 </a>

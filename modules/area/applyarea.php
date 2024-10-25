@@ -1,33 +1,36 @@
 <?php
 
-if (!defined('_INCODE')) die('Access denied...');
+if (!defined('_INCODE'))
+    die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Áp dụng bảng giá'
+    'pageTitle' => 'Áp dụng'
 ];
 
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
+
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
+
 // Lấy danh sách cơ sở vật chất và phòng trọ
-$listAllCost = getRaw("SELECT * FROM cost ORDER BY giathue ASC");
+$listAllArea = getRaw("SELECT * FROM area ORDER BY tenkhuvuc ASC");
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 
-// Hàm lấy danh sách phòng và thiết bị
-function getRoomAndCostList()
+// Hàm lấy danh sách phòng và khuvuc
+function getRoomAndAreaList()
 {
     $sql = "
         SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-        GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+        GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc,
+        GROUP_CONCAT(e.mota SEPARATOR ', ') AS mota
         FROM room r
-        LEFT JOIN cost_room er ON r.id = er.room_id
-        LEFT JOIN cost e ON er.cost_id = e.id
+        LEFT JOIN area_room er ON r.id = er.room_id
+        LEFT JOIN area e ON er.area_id = e.id
         GROUP BY r.id
         ORDER BY r.id ASC
     ";
@@ -43,23 +46,26 @@ if (!empty($_POST['search_term'])) {
 $sqlSearchRooms = "
     SELECT r.id AS room_id, 
            r.tenphong, 
-           GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-           GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+           GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
     FROM room r
-    JOIN cost_room er ON r.id = er.room_id
-    JOIN cost e ON er.cost_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tengia LIKE '%$searchTerm%'
+    JOIN area_room er ON r.id = er.room_id
+    JOIN area e ON er.area_id = e.id
+    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tenkhuvuc LIKE '%$searchTerm%'
     GROUP BY r.id, r.tenphong
     ORDER BY r.tenphong ASC
 ";
 
-$searchResults = getRaw($sqlSearchRooms);
-$listRoomAndCost = getRoomAndCostList();
 
+$searchResults = getRaw($sqlSearchRooms);
+$listRoomAndArea = getRoomAndAreaList();
 
 ?>
 
-<?php layout('navbar', 'admin', $data); ?>
+
+<?php
+layout('navbar', 'admin', $data);
+?>
+
 
 <div class="container-fluid">
     <div id="MessageFlash">
@@ -82,7 +88,7 @@ $listRoomAndCost = getRoomAndCostList();
             </div>
             <div class="form-group mt-3">
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('cost', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng  </a>
+                <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
                 <a href="<?php echo getLinkAdmin('cost', 'removecost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
@@ -96,14 +102,14 @@ $listRoomAndCost = getRoomAndCostList();
                         <th>STT</th>
                         <th>Mã phòng</th>
                         <th>Tên Phòng</th>
-                        <th>Tên loại giá</th>
-                        <th>Ngày áp dụng</th>
+                        <th>Tên khu vực</th>
+                        <th>Mô tả</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
-                <tbody id="costData">
+                <tbody id="AreaData">
                     <?php
-                    $resultsToDisplay = !empty($searchTerm) ? $searchResults : $listRoomAndCost;
+                    $resultsToDisplay = !empty($searchTerm) ? $searchResults : $listRoomAndArea;
 
                     if (!empty($resultsToDisplay)):
                         $count = 0;
@@ -115,13 +121,15 @@ $listRoomAndCost = getRoomAndCostList();
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
-                                <td><b><?php echo $item['tengia']; ?></b></td>
-                                <td><?php echo $item['thoigianapdung']; ?></td>
+                                <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
+                                <td><?php echo $item['mota']; ?></td>
+
                                 <td class="" style="width: 100px; height: 50px;">
-                                <a href="<?php echo getLinkAdmin('cost', 'editapplycost', ['applycost' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
 
-                                <a href="<?php echo getLinkAdmin('cost', 'deleteapplycost', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
+                                    <a href="<?php echo getLinkAdmin('area', 'editapplyarea', ['applyarea' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
 
+                                    <a href="<?php echo getLinkAdmin('area', 'deleteapplyarea', ['room_id' => $item['room_id']]); ?>"
+                                        class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
                                 </td>
                             </tr>
                         <?php endforeach;
@@ -137,15 +145,4 @@ $listRoomAndCost = getRoomAndCostList();
         </form>
     </div>
 </div>
-
 <?php layout('footer', 'admin'); ?>
-
-<!-- <script>
-    function toggle(checkbox) {
-        let isChecked = checkbox.checked;
-        let checkboxes = document.querySelectorAll('input[name="records[]"]');
-        checkboxes.forEach(function(cb) {
-            cb.checked = isChecked;
-        });
-    }
-</script> -->

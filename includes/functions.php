@@ -152,27 +152,27 @@ function isNumberFloat($number, $range=[]){
 }
 
 //Kiểm tra số điện thoại (0123456789 - Bắt đầu bằng số 0, nối tiếp là 9 số)
-function isPhone($phone){
+// function isPhone($phone){
 
-    $checkFirstZero = false;
+//     $checkFirstZero = false;
 
-    if ($phone[0]=='0'){
-        $checkFirstZero = true;
-        $phone = substr($phone, 1);
-    }
+//     if ($phone[0]=='0'){
+//         $checkFirstZero = true;
+//         $phone = substr($phone, 1);
+//     }
 
-    $checkNumberLast = false;
+//     $checkNumberLast = false;
 
-    if (isNumberInt($phone) && strlen($phone)==9){
-        $checkNumberLast = true;
-    }
+//     if (isNumberInt($phone) && strlen($phone)==9){
+//         $checkNumberLast = true;
+//     }
 
-    if ($checkFirstZero && $checkNumberLast){
-        return true;
-    }
+//     if ($checkFirstZero && $checkNumberLast){
+//         return true;
+//     }
 
-    return false;
-}
+//     return false;
+// }
 
 //Hàm tạo thông báo
 function getMsg($msg, $type = 'suc') {
@@ -205,9 +205,6 @@ function redirect($path='index.php'){
     header("Location: $url");
     exit;
 }
-
-
-
 
 
 //Hàm thông báo lỗi
@@ -317,7 +314,7 @@ function loadErrors($name='404') {
     die();
 }
 
-
+// in ra mã đơn hàng tự động
 function generateInvoiceCode($length = 5) {
     $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     $charactersLength = strlen($characters);
@@ -331,6 +328,7 @@ function generateInvoiceCode($length = 5) {
     return $randomString;
 }
 
+// check trạng thái hợp đồng
 function getContractStatus($endDate) {
     $currentDate = new DateTime();
     $contractEndDate = new DateTime($endDate);

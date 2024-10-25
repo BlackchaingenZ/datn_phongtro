@@ -80,11 +80,11 @@ if (isPost()) {
                 if ($insertStatus) {
                     setFlashData('msg', 'Thêm loại giá thành công');
                     setFlashData('msg_type', 'suc');
-                    redirect('?module=cost&action=applycost');
+                    redirect('?module=cost&action=applyroom');
                 } else {
                     setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
                     setFlashData('msg_type', 'err');
-                    redirect('?module=cost&action=applycost');
+                    redirect('?module=cost&action=applyroom');
                 }
             }
         }
@@ -198,7 +198,7 @@ $listRoomAndCost = getRoomAndCostList();
             </div>
 
             <div class="form-group">
-            <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary">
+                <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary">
                     <i class="fa fa-arrow-circle-left"></i> Quay lại
                 </a>
                 <button type="submit" class="btn btn-secondary">

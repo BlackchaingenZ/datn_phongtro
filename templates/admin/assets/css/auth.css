@@ -1,4 +1,4 @@
-.error{
+.error {
     color: rgb(255, 128, 0);
     font-size: 90%;
     font-style: italic;
@@ -11,9 +11,11 @@
     justify-content: center;
     height: 100vh;
     background-image: url('https://img.freepik.com/free-vector/gradient-white-monochrome-background_23-2149017048.jpg?t=st=1728708397~exp=1728711997~hmac=e61231ec3c2db0589df1eacd3224af308035a8ef127de6412ec4c11f7371768d&w=996');
-    background-size: cover; /* Đảm bảo ảnh phủ đầy khu vực nền */
-    background-repeat: no-repeat; /* Không lặp lại ảnh nền */
- 
+    background-size: cover;
+    /* Đảm bảo ảnh phủ đầy khu vực nền */
+    background-repeat: no-repeat;
+    /* Không lặp lại ảnh nền */
+
 }
 
 a {
@@ -57,11 +59,13 @@ a {
     background: #898585;
     border-radius: 10px;
     color: #fff;
-    transition: transform 0.3s ease; /* Hiệu ứng mượt mà khi thay đổi kích thước */
+    transition: transform 0.3s ease;
+    /* Hiệu ứng mượt mà khi thay đổi kích thước */
 }
 
 .btn-login:hover {
-    transform: translateX(-50%) scale(1.05); /* Phóng to button lên 10% khi hover */
+    transform: translateX(-50%) scale(1.05);
+    /* Phóng to button lên 10% khi hover */
 }
 
 

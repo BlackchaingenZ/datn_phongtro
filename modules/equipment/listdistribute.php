@@ -23,7 +23,7 @@ function getRoomAndEquipmentList()
 {
     $sql = "
         SELECT r.id AS room_id, r.tenphong, GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
-               GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
+               GROUP_CONCAT( DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
         FROM room r
         LEFT JOIN equipment_room er ON r.id = er.room_id
         LEFT JOIN equipment e ON er.equipment_id = e.id

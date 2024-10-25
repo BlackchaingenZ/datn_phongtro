@@ -225,7 +225,7 @@ layout('navbar', 'admin', $data);
                         <td><?php echo $item['sonuoccu']; ?></td>
                         <td>
                             <?php echo $item['sonuocmoi']; ?>
-                            <a target="_blank" href="<?php echo getLinkAdmin('bill','img_snm',['id' => $item['id']]); ?>" class="fa fa-eye"></a>
+                            <!-- <a target="_blank" href="<?php echo getLinkAdmin('bill','img_snm',['id' => $item['id']]); ?>" class="fa fa-eye"></a> -->
                         </td>
                         <td><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
                         <td><?php echo $item['songuoi']; ?></td>
