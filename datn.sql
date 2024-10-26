@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 25, 2024 lúc 03:54 PM
+-- Thời gian đã tạo: Th10 26, 2024 lúc 10:04 AM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -29,8 +29,8 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `area` (
   `id` int NOT NULL,
-  `tenkhuvuc` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `mota` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tenkhuvuc` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mota` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ngaytao` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -51,7 +51,7 @@ INSERT INTO `area` (`id`, `tenkhuvuc`, `mota`, `ngaytao`) VALUES
 CREATE TABLE `area_room` (
   `id` int NOT NULL,
   `room_id` int DEFAULT NULL,
-  `mota` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mota` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `area_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -60,7 +60,9 @@ CREATE TABLE `area_room` (
 --
 
 INSERT INTO `area_room` (`id`, `room_id`, `mota`, `area_id`) VALUES
-(2, 86, NULL, 6);
+(2, 86, NULL, 6),
+(4, 85, NULL, 5),
+(5, 87, NULL, 6);
 
 -- --------------------------------------------------------
 
@@ -70,7 +72,7 @@ INSERT INTO `area_room` (`id`, `room_id`, `mota`, `area_id`) VALUES
 
 CREATE TABLE `bill` (
   `id` int NOT NULL,
-  `mahoadon` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `mahoadon` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `room_id` int DEFAULT NULL,
   `tenant_id` int DEFAULT NULL,
   `chuky` int DEFAULT NULL,
@@ -78,11 +80,11 @@ CREATE TABLE `bill` (
   `tienphong` float DEFAULT NULL,
   `sodiencu` int DEFAULT NULL,
   `sodienmoi` int DEFAULT NULL,
-  `img_sodienmoi` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `img_sodienmoi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tiendien` float DEFAULT NULL,
   `sonuoccu` int DEFAULT NULL,
   `sonuocmoi` int DEFAULT NULL,
-  `img_sonuocmoi` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `img_sonuocmoi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tiennuoc` float DEFAULT NULL,
   `songuoi` int DEFAULT NULL,
   `tienrac` float DEFAULT NULL,
@@ -167,7 +169,7 @@ DELIMITER ;
 
 CREATE TABLE `category_collect` (
   `id` int NOT NULL,
-  `tendanhmuc` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tendanhmuc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -179,7 +181,7 @@ CREATE TABLE `category_collect` (
 
 CREATE TABLE `category_spend` (
   `id` int NOT NULL,
-  `tendanhmuc` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tendanhmuc` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -193,6 +195,7 @@ CREATE TABLE `contract` (
   `id` int NOT NULL,
   `room_id` int DEFAULT NULL,
   `tenant_id` int DEFAULT NULL,
+  `tenant_id_2` int DEFAULT NULL,
   `soluongthanhvien` int DEFAULT NULL,
   `ngaylaphopdong` date DEFAULT NULL,
   `ngayvao` date DEFAULT NULL,
@@ -206,8 +209,8 @@ CREATE TABLE `contract` (
 -- Đang đổ dữ liệu cho bảng `contract`
 --
 
-INSERT INTO `contract` (`id`, `room_id`, `tenant_id`, `soluongthanhvien`, `ngaylaphopdong`, `ngayvao`, `ngayra`, `tinhtrangcoc`, `trangthaihopdong`, `create_at`) VALUES
-(75, 86, 65, NULL, '2024-10-25', '2024-10-25', '2025-02-25', 1, 1, '2024-10-25');
+INSERT INTO `contract` (`id`, `room_id`, `tenant_id`, `tenant_id_2`, `soluongthanhvien`, `ngaylaphopdong`, `ngayvao`, `ngayra`, `tinhtrangcoc`, `trangthaihopdong`, `create_at`) VALUES
+(129, 85, 64, 66, NULL, '2024-10-26', '2024-10-26', '2024-12-26', 1, 1, '2024-10-26');
 
 --
 -- Bẫy `contract`
@@ -246,12 +249,34 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `contract_services`
+--
+
+CREATE TABLE `contract_services` (
+  `id` int NOT NULL,
+  `contract_id` int DEFAULT NULL,
+  `services_id` int DEFAULT NULL,
+  `ghichu` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `contract_services`
+--
+
+INSERT INTO `contract_services` (`id`, `contract_id`, `services_id`, `ghichu`) VALUES
+(87, 129, 5, NULL),
+(88, 129, 8, NULL),
+(89, 129, 1, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `cost`
 --
 
 CREATE TABLE `cost` (
   `id` int NOT NULL,
-  `tengia` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tengia` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `giathue` float DEFAULT NULL,
   `ngaybatdau` date DEFAULT NULL,
   `ngayketthuc` date DEFAULT NULL
@@ -262,8 +287,8 @@ CREATE TABLE `cost` (
 --
 
 INSERT INTO `cost` (`id`, `tengia`, `giathue`, `ngaybatdau`, `ngayketthuc`) VALUES
-(38, 'Khuyến mại 1', 1000000, '2024-10-25', '2025-02-25'),
-(39, 'Khuyến mại 2', 2000000, '2024-10-25', '2025-02-25');
+(38, 'Khuyến mại 1', 1100000, '2024-10-25', '2025-02-25'),
+(39, 'Khuyến mại 2', 2100000, '2024-10-25', '2025-02-25');
 
 -- --------------------------------------------------------
 
@@ -294,7 +319,7 @@ INSERT INTO `cost_room` (`id`, `room_id`, `cost_id`, `thoigianapdung`) VALUES
 
 CREATE TABLE `equipment` (
   `id` int NOT NULL,
-  `tenthietbi` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tenthietbi` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `giathietbi` float DEFAULT NULL,
   `ngaynhap` date DEFAULT NULL,
   `soluongphanbo` int DEFAULT NULL,
@@ -343,8 +368,8 @@ INSERT INTO `equipment_room` (`id`, `room_id`, `equipment_id`, `thoigiancap`) VA
 
 CREATE TABLE `groups` (
   `id` int NOT NULL,
-  `name` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `permission` text COLLATE utf8mb4_general_ci,
+  `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `permission` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `create_at` datetime DEFAULT NULL,
   `update_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -366,7 +391,7 @@ INSERT INTO `groups` (`id`, `name`, `permission`, `create_at`, `update_at`) VALU
 CREATE TABLE `login_token` (
   `id` int NOT NULL,
   `user_id` int DEFAULT NULL,
-  `token` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `create_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -404,7 +429,9 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (384, 30, '53121c4835d2c5818ec1c637b5ada65182483209', '2024-10-22 17:27:51'),
 (385, 30, 'e98f2e563cdee1d50e2f64636a6aa77069ed8ab8', '2024-10-22 17:33:43'),
 (390, 30, 'd73b5936f0d98c03e71343401c64ba81bad27bf8', '2024-10-23 02:04:35'),
-(397, 30, '60933e0622d9e28d4b458af0ed829821f8fe1504', '2024-10-24 00:04:30');
+(397, 30, '60933e0622d9e28d4b458af0ed829821f8fe1504', '2024-10-24 00:04:30'),
+(398, 30, '6d4517466eaa1d7912f0b557f0b9bbf662011768', '2024-10-26 01:09:26'),
+(399, 30, 'b90cad76943ec2134cabba17e884b622588e56be', '2024-10-26 09:32:27');
 
 -- --------------------------------------------------------
 
@@ -416,7 +443,7 @@ CREATE TABLE `payment` (
   `id` int NOT NULL,
   `room_id` int DEFAULT NULL,
   `sotien` float DEFAULT NULL,
-  `ghichu` text COLLATE utf8mb4_general_ci,
+  `ghichu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ngaychi` date DEFAULT NULL,
   `phuongthuc` int DEFAULT NULL,
   `danhmucchi_id` int DEFAULT NULL
@@ -432,7 +459,7 @@ CREATE TABLE `receipt` (
   `id` int NOT NULL,
   `room_id` int DEFAULT NULL,
   `sotien` float DEFAULT NULL,
-  `ghichu` text COLLATE utf8mb4_general_ci,
+  `ghichu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ngaythu` date DEFAULT NULL,
   `phuongthuc` int DEFAULT NULL,
   `danhmucthu_id` int DEFAULT NULL,
@@ -465,8 +492,8 @@ CREATE TABLE `rental_history` (
 
 CREATE TABLE `room` (
   `id` int NOT NULL,
-  `image` varchar(300) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `tenphong` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `image` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tenphong` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `dientich` int DEFAULT NULL,
   `giathue` float DEFAULT NULL,
   `tiencoc` float DEFAULT NULL,
@@ -483,8 +510,9 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `giathue`, `tiencoc`, `soluong`, `ngaylaphd`, `chuky`, `ngayvao`, `ngayra`, `trangthai`) VALUES
-(85, '', 'Phòng 01', 20, NULL, 1000000, 1, 1, 1, NULL, NULL, 1),
-(86, '', 'Phòng 02', 20, NULL, 1000000, 1, 1, 1, '2024-10-25', '2025-02-25', 1);
+(85, '', 'Phòng 01', 20, NULL, 200000, 2, 1, 1, '2024-10-26', '2024-12-26', 1),
+(86, '', 'Phòng 02', 20, NULL, 300000, 1, 1, 1, '2024-10-26', '2024-10-26', 1),
+(87, '', 'Phòng 03', 20, NULL, 1000000, 2, 1, 1, '2024-10-18', '2024-10-27', 1);
 
 --
 -- Bẫy `room`
@@ -508,8 +536,8 @@ DELIMITER ;
 
 CREATE TABLE `services` (
   `id` int NOT NULL,
-  `tendichvu` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `donvitinh` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tendichvu` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `donvitinh` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `giadichvu` float DEFAULT NULL,
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -523,7 +551,8 @@ INSERT INTO `services` (`id`, `tendichvu`, `donvitinh`, `giadichvu`, `create_at`
 (5, 'Tiền nước', 'khối', 20000, NULL),
 (8, 'Tiền rác', 'người', 10000, NULL),
 (10, 'Tiền Wifi', 'người', 50000, NULL),
-(19, 'Dọn phòng', 'Tuần', 100000, '2024-10-09');
+(19, 'Dọn phòng', 'Tháng', 100000, '2024-10-09'),
+(20, 'Phi ủng hộ ', 'tháng', 100000, '2024-10-26');
 
 -- --------------------------------------------------------
 
@@ -533,18 +562,18 @@ INSERT INTO `services` (`id`, `tendichvu`, `donvitinh`, `giadichvu`, `create_at`
 
 CREATE TABLE `tenant` (
   `id` int NOT NULL,
-  `tenkhach` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `tenkhach` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `sdt` int DEFAULT NULL,
   `ngaysinh` date DEFAULT NULL,
-  `gioitinh` varchar(10) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `diachi` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `nghenghiep` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `cmnd` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `gioitinh` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `diachi` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `nghenghiep` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `cmnd` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ngayvao` date DEFAULT NULL,
   `ngaycap` date DEFAULT NULL,
-  `anhmattruoc` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `anhmatsau` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `zalo` varchar(200) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `anhmattruoc` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `anhmatsau` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `zalo` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `room_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -554,7 +583,10 @@ CREATE TABLE `tenant` (
 
 INSERT INTO `tenant` (`id`, `tenkhach`, `sdt`, `ngaysinh`, `gioitinh`, `diachi`, `nghenghiep`, `cmnd`, `ngayvao`, `ngaycap`, `anhmattruoc`, `anhmatsau`, `zalo`, `room_id`) VALUES
 (64, 'Nguyễn Văn A', 123456789, '2024-07-25', 'Nam', 'Ngô Quyền', 'sinh viên', '031202010032', '2024-10-25', '2024-10-12', '', '', NULL, 85),
-(65, 'Nguyễn Văn B', 123456788, '2024-09-12', 'Nam', 'Lạch Tray', 'Giáo viên', '031202010031', '2024-11-25', '2024-09-18', '', '', NULL, 86);
+(65, 'Nguyễn Văn B', 123456788, '2024-09-12', 'Nam', 'Lạch Tray', 'Giáo viên', '031202010031', '2024-11-25', '2024-09-18', '', '', NULL, 86),
+(66, 'Nguyễn Văn C', 123456789, '2023-11-15', 'Nam', 'Ngô Quyền', 'sinh viên', '031202010039', '2024-10-25', '2024-10-25', '', '', NULL, 85),
+(67, 'Nguyễn Văn D', 912345321, '2024-05-15', 'Nam', 'Lạch Tray', 'sinh viên', '031202010034', '2024-10-11', '2024-10-25', '', '', '', 87),
+(68, 'Nguyễn Văn E', 886556178, '2024-05-16', 'Nam', 'hải phòng', 'sinh viên', '031202010234', '2024-10-26', '2024-10-26', '', '', '', 87);
 
 --
 -- Bẫy `tenant`
@@ -600,13 +632,13 @@ DELIMITER ;
 
 CREATE TABLE `users` (
   `id` int NOT NULL,
-  `fullname` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `email` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `password` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `fullname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `password` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `group_id` int DEFAULT NULL,
   `status` int DEFAULT '0',
   `last_activity` datetime DEFAULT NULL,
-  `forget_token` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `forget_token` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `room_id` int DEFAULT '0',
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -663,7 +695,16 @@ ALTER TABLE `category_spend`
 ALTER TABLE `contract`
   ADD PRIMARY KEY (`id`),
   ADD KEY `room_id` (`room_id`),
-  ADD KEY `tenant_id` (`tenant_id`);
+  ADD KEY `tenant_id` (`tenant_id`),
+  ADD KEY `contract_ibfk_3` (`tenant_id_2`);
+
+--
+-- Chỉ mục cho bảng `contract_services`
+--
+ALTER TABLE `contract_services`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contract_services_1` (`contract_id`),
+  ADD KEY `contract_services_2` (`services_id`);
 
 --
 -- Chỉ mục cho bảng `cost`
@@ -772,7 +813,7 @@ ALTER TABLE `area`
 -- AUTO_INCREMENT cho bảng `area_room`
 --
 ALTER TABLE `area_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `bill`
@@ -796,7 +837,13 @@ ALTER TABLE `category_spend`
 -- AUTO_INCREMENT cho bảng `contract`
 --
 ALTER TABLE `contract`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
+
+--
+-- AUTO_INCREMENT cho bảng `contract_services`
+--
+ALTER TABLE `contract_services`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT cho bảng `cost`
@@ -832,7 +879,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=398;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=400;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -856,19 +903,19 @@ ALTER TABLE `rental_history`
 -- AUTO_INCREMENT cho bảng `room`
 --
 ALTER TABLE `room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=88;
 
 --
 -- AUTO_INCREMENT cho bảng `services`
 --
 ALTER TABLE `services`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT cho bảng `tenant`
 --
 ALTER TABLE `tenant`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -899,7 +946,15 @@ ALTER TABLE `bill`
 --
 ALTER TABLE `contract`
   ADD CONSTRAINT `contract_ibfk_1` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`),
-  ADD CONSTRAINT `contract_ibfk_2` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`);
+  ADD CONSTRAINT `contract_ibfk_2` FOREIGN KEY (`tenant_id`) REFERENCES `tenant` (`id`),
+  ADD CONSTRAINT `contract_ibfk_3` FOREIGN KEY (`tenant_id_2`) REFERENCES `tenant` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Các ràng buộc cho bảng `contract_services`
+--
+ALTER TABLE `contract_services`
+  ADD CONSTRAINT `contract_services_1` FOREIGN KEY (`contract_id`) REFERENCES `contract` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `contract_services_2` FOREIGN KEY (`services_id`) REFERENCES `services` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Các ràng buộc cho bảng `cost_room`
