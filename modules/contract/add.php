@@ -62,6 +62,7 @@ if (isPost()) {
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
     }
+  
 
     // Đoạn mã của bạn
     if (!empty($_POST['tendichvu'])) {
@@ -86,6 +87,7 @@ if (isPost()) {
             'ngayvao' => $body['ngayvao'],
             'ngayra' => $body['ngayra'],
             'create_at' => date('Y-m-d H:i:s'),
+            'ghichu' => $body['ghichu'],
         ];
 
         // Gọi hàm thêm hợp đồng
@@ -249,6 +251,12 @@ layout('navbar', 'admin', $data);
                         ?>
                     </select>
                     <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="">Ghi chú</label>
+                    <input type="text" placeholder="" name="ghichu" class="form-control" value="<?php echo old('ghichu', $old); ?>" style="width: 100%;height:100px">
+                    <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
             </div>

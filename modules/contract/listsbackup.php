@@ -143,15 +143,34 @@ if (!empty(getBody()['page'])) {
 }
 $offset = ($page - 1) * $perPage;
 //lấy giá thuê từ bảng cost,không lấy từ room
-$listAllcontract = getRaw("SELECT *, contract.id, tenphong, cost.giathue, tenant1.tenkhach 
-AS tenant_name_1, tenant2.tenkhach 
-AS tenant_name_2, tiencoc, soluong, contract.ngayvao as ngayvaoo, contract.ngayra as thoihanhopdong, tinhtrangcoc FROM contract 
-INNER JOIN room ON contract.room_id = room.id
-LEFT JOIN tenant AS tenant1 ON contract.tenant_id = tenant1.id
-LEFT JOIN tenant AS tenant2 ON contract.tenant_id_2 = tenant2.id
-INNER JOIN cost_room ON room.id = cost_room.room_id 
-INNER JOIN cost ON cost_room.cost_id = cost.id
-$filter LIMIT $offset, $perPage");
+$listAllcontract = getRaw("
+    SELECT *, 
+        contract.id, 
+        tenphong, 
+        cost.giathue, 
+        tenant1.tenkhach AS tenant_name_1, 
+        tenant2.tenkhach AS tenant_name_2, 
+        tiencoc, 
+        soluong, 
+        contract.ngayvao AS ngayvaoo, 
+        contract.ngayra AS thoihanhopdong, 
+        tinhtrangcoc, 
+        GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
+    FROM contract 
+    INNER JOIN room ON contract.room_id = room.id
+    LEFT JOIN tenant AS tenant1 ON contract.tenant_id = tenant1.id
+    LEFT JOIN tenant AS tenant2 ON contract.tenant_id_2 = tenant2.id
+    INNER JOIN cost_room ON room.id = cost_room.room_id 
+    INNER JOIN cost ON cost_room.cost_id = cost.id
+    LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
+    LEFT JOIN services ON contract_services.services_id = services.id 
+    $filter 
+GROUP BY 
+        contract.id
+    LIMIT 
+        $offset, $perPage
+");
+
 
 
 // Danh sách các hợp đồng sắp hết hạn
@@ -265,21 +284,21 @@ layout('navbar', 'admin', $data);
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
                         </th>
                         <th></th>
-                        <th wìdth="5%">STT</th>
+                        <th wìdth="2%">STT</th>
                         <th>Tên phòng</th>
-                        <th>Người làm hợp đồng</th>
+                        <th style="width: 6%; text-align: center;">Người làm hợp đồng</th>
                         <th>Đang ở</th>
-                        <th>Tổng người</th>
+                        <th style="width: 2%; text-align: center;">Tổng người</th>
                         <th>Giá thuê</th>
-                        <th>Giá tiền cọc</th>
-                        <th>Trạng thái cọc</th>
-                        <th>Chu kỳ thu</th>
+                        <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
+                        <th style="width: 6%; text-align: center;" >Trạng thái cọc</th>
+                        <th style="width: 4%; text-align: center;">Chu kỳ thu </th>
                         <th>Ngày lập</th>
                         <th>Ngày vào ở</th>
-                        <th>Thời hạn hợp đồng</th>
+                        <th style="width: 6%; text-align: center;" >Thời hạn hợp đồng</th>
                         <th>Dịch vụ</th>
                         <th>Tình trạng</th>
-                        <th>Thao tác</th>
+                        <th style="width: 3%; text-align: center;" >Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="contractData">

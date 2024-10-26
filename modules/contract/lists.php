@@ -147,13 +147,14 @@ $listAllcontract = getRaw("
     SELECT *, 
         contract.id, 
         tenphong, 
-        cost.giathue, 
+        cost.giathue,
         tenant1.tenkhach AS tenant_name_1, 
         tenant2.tenkhach AS tenant_name_2, 
         tiencoc, 
         soluong, 
         contract.ngayvao AS ngayvaoo, 
         contract.ngayra AS thoihanhopdong, 
+        contract.ghichu,
         tinhtrangcoc, 
         GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
     FROM contract 
@@ -298,6 +299,7 @@ layout('navbar', 'admin', $data);
                         <th style="width: 6%; text-align: center;" >Thời hạn hợp đồng</th>
                         <th>Dịch vụ</th>
                         <th>Tình trạng</th>
+                        <th>Ghi chú</th>
                         <th style="width: 3%; text-align: center;" >Thao tác</th>
                     </tr>
                 </thead>
@@ -361,7 +363,7 @@ layout('navbar', 'admin', $data);
                                     }
                                     ?>
                                 </td>
-
+                                <td><b><?php echo $item['ghichu']; ?></b></td>
                                 <td class="">
                                     <div class="action">
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
