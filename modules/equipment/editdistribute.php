@@ -52,15 +52,15 @@ if (isPost()) {
         // Thêm giờ 00:00 vào thời gian cấp
         $thoigiancap = $body['thoigiancap'] . ' 00:00:00';
 
-// Chèn dữ liệu cho từng thiết bị được chọn
-foreach ($body['equipment_ids'] as $equipmentId) {
-    $dataInsert = [
-        'room_id' => $roomId,
-        'equipment_id' => $equipmentId,
-        'thoigiancap' => $thoigiancap // Lưu thời gian cấp từ form
-    ];
-    insert('equipment_room', $dataInsert);
-}
+        // Chèn dữ liệu cho từng thiết bị được chọn
+        foreach ($body['equipment_ids'] as $equipmentId) {
+            $dataInsert = [
+                'room_id' => $roomId,
+                'equipment_id' => $equipmentId,
+                'thoigiancap' => $thoigiancap // Lưu thời gian cấp từ form
+            ];
+            insert('equipment_room', $dataInsert);
+        }
 
 
         setFlashData('msg', 'Cập nhật phân bổ thiết bị thành công!');
@@ -87,7 +87,7 @@ layout('navbar', 'admin', $data);
     </div>
 
     <div class="box-content">
-    <label for="">Thông tin phòng:</label>
+        <label for="">Thông tin phòng:</label>
         <p><?php echo $roomData['tenphong']; ?></p>
         <form method="POST" action="">
             <div class="form-group">
@@ -107,7 +107,7 @@ layout('navbar', 'admin', $data);
             <!-- Thêm trường nhập thời gian cấp -->
             <div class="form-group">
                 <label for="thoigiancap">Chọn thời gian cấp:</label>
-                <input type="date" name="thoigiancap" class="form-control"style="width: 40%; height: auto;" required
+                <input type="date" name="thoigiancap" class="form-control" style="width: 40%; height: auto;" required
                     value="<?php echo isset($body['thoigiancap']) ? htmlspecialchars($body['thoigiancap']) : date('Y-m-d'); ?>">
                 <?php echo form_error('thoigiancap', $errors, '<span class="error">', '</span>'); ?>
             </div>

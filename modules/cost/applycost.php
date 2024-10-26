@@ -76,7 +76,7 @@ if (isPost()) {
                     'thoigianapdung' => $body['thoigianapdung'], // Thêm thời gian cấp vào mảng chèn
                 ];
 
-                $insertStatus = insert('cost_room', $dataInsert); // Sử dụng bảng equipment_room để lưu thông tin phân bổ
+                $insertStatus = insert('cost_room', $dataInsert); // Sử dụng bảng cost_room để lưu thông tin phân bổ
                 if ($insertStatus) {
                     setFlashData('msg', 'Thêm loại giá thành công');
                     setFlashData('msg_type', 'suc');

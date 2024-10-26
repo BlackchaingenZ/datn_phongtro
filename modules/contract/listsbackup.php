@@ -143,7 +143,9 @@ if (!empty(getBody()['page'])) {
 }
 $offset = ($page - 1) * $perPage;
 //lấy giá thuê từ bảng cost,không lấy từ room
-$listAllcontract = getRaw("SELECT *, contract.id, tenphong, cost.giathue,  tenant1.tenkhach AS tenant_name_1, tenant2.tenkhach AS tenant_name_2, tiencoc, soluong, contract.ngayvao as ngayvaoo, contract.ngayra as thoihanhopdong, tinhtrangcoc FROM contract 
+$listAllcontract = getRaw("SELECT *, contract.id, tenphong, cost.giathue, tenant1.tenkhach 
+AS tenant_name_1, tenant2.tenkhach 
+AS tenant_name_2, tiencoc, soluong, contract.ngayvao as ngayvaoo, contract.ngayra as thoihanhopdong, tinhtrangcoc FROM contract 
 INNER JOIN room ON contract.room_id = room.id
 LEFT JOIN tenant AS tenant1 ON contract.tenant_id = tenant1.id
 LEFT JOIN tenant AS tenant2 ON contract.tenant_id_2 = tenant2.id
@@ -267,7 +269,7 @@ layout('navbar', 'admin', $data);
                         <th>Tên phòng</th>
                         <th>Người làm hợp đồng</th>
                         <th>Đang ở</th>
-                        <th>Tổng thành viên</th>
+                        <th>Tổng người</th>
                         <th>Giá thuê</th>
                         <th>Giá tiền cọc</th>
                         <th>Trạng thái cọc</th>
@@ -275,6 +277,7 @@ layout('navbar', 'admin', $data);
                         <th>Ngày lập</th>
                         <th>Ngày vào ở</th>
                         <th>Thời hạn hợp đồng</th>
+                        <th>Dịch vụ</th>
                         <th>Tình trạng</th>
                         <th>Thao tác</th>
                     </tr>
@@ -325,6 +328,7 @@ layout('navbar', 'admin', $data);
                                 <td><?php echo $item['ngaylaphopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngaylaphopdong'], 'd-m-Y'); ?></td>
                                 <td><?php echo $item['ngayvaoo'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvaoo'], 'd-m-Y'); ?></td>
                                 <td><?php echo $item['thoihanhopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['thoihanhopdong'], 'd-m-Y'); ?></td>
+                                <td><b><?php echo $item['tendichvu']; ?></b></td>
                                 <td>
                                     <?php
                                     $contractStatus = getContractStatus($item['thoihanhopdong']);

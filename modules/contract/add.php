@@ -22,7 +22,9 @@ $allTenant = getRaw("
     ORDER BY room.tenphong
 ");
 
+include 'includes/add_contract.php';
 
+$allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
 $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $allRoomId = getRaw("SELECT room_id FROM contract");
 $roomsByArea = [];
@@ -33,12 +35,13 @@ foreach ($allRoom as $room) {
     }
 }
 // Xử lý thêm hợp đồng
+// Thêm hợp đồng
 if (isPost()) {
     // Validate form
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
 
-    //Valide họ tên: Bắt buộc phải nhập, >=5 ký tự
+    // Validate họ tên: Bắt buộc phải nhập, >=5 ký tự
     if (empty(trim($body['room_id']))) {
         $errors['room_id']['required'] = '** Bạn chưa chọn phòng lập hợp đồng!';
     } else {
@@ -51,14 +54,23 @@ if (isPost()) {
             }
         }
     }
+
     if (empty(trim($body['tenant_id'])) && empty(trim($body['tenant_id_2']))) {
         $errors['tenant_id']['required'] = '** Hãy chọn ít nhất 1 người thuê!';
     }
 
-
-
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
+    }
+
+    // Đoạn mã của bạn
+    if (!empty($_POST['tendichvu'])) {
+        $tendichvuId = $_POST['tendichvu']; // Đây sẽ là mảng
+
+        // Nếu bạn cần trim từng phần tử trong mảng
+        $tendichvuId = array_map('trim', $tendichvuId);
+    } else {
+        $tendichvuId = []; // Nếu không có dịch vụ nào được chọn
     }
 
 
@@ -76,26 +88,27 @@ if (isPost()) {
             'create_at' => date('Y-m-d H:i:s'),
         ];
 
+        // Gọi hàm thêm hợp đồng
+        $result = addContract($dataInsert, $body['tendichvu']); // Chuyển dịch vụ
 
-        $insertStatus = insert('contract', $dataInsert);
-        if ($insertStatus) {
-            setFlashData('msg', 'Thêm thông tin hợp đồng mới thành công');
+        if ($result['success']) {
+            setFlashData('msg', 'Thêm hợp đồng mới và dịch vụ thành công'); //với ID: ' . $result['contract_id']
             setFlashData('msg_type', 'suc');
             redirect('?module=contract');
         } else {
-            setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+            setFlashData('msg', 'Lỗi: ' . $result['message']);
             setFlashData('msg_type', 'err');
-            redirect('?module=contract&action=add');
         }
     } else {
-        // Có lỗi xảy ra
-        setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
+        setFlashData('msg', 'Vui lòng kiểm tra lại thông tin đã nhập.');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
-        setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lê khi nhập vào
-        redirect('?module=contract&action=add');
+        setFlashData('old', $body);
     }
+
+    redirect('?module=contract&action=add');
 }
+
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -121,7 +134,9 @@ layout('navbar', 'admin', $data);
                         if (!empty($allArea)) {
                             foreach ($allArea as $item) {
                         ?>
-                                <option value="<?php echo $item['id'] ?>" <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>><?php echo $item['tenkhuvuc'] ?></option>
+                                <option value="<?php echo $item['id'] ?>"
+                                    <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>>
+                                    <?php echo $item['tenkhuvuc'] ?></option>
                         <?php
                             }
                         }
@@ -147,7 +162,8 @@ layout('navbar', 'admin', $data);
                         if (!empty($allTenant)) {
                             foreach ($allTenant as $item) {
                         ?>
-                                <option value="<?php echo $item['id']; ?>" <?php echo (!empty($tenantId) && $tenantId == $item['id']) ? 'selected' : ''; ?>>
+                                <option value="<?php echo $item['id']; ?>"
+                                    <?php echo (!empty($tenantId) && $tenantId == $item['id']) ? 'selected' : ''; ?>>
                                     <?php echo $item['tenkhach']; ?> - <?php echo $item['tenphong']; ?>
                                 </option>
                         <?php
@@ -166,7 +182,8 @@ layout('navbar', 'admin', $data);
                         if (!empty($allTenant)) {
                             foreach ($allTenant as $item) {
                         ?>
-                                <option value="<?php echo $item['id']; ?>" <?php echo (!empty($tenantId2) && $tenantId2 == $item['id']) ? 'selected' : ''; ?>>
+                                <option value="<?php echo $item['id']; ?>"
+                                    <?php echo (!empty($tenantId2) && $tenantId2 == $item['id']) ? 'selected' : ''; ?>>
                                     <?php echo $item['tenkhach']; ?> - <?php echo $item['tenphong']; ?>
                                 </option>
                         <?php
@@ -177,13 +194,10 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('tenant_id_2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
-
-
-
-
                 <div class="form-group">
                     <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
-                    <input type="date" name="ngaylaphopdong" id="" class="form-control" value="<?php echo old('ngaylaphopdong', $old); ?>">
+                    <input type="date" name="ngaylaphopdong" id="" class="form-control"
+                        value="<?php echo old('ngaylaphopdong', $old); ?>">
                     <?php echo form_error('ngaylaphopdong', $errors, '<span class="error">', '</span>'); ?>
                 </div>
             </div>
@@ -191,13 +205,15 @@ layout('navbar', 'admin', $data);
             <div class="col-5">
                 <div class="form-group">
                     <label for="">Ngày vào ở <span style="color: red">*</span></label>
-                    <input type="date" name="ngayvao" id="" class="form-control" value="<?php echo old('ngayvao', $old); ?>">
+                    <input type="date" name="ngayvao" id="" class="form-control"
+                        value="<?php echo old('ngayvao', $old); ?>">
                     <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
                 <div class="form-group">
                     <label for="">Ngày hết hạn hợp đồng <span style="color: red">*</span></label>
-                    <input type="date" name="ngayra" id="" class="form-control" value="<?php echo old('ngayra', $old); ?>">
+                    <input type="date" name="ngayra" id="" class="form-control"
+                        value="<?php echo old('ngayra', $old); ?>">
                     <?php echo form_error('ngayra', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
@@ -210,10 +226,36 @@ layout('navbar', 'admin', $data);
                     </select>
                 </div>
 
+                <?php
+                // Khởi tạo biến $tendichvuId nếu chưa được xác định
+                $tendichvuId = isset($tendichvuId) ? $tendichvuId : [];
+                ?>
+
+                <div class="form-group">
+                    <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
+                    <select name="tendichvu[]" id="" class="form-select" multiple style="height:150px">
+                        <!-- <option value="">Chọn dịch vụ</option> -->
+                        <?php
+                        if (!empty($allServices)) {
+                            foreach ($allServices as $item) {
+                        ?>
+                                <option value="<?php echo $item['id']; ?>"
+                                    <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'selected' : ''; ?>>
+                                    <?php echo $item['tendichvu']; ?>
+                                </option>
+                        <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
             </div>
             <div class="from-group">
                 <div class="btn-row">
-                    <a style="margin-right: 20px" href="<?php echo getLinkAdmin('contract') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
+                    <a style="margin-right: 20px" href="<?php echo getLinkAdmin('contract') ?>"
+                        class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
                     <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm hợp đồng</button>
                 </div>
             </div>

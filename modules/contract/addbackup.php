@@ -12,14 +12,16 @@ layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
 $allRoom = getRaw("SELECT id, tenphong, soluong FROM room ORDER BY tenphong");
+//kiểm tra khách đã làm hợp đồng chưa,nếu rồi thì không hiện
 $allTenant = getRaw("
     SELECT tenant.id, tenant.tenkhach, room.tenphong 
     FROM tenant 
     INNER JOIN room ON room.id = tenant.room_id 
-    LEFT JOIN contract ON contract.tenant_id = tenant.id 
-    WHERE contract.tenant_id IS NULL 
-    ORDER BY tenphong
+    LEFT JOIN contract ON contract.tenant_id = tenant.id OR contract.tenant_id_2 = tenant.id 
+    WHERE contract.tenant_id IS NULL AND contract.tenant_id_2 IS NULL
+    ORDER BY room.tenphong
 ");
+
 
 $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $allRoomId = getRaw("SELECT room_id FROM contract");
@@ -49,9 +51,11 @@ if (isPost()) {
             }
         }
     }
-    if (empty(trim($body['tenant_id']))) {
-        $errors['tenant_id']['required'] = '** Bạn chưa chọn người đại diện!';
+    if (empty(trim($body['tenant_id'])) && empty(trim($body['tenant_id_2']))) {
+        $errors['tenant_id']['required'] = '** Hãy chọn ít nhất 1 người thuê!';
     }
+
+
 
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
@@ -64,12 +68,14 @@ if (isPost()) {
         $dataInsert = [
             'room_id' => $body['room_id'],
             'tenant_id' => $body['tenant_id'],
+            'tenant_id_2' => empty(trim($body['tenant_id_2'])) ? null : $body['tenant_id_2'], // Sử dụng null nếu không có giá trị
             'tinhtrangcoc' => $body['tinhtrangcoc'],
             'ngaylaphopdong' => $body['ngaylaphopdong'],
             'ngayvao' => $body['ngayvao'],
             'ngayra' => $body['ngayra'],
             'create_at' => date('Y-m-d H:i:s'),
         ];
+
 
         $insertStatus = insert('contract', $dataInsert);
         if ($insertStatus) {
@@ -134,14 +140,16 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Chọn Người thuê <span style="color: red">*</span></label>
+                    <label for="">Người thuê 1 <span style="color: red">*</span></label>
                     <select name="tenant_id" id="" class="form-select">
                         <option value="">Chọn người thuê</option>
                         <?php
                         if (!empty($allTenant)) {
                             foreach ($allTenant as $item) {
                         ?>
-                                <option value="<?php echo $item['id'] ?>" <?php echo (!empty($tenantId) && $tenantId == $item['id']) ? 'selected' : '' ?>><?php echo $item['tenkhach'] ?> - <?php echo $item['tenphong'] ?></option>
+                                <option value="<?php echo $item['id']; ?>" <?php echo (!empty($tenantId) && $tenantId == $item['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenphong']; ?>
+                                </option>
                         <?php
                             }
                         }
@@ -149,6 +157,29 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('tenant_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
+                <div class="form-group">
+                    <label for="">Người thuê 2</label>
+                    <select name="tenant_id_2" id="" class="form-select">
+                        <option value="">Trống</option> <!-- Tùy chọn không có người thuê -->
+                        <?php
+                        if (!empty($allTenant)) {
+                            foreach ($allTenant as $item) {
+                        ?>
+                                <option value="<?php echo $item['id']; ?>" <?php echo (!empty($tenantId2) && $tenantId2 == $item['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenphong']; ?>
+                                </option>
+                        <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php echo form_error('tenant_id_2', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+
+
+
 
                 <div class="form-group">
                     <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>

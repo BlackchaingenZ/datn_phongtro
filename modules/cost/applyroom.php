@@ -18,7 +18,7 @@ $old = getFlashData('old');
 $listAllCost = getRaw("SELECT * FROM cost ORDER BY giathue ASC");
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 
-// Hàm lấy danh sách phòng và thiết bị
+// Hàm lấy danh sách phòng và bảng giá
 function getRoomAndCostList()
 {
     $sql = "
@@ -39,7 +39,7 @@ if (!empty($_POST['search_term'])) {
     $searchTerm = $_POST['search_term'];
 }
 
-// Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
+// Truy vấn để tìm tên phòng và cost theo từ khóa tìm kiếm
 $sqlSearchRooms = "
     SELECT r.id AS room_id, 
            r.tenphong, 
