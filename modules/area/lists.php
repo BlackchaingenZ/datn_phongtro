@@ -38,7 +38,7 @@ layout('navbar', 'admin', $data);
                 </div>
             </div>
             <div class="collect-list">
-                <!-- Danh mục cơ sở vật chất -->
+                <!-- Danh mục khu vực -->
                 <div class="collect-item">
                     <div class="service-item_left">
                         <div class="service-item_icon">
@@ -59,7 +59,7 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
 
-                <!-- Phân bổ cơ sở vật chất -->
+                <!-- Phân bổ khu vực -->
                 <div class="collect-item">
                     <div class="service-item_left">
                         <div class="service-item_icon">

@@ -22,9 +22,9 @@ if (isset($_GET['id'])) {
 
         if ($checkLinkedRoom) {
             // Nếu khu vực này đã được liên kết với phòng
-            setFlashData('msg', 'Không thể xoá vì khu vực này đang có phòng sử dụng');
+            setFlashData('msg', 'Không thể xóa vì đang chứa phòng nào đó!');
             setFlashData('msg_type', 'err');
-            redirect('?module=area&action=applyarea');
+            redirect('?module=area&action=listarea');
         } else {
             // Xóa bản ghi trong bảng area nếu không liên kết với phòng nào
             $deleteStatus = delete('area', "id = $id");
@@ -32,11 +32,11 @@ if (isset($_GET['id'])) {
             if ($deleteStatus) {
                 setFlashData('msg', 'Xóa thông tin khu vực thành công');
                 setFlashData('msg_type', 'suc');
-                redirect('?module=area&action=applyarea');
+                redirect('?module=area&action=listarea');
             } else {
                 setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
                 setFlashData('msg_type', 'err');
-                redirect('?module=area&action=applyarea');
+                redirect('?module=area&action=listarea');
             }
         }
     } else {
@@ -49,7 +49,7 @@ if (isset($_GET['id'])) {
     // Không có id được truyền vào
     setFlashData('msg', 'Liên kết không hợp lệ!');
     setFlashData('msg_type', 'err');
-    redirect('?module=area&action=applyarea');
+    redirect('?module=area&action=listarea');
 }
 
 ?>

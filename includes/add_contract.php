@@ -19,8 +19,8 @@ function addContract($dataInsert, $services_ids)
             $contract_id = $existingContract['id'];
         } else {
             // Nếu không có hợp đồng, tạo hợp đồng mới
-            $stmt = $pdo->prepare("INSERT INTO contract (room_id, tenant_id, tenant_id_2, tinhtrangcoc, ngaylaphopdong, ngayvao, ngayra, create_at, ghichu )
-             VALUES (:room_id, :tenant_id, :tenant_id_2, :tinhtrangcoc, :ngaylaphopdong, :ngayvao, :ngayra, :create_at, :ghichu )");
+            $stmt = $pdo->prepare("INSERT INTO contract (room_id, tenant_id, tenant_id_2, tinhtrangcoc,soluongthanhvien, ngaylaphopdong, ngayvao, ngayra, create_at, ghichu )
+             VALUES (:room_id, :tenant_id, :tenant_id_2, :tinhtrangcoc, :soluongthanhvien, :ngaylaphopdong, :ngayvao, :ngayra, :create_at, :ghichu )");
             $stmt->execute($dataInsert);
             $contract_id = $pdo->lastInsertId(); // Lấy ID của hợp đồng mới
         }

@@ -86,7 +86,7 @@ $old = getFlashData('old');
 
                     <div class="form-group">
                         <label for="">Mô tả <span style="color: red">*</span></label>
-                        <input type="text" placeholder="" name="mota" class="form-control" value="<?php echo old('mota', $old); ?>"  style="width: 100%;height:100px">
+                        <input type="text" placeholder="" name="mota" class="form-control" value="<?php echo old('mota', $old); ?>" style="width: 100%;height:100px">
                         <?php echo form_error('mota', $errors, '<span class="error">', '</span>'); ?>
                     </div>
 

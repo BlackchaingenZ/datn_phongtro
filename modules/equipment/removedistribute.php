@@ -40,7 +40,7 @@ if (isPost()) {
             $equipmentId = $body['equipment_id'];
 
             // Kiểm tra xem thiết bị có trong phòng hay không
-            $isEquipmentInRoom = checkEquipmentInRoomById($pdo, $roomId, $equipmentId);
+            $isEquipmentInRoom = checkEquipmenntInRoomById($pdo, $roomId, $equipmentId);
             if (!$isEquipmentInRoom) {
                 setFlashData('msg', 'Thiết bị này chưa có trong phòng');
                 setFlashData('msg_type', 'err');

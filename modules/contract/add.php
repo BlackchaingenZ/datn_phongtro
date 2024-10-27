@@ -11,10 +11,19 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-$allRoom = getRaw("SELECT id, tenphong, soluong FROM room ORDER BY tenphong");
+include 'includes/add_contract.php';
+// kiểm tra nếu phòng nào có hợp đồng rồi thì không hiện
+$allRoom = getRaw("
+    SELECT room.id, room.tenphong, room.soluong 
+    FROM room 
+    LEFT JOIN contract ON contract.room_id = room.id
+    WHERE contract.id IS NULL
+    ORDER BY room.tenphong
+");
+
 //kiểm tra khách đã làm hợp đồng chưa,nếu rồi thì không hiện
 $allTenant = getRaw("
-    SELECT tenant.id, tenant.tenkhach, room.tenphong 
+    SELECT tenant.id, tenant.tenkhach, room.tenphong
     FROM tenant 
     INNER JOIN room ON room.id = tenant.room_id 
     LEFT JOIN contract ON contract.tenant_id = tenant.id OR contract.tenant_id_2 = tenant.id 
@@ -22,11 +31,12 @@ $allTenant = getRaw("
     ORDER BY room.tenphong
 ");
 
-include 'includes/add_contract.php';
+
 
 $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
 $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $allRoomId = getRaw("SELECT room_id FROM contract");
+//phân loại phòng theo khu vực
 $roomsByArea = [];
 foreach ($allRoom as $room) {
     $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
@@ -62,7 +72,13 @@ if (isPost()) {
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
     }
-  
+    // Kiểm tra số lượng thành viên
+    if (empty(trim($body['soluongthanhvien']))) {
+        $errors['soluongthanhvien']['required'] = '** Bạn chưa nhập số lượng thành viên!';
+    } elseif (!is_numeric($body['soluongthanhvien']) || intval($body['soluongthanhvien']) <= 0) {
+        $errors['soluongthanhvien']['invalid'] = '** Số lượng thành viên phải là một số nguyên dương!';
+    }
+
 
     // Đoạn mã của bạn
     if (!empty($_POST['tendichvu'])) {
@@ -88,6 +104,7 @@ if (isPost()) {
             'ngayra' => $body['ngayra'],
             'create_at' => date('Y-m-d H:i:s'),
             'ghichu' => $body['ghichu'],
+            'soluongthanhvien' => intval($body['soluongthanhvien']), // Chuyển đổi thành số nguyên
         ];
 
         // Gọi hàm thêm hợp đồng
@@ -156,6 +173,7 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
+
                 <div class="form-group">
                     <label for="">Người thuê 1 <span style="color: red">*</span></label>
                     <select name="tenant_id" id="" class="form-select">
@@ -197,6 +215,16 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
+                    <label for="">Số lượng thành viên<span style="color: red">*</label>
+                    <select name="soluongthanhvien" class="form-select">
+                        <option value="">Chọn số lượng</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                    </select>
+                    <?php echo form_error('soluongthanhvien', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+                <div class="form-group">
                     <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
                     <input type="date" name="ngaylaphopdong" id="" class="form-control"
                         value="<?php echo old('ngaylaphopdong', $old); ?>">
@@ -220,7 +248,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Tình trạng cọc</label>
+                    <label for="">Tình trạng cọc<span style="color: red">*</label>
                     <select name="tinhtrangcoc" class="form-select">
                         <option value="">Chọn trạng thái</option>
                         <option value="0">Chưa thu tiền</option>
@@ -254,7 +282,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Ghi chú</label>
+                    <label for="">Ghi chú<span style="color: red">*</label>
                     <input type="text" placeholder="" name="ghichu" class="form-control" value="<?php echo old('ghichu', $old); ?>" style="width: 100%;height:100px">
                     <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
                 </div>

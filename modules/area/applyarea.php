@@ -46,6 +46,7 @@ if (!empty($_POST['search_term'])) {
 $sqlSearchRooms = "
     SELECT r.id AS room_id, 
            r.tenphong, 
+           e.mota,
            GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
     FROM room r
     JOIN area_room er ON r.id = er.room_id
@@ -77,7 +78,7 @@ layout('navbar', 'admin', $data);
             <div class="row">
                 <div class="col-4"></div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng cần tìm loại giá" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng hoặc khu vực cần tìm" value="<?php echo htmlspecialchars($searchTerm); ?>">
                 </div>
 
                 <div class="col">
@@ -90,7 +91,7 @@ layout('navbar', 'admin', $data);
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('area', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('area', 'addapply') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('area', 'applyarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('', '') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
+                <a href="<?php echo getLinkAdmin('area', 'removeapplyarea') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 
@@ -146,3 +147,12 @@ layout('navbar', 'admin', $data);
     </div>
 </div>
 <?php layout('footer', 'admin'); ?>
+<script>
+    function toggle(__this) {
+        let isChecked = __this.checked;
+        let checkbox = document.querySelectorAll('input[name="records[]"]');
+        for (let index = 0; index < checkbox.length; index++) {
+            checkbox[index].checked = isChecked;
+        }
+    }
+</script>

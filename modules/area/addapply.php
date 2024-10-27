@@ -55,7 +55,7 @@ if (isPost()) {
 
             if ($result['count'] > 0) {
                 // Nếu giá đã tồn tại trong phòng
-                setFlashData('msg', 'Không thể thêm vì phòng này đã có giá thuê rồi !');
+                setFlashData('msg', 'Không thể thêm vì phòng này đã có khu vực rồi !');
                 setFlashData('msg_type', 'err');
                 redirect('?module=cost&action=applycost'); // Chuyển hướng về trang phân bổ
             } else {
@@ -110,9 +110,19 @@ $old = getFlashData('old');
 
 // Lấy danh sách phòng và area
 $listAllArea = getRaw("SELECT * FROM area ORDER BY tenkhuvuc ASC");
-$listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 
-// Hàm lấy danh sách phòng và cost
+// kiểm tra nếu phòng nào có khu vực rồi thì không hiện
+$listAllRoom = getRaw("
+    SELECT room.id, room.tenphong
+    FROM room 
+    LEFT JOIN area_room ON area_room.room_id = room.id
+    WHERE area_room.area_id IS NULL
+    ORDER BY room.tenphong
+");
+
+
+
+// Hàm lấy danh sách phòng và area
 function getRoomAndAreaList()
 {
     $sql = "
@@ -183,7 +193,7 @@ $listRoomAndArea = getRoomAndAreaList();
                     <i class="fa fa-arrow-circle-left"></i> Quay lại
                 </a>
                 <button type="submit" class="btn btn-secondary">
-                    <i class="fa fa-plus"></i> Áp dụng giá
+                    <i class="fa fa-plus"></i> Áp dụng
                 </button>
             </div>
         </form>

@@ -1,5 +1,23 @@
 <?php
-$listAlltenant = getRaw("SELECT *, tenkhach, tenphong, room.giathue as giathue, tiencoc, chuky FROM contract INNER JOIN tenant ON tenant.id = contract.tenant_id INNER JOIn room ON room.id = contract.room_id");
+$listAlltenant = getRaw("
+SELECT 
+    *, 
+    tenant.tenkhach AS tenkhach, 
+    tenant2.tenkhach AS tenkhach_2, 
+    tenphong, 
+    cost.giathue AS giathue, -- Lấy giathue từ bảng cost
+    tiencoc, 
+    chuky 
+FROM contract 
+INNER JOIN tenant ON tenant.id = contract.tenant_id 
+INNER JOIN tenant AS tenant2 ON tenant2.id = contract.tenant_id_2
+INNER JOIN room ON room.id = contract.room_id
+INNER JOIN cost_room ON cost_room.room_id = room.id -- Kết nối cost_room với room
+INNER JOIN cost ON cost.id = cost_room.cost_id -- Kết nối cost với cost_room
+");
+
+
+
 $dataTenant = json_encode($listAlltenant);
 
 $tenantFinal = json_decode($dataTenant,true);
@@ -120,7 +138,9 @@ $row = 3;
 foreach($tenantFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('A'.$row, $item['id']);
       $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $item['tenphong']);
-      $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $item['tenkhach']);
+      $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $item['tenkhach'] . "\n" . $item['tenkhach_2']);
+      //cho phéo xuống dòng
+      $spreadsheet->getActiveSheet()->getStyle('C' . $row)->getAlignment()->setWrapText(true);
       $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $item['soluongthanhvien']);
       $spreadsheet->getActiveSheet()->setCellValue('E'.$row, $item['giathue']);
       $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['tiencoc']);

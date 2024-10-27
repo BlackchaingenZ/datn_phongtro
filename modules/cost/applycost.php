@@ -122,7 +122,15 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
 
 // Lấy danh sách phòng và cost
 $listAllCost = getRaw("SELECT * FROM cost ORDER BY giathue ASC");
-$listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
+
+//láy phòng nào chưa có giathue
+$listAllRoom = getRaw("
+    SELECT room.id, room.tenphong
+    FROM room 
+    LEFT JOIN cost_room ON cost_room.room_id = room.id
+    WHERE cost_room.cost_id IS NULL
+    ORDER BY room.tenphong
+");
 
 // Hàm lấy danh sách phòng và cost
 function getRoomAndCostList()

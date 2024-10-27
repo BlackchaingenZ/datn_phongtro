@@ -91,6 +91,7 @@ layout('navbar', 'admin', $data);
         <p><?php echo $roomData['tenphong']; ?></p>
         <form method="POST" action="">
             <div class="form-group">
+                
                 <label for="equipment">Chọn thiết bị:</label>
                 <select multiple name="equipment_ids[]" class="form-control" style="width: 40%; height: auto;" size="9" required>
                     <?php foreach ($listAllEquipment as $equipment): ?>

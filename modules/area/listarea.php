@@ -25,7 +25,7 @@ $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 
 // Lấy danh sách khu vực từ cơ sở dữ liệu
-$listAllArea = getRaw("SELECT id AS id, tenkhuvuc, mota,ngaytao FROM area ORDER BY tenkhuvuc ASC");
+$listAllArea = getRaw("SELECT id AS id, tenkhuvuc, mota, ngaytao FROM area ORDER BY tenkhuvuc ASC");
 
 
 if (isset($_POST['deleteMultip'])) {
@@ -38,22 +38,22 @@ if (isset($_POST['deleteMultip'])) {
         $extract_id = implode(',', array_map('intval', $numberCheckbox));
 
         try {
-            // Kiểm tra trước nếu có thiết bị nào đang được sử dụng trong bảng equipment_room
-            $sqlCheck = "SELECT COUNT(*) AS count FROM cost_room WHERE cost_id IN ($extract_id)";
+            // Kiểm tra trước nếu có khu vưc nào đang được sử dụng trong bảng room
+            $sqlCheck = "SELECT COUNT(*) AS count FROM area_room WHERE area_id IN ($extract_id)";
             $count = getRow($sqlCheck)['count'];
 
             if ($count > 0) {
-                // Nếu thiết bị đang được sử dụng trong phòng, không thực hiện xóa
-                setFlashData('msg', 'Không thể xóa vì loại giá này đang được sử dụng trong phòng.');
+                // Nếu khu vực đang được sử dụng trong phòng, không thực hiện xóa
+                setFlashData('msg', 'Không thể xóa vì đang chứa phòng nào đó!');
                 setFlashData('msg_type', 'err');
-                redirect('?module=cost&action=costroom');
+                redirect('?module=area&action=listarea');
                 exit(); // Dừng việc thực hiện thêm
             } else {
                 // Thực hiện xóa các thiết bị đã chọn từ cơ sở dữ liệu nếu không có thiết bị nào đang được sử dụng
                 $checkDelete = delete('cost', "id IN($extract_id)");
 
                 if ($checkDelete) {
-                    setFlashData('msg', 'Xóa loại giá thành công');
+                    setFlashData('msg', 'Xóa  thành công');
                     setFlashData('msg_type', 'suc');
                 } else {
                     setFlashData('msg', 'Có lỗi xảy ra khi xóa loại giá');
@@ -65,7 +65,7 @@ if (isset($_POST['deleteMultip'])) {
             setFlashData('msg_type', 'err');
         }
     }
-    redirect('?module=cost&action=costroom'); // Chuyển hướng về trang danh sách
+    redirect('?module=area&action=listarea'); // Chuyển hướng về trang danh sách
 }
 
 

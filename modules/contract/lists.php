@@ -151,7 +151,7 @@ $listAllcontract = getRaw("
         tenant1.tenkhach AS tenant_name_1, 
         tenant2.tenkhach AS tenant_name_2, 
         tiencoc, 
-        soluong, 
+        soluongthanhvien, 
         contract.ngayvao AS ngayvaoo, 
         contract.ngayra AS thoihanhopdong, 
         contract.ghichu,
@@ -196,15 +196,54 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 }
 
 // Xóa hết
+// if (isset($_POST['deleteMultip'])) {
+//     $numberCheckbox = $_POST['records'];
+//     $extract_id = implode(',', $numberCheckbox);
+//     $checkDelete = delete('contract', "id IN($extract_id)");
+//     if ($checkDelete) {
+//         setFlashData('msg', 'Xóa thông tin phòng trọ thành công');
+//         setFlashData('msg_type', 'suc');
+//     }
+//     redirect('?module=contract');
+// }
 if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records'];
-    $extract_id = implode(',', $numberCheckbox);
-    $checkDelete = delete('contract', "id IN($extract_id)");
-    if ($checkDelete) {
-        setFlashData('msg', 'Xóa thông tin phòng trọ thành công');
-        setFlashData('msg_type', 'suc');
+    $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
+    if (empty($numberCheckbox)) {
+        setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
+        setFlashData('msg_type', 'err');
+    } else {
+        // Chuyển mảng các ID thiết bị thành chuỗi để sử dụng trong câu truy vấn SQL
+        $extract_id = implode(',', array_map('intval', $numberCheckbox));
+
+        try {
+            // Kiểm tra trước nếu có dịch vụ  nào đang được sử dụng trong bảng contact_services
+            $sqlCheck = "SELECT COUNT(*) AS count FROM contract_services WHERE contract_id IN ($extract_id)";
+            $count = getRow($sqlCheck)['count'];
+
+            if ($count > 0) {
+                // Nếu dịch vụ đang được sử dụng trong hợp đồng, không thực hiện xóa
+                setFlashData('msg', 'Không thể xóa vì còn dữ liệu liên quan');
+                setFlashData('msg_type', 'err');
+                redirect('?module=contract');
+                exit(); // Dừng việc thực hiện thêm
+            } else {
+                // Thực hiện xóa các hợp đồng đã chọn từ cơ sở dữ liệu 
+                $checkDelete = delete('contract', "id IN($extract_id)");
+
+                if ($checkDelete) {
+                    setFlashData('msg', 'Xóa hợp đồng thành công');
+                    setFlashData('msg_type', 'suc');
+                } else {
+                    setFlashData('msg', 'Có lỗi xảy ra khi xóa hợp đồng');
+                    setFlashData('msg_type', 'err');
+                }
+            }
+        } catch (PDOException $e) {
+            setFlashData('msg', 'Đã xảy ra lỗi: ' . $e->getMessage());
+            setFlashData('msg_type', 'err');
+        }
     }
-    redirect('?module=contract');
+    redirect('?module=contract'); // Chuyển hướng về trang danh sách
 }
 
 $msg = getFlashData('msg');
@@ -275,7 +314,7 @@ layout('navbar', 'admin', $data);
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
             <a href="<?php echo getLinkAdmin('contract'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <a href="<?php echo getLinkAdmin('contract', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a>
+            <!-- <a href="<?php echo getLinkAdmin('contract', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a> -->
             <a href="<?php echo getLinkAdmin('contract', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
             <table class="table table-bordered mt-3">
@@ -284,23 +323,23 @@ layout('navbar', 'admin', $data);
                         <th>
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
                         </th>
-                        <th></th>
-                        <th wìdth="2%">STT</th>
-                        <th>Tên phòng</th>
+                        <!-- <th></th> -->
+                        <th width="2%">STT</th>
+                        <th style="width: 3%; text-align: center;">Tên phòng</th>
                         <th style="width: 6%; text-align: center;">Người làm hợp đồng</th>
                         <th>Đang ở</th>
                         <th style="width: 2%; text-align: center;">Tổng người</th>
                         <th>Giá thuê</th>
                         <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
-                        <th style="width: 6%; text-align: center;" >Trạng thái cọc</th>
+                        <th style="width: 6%; text-align: center;">Trạng thái cọc</th>
                         <th style="width: 4%; text-align: center;">Chu kỳ thu </th>
                         <th>Ngày lập</th>
                         <th>Ngày vào ở</th>
-                        <th style="width: 6%; text-align: center;" >Thời hạn hợp đồng</th>
+                        <th style="width: 6%; text-align: center;">Thời hạn hợp đồng</th>
                         <th>Dịch vụ</th>
                         <th>Tình trạng</th>
                         <th>Ghi chú</th>
-                        <th style="width: 3%; text-align: center;" >Thao tác</th>
+                        <th style="width: 3%; text-align: center;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="contractData">
@@ -318,12 +357,12 @@ layout('navbar', 'admin', $data);
                                 <td>
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
-
+                                <!-- 
                                 <td>
                                     <div class="image__contract">
                                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/contracts.png" class="image__room-img" alt="">
                                     </div>
-                                </td>
+                                </td> -->
                                 <td><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tenphong']; ?></b></td>
                                 <td>
@@ -341,7 +380,7 @@ layout('navbar', 'admin', $data);
                                         echo '<i>Chưa có ai</i>';
                                     } ?>
                                 </td>
-                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td>
+                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td>
                                 <td><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
                                 <td><?php echo $item['tinhtrangcoc'] == 0 ? '<span class="btn-kyhopdong-err">Chưa thu tiền</span>' : '<span class="btn-kyhopdong-suc">Đã thu tiền</span>' ?></td>

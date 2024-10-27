@@ -123,7 +123,16 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
 
 // Lấy danh sách cơ sở vật chất và phòng trọ
 $listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC");
-$listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
+//láy phòng nào chưa có thiết bị
+$listAllRoom = getRaw("
+    SELECT room.id, room.tenphong
+    FROM room 
+    LEFT JOIN equipment_room ON equipment_room.room_id = room.id
+    WHERE equipment_room.equipment_id IS NULL
+    ORDER BY room.tenphong
+");
+
+
 
 // Hàm lấy danh sách phòng và thiết bị
 function getRoomAndEquipmentList()
@@ -154,9 +163,10 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
     <div class="box-content">
         <form action="" method="post" class="row">
             <div class="col-5">
+                
                 <div class="form-group">
                     <label for="">Chọn thiết bị <span style="color: red">*</span></label>
-                    <select name="equipment_id" class="form-control">
+                    <select name="equipment_id" class="form-control" >
                         <option value="">Chọn thiết bị</option>
                         <?php
                         if (!empty($listAllEquipment)) {
