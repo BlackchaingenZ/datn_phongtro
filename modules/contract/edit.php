@@ -215,7 +215,7 @@ layout('navbar', 'admin', $data);
                         ?>
                                 <option value="<?php echo $item['id']; ?>"
                                     <?php echo (!empty($tenant_id) && $tenant_id == $item['id']) ? 'selected' : ''; ?>>
-                                    <?php echo $item['tenkhach']; ?> - Phòng: <?php echo $item['tenphong']; ?>
+                                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenphong']; ?>
                                 </option>
                         <?php
                             }

@@ -39,11 +39,20 @@ $allRoomId = getRaw("SELECT room_id FROM contract");
 //phân loại phòng theo khu vực
 $roomsByArea = [];
 foreach ($allRoom as $room) {
+    // Giả sử bạn có một cách để lấy số người hiện tại trong phòng, có thể từ cơ sở dữ liệu
+    $soluong = getRaw("SELECT COUNT(*) AS soluong FROM room WHERE id = " . $room['id'])[0]['soluong']; // Hoặc sử dụng cách khác nếu có thông tin
+
     $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
     foreach ($areaIds as $area) {
-        $roomsByArea[$area['area_id']][] = $room;
+        // Thêm thông tin số người vào mỗi phòng
+        $roomsByArea[$area['area_id']][] = [
+            'id' => $room['id'],
+            'tenphong' => $room['tenphong'], // Giả sử bạn có trường này trong $room
+            'soluong' => $soluong
+        ];
     }
 }
+
 // Xử lý thêm hợp đồng
 // Thêm hợp đồng
 if (isPost()) {
@@ -172,7 +181,6 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-
 
                 <div class="form-group">
                     <label for="">Người thuê 1 <span style="color: red">*</span></label>
@@ -313,7 +321,7 @@ layout('navbar', 'admin', $data);
             roomsByArea[areaId].forEach(room => {
                 const option = document.createElement('option');
                 option.value = room.id;
-                option.textContent = room.tenphong;
+                option.textContent = `${room.tenphong} (${room.soluong} người)`; // Hiển thị tên phòng và số người
                 roomSelect.appendChild(option);
             });
         }
