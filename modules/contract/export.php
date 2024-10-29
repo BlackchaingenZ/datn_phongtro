@@ -108,7 +108,7 @@ $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 $spreadsheet->getActiveSheet()
             ->setCellValue('A2', 'ID')
             ->setCellValue('B2', 'Tên phòng')
-            ->setCellValue('C2', 'Người đại diện')
+            ->setCellValue('C2', 'Người thuê phòng')
             ->setCellValue('D2', 'Tổng thành viên')
             ->setCellValue('E2', 'Giá thuê')
             ->setCellValue('F2', 'Giá cọc')

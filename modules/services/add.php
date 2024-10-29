@@ -46,7 +46,7 @@ if (isPost()) {
 
         $insertStatus = insert('services', $dataInsert); // Giả định bạn có hàm insert để thêm dữ liệu vào bảng cost
         if ($insertStatus) {
-            setFlashData('msg', 'Thêm thông tin bảng giá thành công');
+            setFlashData('msg', 'Thêm thông tin dịch vụ thành công');
             setFlashData('msg_type', 'suc');
             redirect('?module=services'); // Đường dẫn đến danh sách danh mục chi phí
         } else {

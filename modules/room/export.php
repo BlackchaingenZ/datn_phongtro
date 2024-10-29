@@ -1,10 +1,16 @@
 <?php
+$listAllroom = getRaw("
+    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue
+    FROM room
+    JOIN area_room ON room.id = area_room.room_id
+    JOIN area ON area_room.area_id = area.id
+    JOIN cost_room ON room.id = cost_room.room_id
+    JOIN cost ON cost_room.cost_id = cost_id
+");
 
+$dataRoom = json_encode($listAllroom);
 
-$listAllstudent = getRaw("SELECT * FROM room");
-$dataStudent = json_encode($listAllstudent);
-
-$studentFinal = json_decode($dataStudent, true);
+$roomFinal = json_decode($dataRoom, true);
 
 
 require_once './vendor/autoload.php';
@@ -78,8 +84,8 @@ $spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setVertical(Alig
 
 // set column with
 $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(6);
-$spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(20);
-$spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(6);
+$spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(20);
 $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
@@ -87,22 +93,24 @@ $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 
 //header Text
 $spreadsheet->getActiveSheet()
    ->setCellValue('A2', 'ID')
-   ->setCellValue('B2', 'Tên phòng')
-   ->setCellValue('C2', 'Diện tích')
-   ->setCellValue('D2', 'Giá thuê')
-   ->setCellValue('E2', 'Giá tiền cọc')
-   ->setCellValue('F2', 'Số lượng')
-   ->setCellValue('G2', 'Ngày lập hóa đơn')
-   ->setCellValue('H2', 'Chu kỳ')
-   ->setCellValue('I2', 'Ngày vào ở')
-   ->setCellValue('J2', 'Ngày hết hạn');
+   ->setCellValue('B2', 'Khu vực')
+   ->setCellValue('C2', 'Tên phòng')
+   ->setCellValue('D2', 'Diện tích')
+   ->setCellValue('E2', 'Giá thuê')
+   ->setCellValue('F2', 'Giá tiền cọc')
+   ->setCellValue('G2', 'Số lượng')
+   ->setCellValue('H2', 'Ngày lập hóa đơn')
+   ->setCellValue('I2', 'Chu kỳ')
+   ->setCellValue('J2', 'Ngày vào ở')
+   ->setCellValue('K2', 'Ngày hết hạn');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:J2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:K2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -120,23 +128,24 @@ $spreadsheet->getActiveSheet()
 $date = time();
 
 $row = 3;
-foreach ($studentFinal as $student) {
-   $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $student['id']);
-   $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $student['tenphong']);
-   $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $student['dientich']);
-   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $student['giathue']);
-   $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $student['tiencoc']);
-   $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $student['soluong']);
-   $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $student['ngaylaphd']);
-   $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $student['chuky']);
-   $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $student['ngayvao']);
-   $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $student['ngayra']);
+foreach ($roomFinal as $room) {
+   $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $room['id']);
+   $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $room['tenkhuvuc']);
+   $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $room['tenphong']);
+   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']);
+   $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $room['giathue']);
+   $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $room['tiencoc']);
+   $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $room['soluong']);
+   $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $room['ngaylaphd']);
+   $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['chuky']);
+   $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['ngayvao']);
+   $spreadsheet->getActiveSheet()->setCellValue('K' . $row, $room['ngayra']);
 
    // set row style
    if ($row % 2 == 0) {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($evenRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':K' . $row)->applyFromArray($evenRow);
    } else {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($oddRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':K' . $row)->applyFromArray($oddRow);
    }
 
    $row++;
@@ -145,7 +154,7 @@ foreach ($studentFinal as $student) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row - 1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":J" . $lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":K" . $lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

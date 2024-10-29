@@ -139,9 +139,9 @@ foreach($tenantFinal as $item) {
 
                // set row style
              if($row % 2 == 0) {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($evenRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($evenRow);
              }else {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($oddRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($oddRow);
              }
 
              $row++;
@@ -150,7 +150,7 @@ foreach($tenantFinal as $item) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row-1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":J".$lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":K".$lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
