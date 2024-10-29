@@ -2,25 +2,36 @@
 
 $body = getBody();
 
-if(!empty($body['id'])) {
+if (!empty($body['id'])) {
     $contractId = $body['id'];
 
     // Kiểm tra Id có tồn tại trong hệ thống hay không
     $roomDetail = getRows("SELECT id FROM contract WHERE id=$contractId");
 
-    if($roomDetail > 0) {
-        // Thực hiện xóa
-       
-            $deleteRoom = delete('contract', "id=$contractId");
-            if($deleteRoom) {
-                setFlashData('msg', 'Xóa thông tin hợp đồng thành công');
+    // Xóa dịch vụ liên kết với hợp đồng
+    $deleteServices = delete('contract_services', "contract_id = $contractId");
+
+    if ($deleteServices) {
+        // Xóa hợp đồng
+        $deleteContracts = delete('contract', "id = $contractId");
+
+        if ($deleteContracts) {
+            // Xóa phòng liên kết với hợp đồng
+            $deleteRooms = delete('room', "id IN(SELECT room_id FROM contract WHERE id = $contractId)");
+
+            if ($deleteRooms) {
+                setFlashData('msg', 'Xóa hợp đồng thành công!');
                 setFlashData('msg_type', 'suc');
-            }else {
-                setFlashData('msg', 'Lỗi hệ thống! Vui lòng thử lại sau');
+            } else {
+                setFlashData('msg', 'Không thể xóa phòng liên kết với hợp đồng!');
                 setFlashData('msg_type', 'err');
             }
-    }else {
-        setFlashData('msg', 'Hợp đồng không tồn tại trên hệ thống');
+        } else {
+            setFlashData('msg', 'Không thể xóa hợp đồng!');
+            setFlashData('msg_type', 'err');
+        }
+    } else {
+        setFlashData('msg', 'Không thể xóa dịch vụ liên kết với hợp đồng!');
         setFlashData('msg_type', 'err');
     }
 }

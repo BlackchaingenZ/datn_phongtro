@@ -166,7 +166,7 @@ layout('navbar', 'admin', $data);
                         <th>
                             <input type="checkbox" id="check-all"  onclick="toggle(this)">
                         </th>
-                        <th></th>
+                        <th>STT</th>
                         <th>Tên khách hàng</th>
                         <th>Số điện thoại</th>
                         <th>Ngày sinh</th>
@@ -195,11 +195,7 @@ layout('navbar', 'admin', $data);
                                 <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">                    
                         </td>
                                 
-                        <td>
-                            <div class="tenant_avt">
-                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/clients.svg" class="image__room-img" alt="">
-                            </div>
-                        </td>
+                        <td><?php echo $count; ?></td>
                         <td><b><?php echo $item['tenkhach']; ?></b></td>
                         <td>0<?php echo $item['sdt'] ?> </td>
                         <td><?php echo ($item['ngaysinh']) ?> </td>
@@ -220,7 +216,7 @@ layout('navbar', 'admin', $data);
                         <td ><a href="<?php echo getLinkAdmin('tenant','view-after',['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmatsau']))?$item['anhmatsau']:'<img src="'.$item['anhmatsau'].'"  width=70 height=50/>' ?></a></td>
                         <td>
                             <?php if(!empty($item['tenphong'])) { ?>
-                                <p class="btn btn-success btn-sm" style="color: #fff; font-size: 12px"><?php echo $item['tenphong'] ?></p>
+                                <p class="btn btn-secondary btn-sm" style="color: #fff; font-size: 12px"><?php echo $item['tenphong'] ?></p>
                             <?php } else {
                                 ?>
                                     <i>Không</i>

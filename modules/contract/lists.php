@@ -195,56 +195,42 @@ if (!empty($_SERVER['QUERY_STRING'])) {
     $queryString = '&' . $queryString;
 }
 
-// Xóa hết
-// if (isset($_POST['deleteMultip'])) {
-//     $numberCheckbox = $_POST['records'];
-//     $extract_id = implode(',', $numberCheckbox);
-//     $checkDelete = delete('contract', "id IN($extract_id)");
-//     if ($checkDelete) {
-//         setFlashData('msg', 'Xóa thông tin phòng trọ thành công');
-//         setFlashData('msg_type', 'suc');
-//     }
-//     redirect('?module=contract');
-// }
+
+
 if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
+    $numberCheckbox = $_POST['records'];
+
     if (empty($numberCheckbox)) {
         setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
         setFlashData('msg_type', 'err');
     } else {
-        // Chuyển mảng các ID thiết bị thành chuỗi để sử dụng trong câu truy vấn SQL
-        $extract_id = implode(',', array_map('intval', $numberCheckbox));
+        $extract_id = implode(',', $numberCheckbox);
 
-        try {
-            // Kiểm tra trước nếu có dịch vụ  nào đang được sử dụng trong bảng contact_services
-            $sqlCheck = "SELECT COUNT(*) AS count FROM contract_services WHERE contract_id IN ($extract_id)";
-            $count = getRow($sqlCheck)['count'];
+        // Xóa dịch vụ liên kết với hợp đồng
+        $deleteServices = delete('contract_services', "contract_id IN($extract_id)");
 
-            if ($count > 0) {
-                // Nếu dịch vụ đang được sử dụng trong hợp đồng, không thực hiện xóa
-                setFlashData('msg', 'Không thể xóa vì còn dữ liệu liên quan');
-                setFlashData('msg_type', 'err');
-                redirect('?module=contract');
-                exit(); // Dừng việc thực hiện thêm
-            } else {
-                // Thực hiện xóa các hợp đồng đã chọn từ cơ sở dữ liệu 
-                $checkDelete = delete('contract', "id IN($extract_id)");
+        if ($deleteServices) {
+            // Xóa hợp đồng
+            $deleteContracts = delete('contract', "id IN($extract_id)");
 
-                if ($checkDelete) {
-                    setFlashData('msg', 'Xóa hợp đồng thành công');
+            if ($deleteContracts) {
+                // Xóa phòng liên kết với hợp đồng
+                $deleteRooms = delete('room', "id IN(SELECT room_id FROM contract WHERE id IN($extract_id))");
+
+                if ($deleteRooms) {
+                    setFlashData('msg', 'Xóa hợp đồng thành công!');
                     setFlashData('msg_type', 'suc');
                 } else {
-                    setFlashData('msg', 'Có lỗi xảy ra khi xóa hợp đồng');
+                    setFlashData('msg', 'Không thể xóa hợp đồng!');
                     setFlashData('msg_type', 'err');
                 }
             }
-        } catch (PDOException $e) {
-            setFlashData('msg', 'Đã xảy ra lỗi: ' . $e->getMessage());
-            setFlashData('msg_type', 'err');
         }
     }
-    redirect('?module=contract'); // Chuyển hướng về trang danh sách
+    redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
 }
+
+
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');

@@ -40,16 +40,15 @@ foreach ($allRoom as $room) {
 $body = getBody();
 $id = $_GET['id'];
 
+$contractDetail = [];
 if (!empty($body['id'])) {
     $contractId = $body['id'];
-    $contractDetail  = firstRaw("SELECT * FROM contract WHERE id=$contractId");
-    if (!empty($contractDetail)) {
-        // Gán giá trị contractDetail vào setFalsh
-        setFlashData('contractDetail', $contractDetail);
-    } else {
+    $contractDetail = firstRaw("SELECT * FROM contract WHERE id = $contractId");
+    if (empty($contractDetail)) {
         redirect('?module=contract');
     }
 }
+
 // Gán giá trị từ contractDetail vào các biến nếu có
 if (!empty($contractDetail)) {
     $tinhtrangcoc = $contractDetail['tinhtrangcoc'];
@@ -82,6 +81,7 @@ if (isPost()) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
     }
 
+    // Kiểm tra tình trạng cọc
     if (empty(trim($body['tinhtrangcoc']))) {
         $errors['tinhtrangcoc']['required'] = '** Bạn chưa chọn tình trạng cọc!';
     }
@@ -112,7 +112,7 @@ if (isPost()) {
             'soluongthanhvien' => intval($body['soluongthanhvien']),
         ];
 
-        $condition = "id=$id";
+        $condition = "id = $id";
         $updateStatus = update('contract', $dataUpdate, $condition);
         if ($updateStatus) {
             setFlashData('msg', 'Cập nhật thông tin hợp đồng thành công');
@@ -143,6 +143,7 @@ if (!empty($contractDetail)) {
     $soluongthanhvien = !empty($contractDetail['soluongthanhvien']) ? $contractDetail['soluongthanhvien'] : '';
     // Lấy các giá trị khác nếu cần thiết...
 }
+
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -193,26 +194,30 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
-
                 <div class="form-group">
-                    <label for="">Người thuê 1 <span style="color: red">*</span></label>
-                    <select name="tenant_id" id="" class="form-select">
-                        <option value="">Chọn người thuê</option>
-                        <?php
-                        if (!empty($allTenant)) {
-                            foreach ($allTenant as $item) {
-                        ?>
-                                <option value="<?php echo $item['id']; ?>"
-                                    <?php echo (!empty($tenantId) && $tenantId == $item['id']) ? 'selected' : ''; ?>>
-                                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenkhach']; ?>
-                                </option>
-                        <?php
-                            }
-                        }
-                        ?>
-                    </select>
-                    <?php echo form_error('tenant_id', $errors, '<span class="error">', '</span>'); ?>
-                </div>
+    <label for="">Người thuê 1 <span style="color: red">*</span></label>
+    <select name="tenant_id" id="" class="form-select">
+        <option value="">Chọn người thuê</option>
+        <?php
+        // Lưu giá trị tenant_id cũ vào biến tạm
+        $selectedTenantId = isset($contractDetail['tenant_id']) ? $contractDetail['tenant_id'] : null;
+
+        if (!empty($allTenant)) {
+            foreach ($allTenant as $item) {
+                ?>
+                <option value="<?php echo $item['id']; ?>" <?php echo ($selectedTenantId == $item['id']) ? 'selected' : ''; ?>>
+                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenphong']; ?>
+                </option>
+                <?php
+            }
+        }
+        ?>
+    </select>
+    <?php echo form_error('tenant_id', $errors, '<span class="error">', '</span>'); ?>
+</div>
+
+
+
 
                 <div class="form-group">
                     <label for="">Người thuê 2</label>
@@ -233,7 +238,7 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('tenant_id_2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-
+                
                 <div class="form-group">
                     <label for="">Số lượng thành viên<span style="color: red">*</span></label>
                     <select name="soluongthanhvien" class="form-select">
@@ -243,6 +248,8 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('soluongthanhvien', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
+
 
                 <div class="form-group">
                     <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
@@ -276,6 +283,7 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('tinhtrangcoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
 
                 <?php
                 // Khởi tạo biến $tendichvuId nếu chưa được xác định

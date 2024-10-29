@@ -110,15 +110,46 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 // Xóa hết
 if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records'];
+
     if (empty($numberCheckbox)) {
         setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
         setFlashData('msg_type', 'err');
     } else {
         $extract_id = implode(',', $numberCheckbox);
-        $checkDelete = delete('room', "id IN($extract_id)");
-        if ($checkDelete) {
-            setFlashData('msg', 'Xóa thông tin phòng trọ thành công');
-            setFlashData('msg_type', 'suc');
+
+        // Kiểm tra xem phòng có hợp đồng đang liên kết không
+        $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id IN($extract_id)");
+
+        if ($checkContractInRoom) {
+            // Nếu có hợp đồng liên kết, thông báo không thể xóa
+            setFlashData('msg', 'Phòng đang có hợp đồng, không thể xóa!');
+            setFlashData('msg_type', 'err');
+        } else {
+            // Xóa các thiết bị liên kết với phòng trọ
+            $deleteEquipment = delete('equipment_room', "room_id IN($extract_id)");
+
+            if ($deleteEquipment) {
+                // Xóa các khu vực liên kết với phòng trọ
+                $deleteArea = delete('area_room', "room_id IN($extract_id)");
+
+                if ($deleteArea) {
+                    // Xóa các giá thuê liên kết với phòng trọ
+                    $deleteCost = delete('cost_room', "room_id IN($extract_id)");
+
+                    if ($deleteCost) {
+                        // Xóa phòng trọ
+                        $checkDeleteRoom = delete('room', "id IN($extract_id)");
+
+                        if ($checkDeleteRoom) {
+                            setFlashData('msg', 'Xóa thông tin phòng trọ thành công!');
+                            setFlashData('msg_type', 'suc');
+                        } else {
+                            setFlashData('msg', 'Không thể xóa phòng trọ!');
+                            setFlashData('msg_type', 'err');
+                        }
+                    }
+                }
+            }
         }
     }
     redirect('?module=room');
@@ -172,7 +203,7 @@ layout('navbar', 'admin', $data);
             </div>
             <a href="<?php echo getLinkAdmin('room', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
             <a href="<?php echo getLinkAdmin('room', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
+            <button type="submit" name="deleteMultip" value="delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
             <a href="<?php echo getLinkAdmin('room', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a>
             <a href="<?php echo getLinkAdmin('room', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 

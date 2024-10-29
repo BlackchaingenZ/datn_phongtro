@@ -5,41 +5,48 @@ $body = getBody();
 if (!empty($body['id'])) {
     $roomId = $body['id'];
 
-    // Kiểm tra Id có tồn tại trong hệ thống hay không
-    $roomDetail = getRows("SELECT id FROM room WHERE id=$roomId");
-    $countTenant = getRows("SELECT id FROM tenant WHERE tenant.room_id = $roomId");
-    $countCost = getRows("SELECT id FROM cost_room WHERE room_id = $roomId");
-    $countEquipment = getRows("SELECT id FROM equipment_room WHERE room_id = $roomId");
+    // Kiểm tra xem phòng có hợp đồng đang liên kết không
+    $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id = $roomId");
 
-    
-    if ($countTenant > 0) {
-        setFlashData('msg', 'Phòng này còn khách đang thuê nên không thể xoá');
+    if ($checkContractInRoom) {
+        // Nếu có hợp đồng liên kết, thông báo không thể xóa
+        setFlashData('msg', 'Phòng đang có hợp đồng, không thể xóa!');
         setFlashData('msg_type', 'err');
-        redirect('?module=room');
-    }elseif ($countCost > 0) {
-        setFlashData('msg', 'Không thể xóa phòng này vì còn dữ liệu liên quan');
-        setFlashData('msg_type', 'err');
-        redirect('?module=room');
-    }elseif ($countEquipment > 0) {
-        setFlashData('msg', 'Không thể xóa phòng này vì còn dữ liệu liên quan');
-        setFlashData('msg_type', 'err');
-        redirect('?module=room');
-    }
+    } else {
+        // Xóa các thiết bị liên kết với phòng trọ
+        $deleteEquipment = delete('equipment_room', "room_id = $roomId");
 
-    if ($roomDetail > 0) {
-        // Thực hiện xóa
+        if ($deleteEquipment) {
+            // Xóa các khu vực liên kết với phòng trọ
+            $deleteArea = delete('area_room', "room_id = $roomId");
 
-        $deleteRoom = delete('room', "id=$roomId");
-        if ($deleteRoom) {
-            setFlashData('msg', 'Xóa thông tin phòng trọ thành công');
-            setFlashData('msg_type', 'suc');
+            if ($deleteArea) {
+                // Xóa các giá thuê liên kết với phòng trọ
+                $deleteCost = delete('cost_room', "room_id = $roomId");
+
+                if ($deleteCost) {
+                    // Xóa phòng trọ
+                    $checkDeleteRoom = delete('room', "id = $roomId");
+
+                    if ($checkDeleteRoom) {
+                        setFlashData('msg', 'Xóa thông tin phòng trọ thành công!');
+                        setFlashData('msg_type', 'suc');
+                    } else {
+                        setFlashData('msg', 'Không thể xóa phòng trọ!');
+                        setFlashData('msg_type', 'err');
+                    }
+                } else {
+                    setFlashData('msg', 'Không thể xóa các giá thuê liên kết!');
+                    setFlashData('msg_type', 'err');
+                }
+            } else {
+                setFlashData('msg', 'Không thể xóa các khu vực liên kết!');
+                setFlashData('msg_type', 'err');
+            }
         } else {
-            setFlashData('msg', 'Lỗi hệ thống! Vui lòng thử lại sau');
+            setFlashData('msg', 'Không thể xóa các thiết bị liên kết!');
             setFlashData('msg_type', 'err');
         }
-    } else {
-        setFlashData('msg', 'Phòng không tồn tại trên hệ thống');
-        setFlashData('msg_type', 'err');
     }
 }
 
