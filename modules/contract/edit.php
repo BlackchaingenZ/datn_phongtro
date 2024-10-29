@@ -78,7 +78,7 @@ if (isPost()) {
 
     // Kiểm tra dịch vụ
     // Xử lý dịch vụ
-    $serviceIds = !empty($body['tendichvu']) ? array_map('trim', $body['tendichvu']) : [];
+
 
     if (empty($errors)) {
         delete('contract_services', "contract_id = $id");
@@ -186,6 +186,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Phòng <span style="color: red">*</span></label>
                     <select name="room_id" id="" class="form-select">
+                        <option value="">Chọn phòng</option>
                         <?php
                         if (!empty($allRoom)) {
                             foreach ($allRoom as $item) {
@@ -207,6 +208,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Người thuê 1 <span style="color: red">*</span></label>
                     <select name="tenant_id" id="" class="form-select">
+                        <option value="">Chọn người thuê</option>
                         <?php
                         if (!empty($allTenant)) {
                             foreach ($allTenant as $item) {
@@ -247,6 +249,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Số lượng thành viên<span style="color: red">*</span></label>
                     <select name="soluongthanhvien" class="form-select">
+                        <option value="">Chọn số lượng</option>
                         <option value="1" <?php echo (isset($soluongthanhvien) && $soluongthanhvien == 1) ? 'selected' : ''; ?>>1</option>
                         <option value="2" <?php echo (isset($soluongthanhvien) && $soluongthanhvien == 2) ? 'selected' : ''; ?>>2</option>
                     </select>
@@ -279,16 +282,13 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Tình trạng cọc<span style="color: red">*</span></label>
                     <select name="tinhtrangcoc" class="form-select">
+                        <option value="">Chọn trạng thái</option>
                         <option value="0" <?php echo (isset($tinhtrangcoc) && $tinhtrangcoc == 0) ? 'selected' : ''; ?>>Chưa thu tiền</option>
                         <option value="1" <?php echo (isset($tinhtrangcoc) && $tinhtrangcoc == 1) ? 'selected' : ''; ?>>Đã thu tiền</option>
                     </select>
                     <?php echo form_error('tinhtrangcoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
-                <?php
-                // Khởi tạo biến $tendichvuId nếu chưa được xác định
-                $tendichvuId = isset($tendichvuId) ? $tendichvuId : [];
-                ?>
 
                 <div class="form-group">
                     <label for="">Dịch vụ</label><br>
@@ -321,7 +321,7 @@ layout('navbar', 'admin', $data);
                 <div class="btn-row">
                     <a style="margin-right: 20px" href="<?php echo getLinkAdmin('contract') ?>"
                         class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
-                    <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Cập nhật</button>
+                    <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm hợp đồng</button>
                 </div>
             </div>
     </div>
