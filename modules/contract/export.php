@@ -5,15 +5,20 @@ SELECT
     tenant.tenkhach AS tenkhach, 
     tenant2.tenkhach AS tenkhach_2, 
     tenphong, 
+    contract.ghichu,
     cost.giathue AS giathue, -- Lấy giathue từ bảng cost
+    GROUP_CONCAT(DISTINCT services.tendichvu SEPARATOR ', ') AS tendichvu,
     tiencoc, 
     chuky 
 FROM contract 
 INNER JOIN tenant ON tenant.id = contract.tenant_id 
-INNER JOIN tenant AS tenant2 ON tenant2.id = contract.tenant_id_2
+LEFT JOIN tenant AS tenant2 ON tenant2.id = contract.tenant_id_2
 INNER JOIN room ON room.id = contract.room_id
 INNER JOIN cost_room ON cost_room.room_id = room.id -- Kết nối cost_room với room
 INNER JOIN cost ON cost.id = cost_room.cost_id -- Kết nối cost với cost_room
+LEFT JOIN contract_services ON contract_services.contract_id = contract.id -- Kết nối contract_services với contract
+LEFT JOIN services ON services.id = contract_services.services_id -- Kết nối services với contract_services
+GROUP BY contract.id
 ");
 
 
@@ -103,7 +108,8 @@ $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-
+$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(30);
+$spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(40);
 //header Text
 $spreadsheet->getActiveSheet()
             ->setCellValue('A2', 'ID')
@@ -115,10 +121,11 @@ $spreadsheet->getActiveSheet()
             ->setCellValue('G2', 'Chu kỳ thu')
             ->setCellValue('H2', 'Ngày lập')
             ->setCellValue('I2', 'Ngày hết hạn')
-            ->setCellValue('J2', 'Tình trạng');
-
+            ->setCellValue('J2', 'Tình trạng')
+            ->setCellValue('K2', 'Ghi chú')
+            ->setCellValue('L2', 'Dịch vụ');
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:J2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:K2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -148,12 +155,13 @@ foreach($tenantFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $item['ngaylaphopdong']);
       $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['ngayra']);
       $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['trangthaihopdong']);    
-
+      $spreadsheet->getActiveSheet()->setCellValue('K'.$row, $item['ghichu']);   
+      $spreadsheet->getActiveSheet()->setCellValue('L'.$row, $item['tendichvu']);   
                // set row style
              if($row % 2 == 0) {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($evenRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':L'.$row)->applyFromArray($evenRow);
              }else {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($oddRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':L'.$row)->applyFromArray($oddRow);
              }
 
              $row++;
@@ -162,7 +170,7 @@ foreach($tenantFinal as $item) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row-1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":J".$lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":L".$lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

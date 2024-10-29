@@ -1,13 +1,17 @@
 <?php
 $listAllroom = getRaw("
-    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue
+    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue,            
+    GROUP_CONCAT(DISTINCT equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
     FROM room
     JOIN area_room ON room.id = area_room.room_id
     JOIN area ON area_room.area_id = area.id
     JOIN cost_room ON room.id = cost_room.room_id
     JOIN cost ON cost_room.cost_id = cost_id
+    JOIN equipment_room ON room.id = equipment_room.room_id
+    JOIN equipment ON equipment_room.equipment_id = equipment_id
+    GROUP BY room.id
 ");
-
+//group by giúp trả về tất cả phòng có trong room
 $dataRoom = json_encode($listAllroom);
 
 $roomFinal = json_decode($dataRoom, true);
@@ -94,6 +98,7 @@ $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(50);
 
 //header Text
 $spreadsheet->getActiveSheet()
@@ -107,10 +112,11 @@ $spreadsheet->getActiveSheet()
    ->setCellValue('H2', 'Ngày lập hóa đơn')
    ->setCellValue('I2', 'Chu kỳ')
    ->setCellValue('J2', 'Ngày vào ở')
-   ->setCellValue('K2', 'Ngày hết hạn');
+   ->setCellValue('K2', 'Ngày hết hạn')
+   ->setCellValue('L2', 'Cơ sở vật chất');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:K2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:L2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -140,12 +146,12 @@ foreach ($roomFinal as $room) {
    $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['chuky']);
    $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['ngayvao']);
    $spreadsheet->getActiveSheet()->setCellValue('K' . $row, $room['ngayra']);
-
+   $spreadsheet->getActiveSheet()->setCellValue('L' . $row, $room['tenthietbi']);
    // set row style
    if ($row % 2 == 0) {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':K' . $row)->applyFromArray($evenRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':L' . $row)->applyFromArray($evenRow);
    } else {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':K' . $row)->applyFromArray($oddRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':L' . $row)->applyFromArray($oddRow);
    }
 
    $row++;
@@ -154,7 +160,7 @@ foreach ($roomFinal as $room) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row - 1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":K" . $lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":L" . $lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

@@ -157,7 +157,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Chọn khu vực <span style="color: red">*</span></label>
                     <select name="area_id" id="area-select" class="form-select">
-                        <option value="">Chọn khu vực</option>
+                        <option value="" disabled selected>Chọn khu vực</option>
                         <?php
                         if (!empty($allArea)) {
                             foreach ($allArea as $item) {
@@ -176,7 +176,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Chọn phòng lập hợp đồng <span style="color: red">*</span></label>
                     <select name="room_id" id="room-select" class="form-select">
-                        <option value="">Chọn phòng</option>
+                        <option value="" disabled selected>Chọn phòng</option>
                         <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
@@ -185,7 +185,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Người thuê 1 <span style="color: red">*</span></label>
                     <select name="tenant_id" id="" class="form-select">
-                        <option value="">Chọn người thuê</option>
+                        <option value="" disabled selected>Chọn người thuê</option>
                         <?php
                         if (!empty($allTenant)) {
                             foreach ($allTenant as $item) {
@@ -225,7 +225,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Số lượng thành viên<span style="color: red">*</label>
                     <select name="soluongthanhvien" class="form-select">
-                        <option value="">Chọn số lượng</option>
+                        <option value="" disabled selected>Chọn số lượng</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
                     </select>
@@ -258,7 +258,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Tình trạng cọc<span style="color: red">*</label>
                     <select name="tinhtrangcoc" class="form-select">
-                        <option value="">Chọn trạng thái</option>
+                        <option value="" disabled selected>Chọn trạng thái</option>
                         <option value="0">Chưa thu tiền</option>
                         <option value="1">Đã thu tiền</option>
                     </select>
@@ -268,16 +268,21 @@ layout('navbar', 'admin', $data);
                 // Khởi tạo biến $tendichvuId nếu chưa được xác định
                 $tendichvuId = isset($tendichvuId) ? $tendichvuId : [];
                 ?>
-
                 <div class="form-group">
                     <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
                     <div class="checkbox-container">
+                        <!-- Checkbox "Chọn tất cả" -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="select-all">
+                            <label for="select-all">Chọn tất cả</label>
+                        </div>
+
                         <?php
                         if (!empty($allServices)) {
                             foreach ($allServices as $item) {
                         ?>
                                 <div class="checkbox-item">
-                                    <input type="checkbox" name="tendichvu[]" value="<?php echo $item['id']; ?>"
+                                    <input type="checkbox" class="service-checkbox" name="tendichvu[]" value="<?php echo $item['id']; ?>"
                                         <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'checked' : ''; ?>>
                                     <?php echo $item['tendichvu']; ?>
                                 </div>
@@ -288,6 +293,16 @@ layout('navbar', 'admin', $data);
                     </div>
                     <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                
+                <script>
+                    document.getElementById('select-all').addEventListener('change', function() {
+                        const checkboxes = document.querySelectorAll('.service-checkbox');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                    });
+                </script>
+
 
                 <div class="form-group">
                     <label for="">Ghi chú<span style="color: red">*</label>
@@ -315,7 +330,7 @@ layout('navbar', 'admin', $data);
 
     areaSelect.addEventListener('change', function() {
         const areaId = this.value;
-        roomSelect.innerHTML = '<option value="">Chọn phòng</option>'; // Reset danh sách phòng
+        roomSelect.innerHTML = '<option value=""disabled selected>Chọn phòng</option>'; // Reset danh sách phòng
 
         if (areaId && roomsByArea[areaId]) {
             roomsByArea[areaId].forEach(room => {

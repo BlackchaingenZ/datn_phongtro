@@ -96,7 +96,7 @@ if (isPost()) {
             setFlashData('msg_type', 'err');
             setFlashData('errors', $errors);
             setFlashData('old', $body);
-            redirect('?module=equipment&action=listdistribute');
+            redirect('?module=equipment&action=distribute');
         }
     }
 
@@ -167,7 +167,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                 <div class="form-group">
                     <label for="">Chọn thiết bị <span style="color: red">*</span></label>
                     <select name="equipment_id" class="form-control" >
-                        <option value="">Chọn thiết bị</option>
+                        <option value=""disabled selected>Chọn thiết bị</option>
                         <?php
                         if (!empty($listAllEquipment)) {
                             foreach ($listAllEquipment as $item) {
@@ -184,7 +184,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                 <div class="form-group">
                     <label for="">Chọn phòng trọ <span style="color: red">*</span></label>
                     <select name="room_id" class="form-control">
-                        <option value="">Chọn phòng</option>
+                        <option value=""disabled selected>Chọn phòng</option>
                         <?php
                         if (!empty($listAllRoom)) {
                             foreach ($listAllRoom as $item) {
