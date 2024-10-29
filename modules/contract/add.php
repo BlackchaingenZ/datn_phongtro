@@ -263,21 +263,21 @@ layout('navbar', 'admin', $data);
 
                 <div class="form-group">
                     <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
-                    <select name="tendichvu[]" id="" class="form-select" multiple style="height:150px">
-                        <!-- <option value="">Chọn dịch vụ</option> -->
+                    <div class="checkbox-container">
                         <?php
                         if (!empty($allServices)) {
                             foreach ($allServices as $item) {
                         ?>
-                                <option value="<?php echo $item['id']; ?>"
-                                    <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'selected' : ''; ?>>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="tendichvu[]" value="<?php echo $item['id']; ?>"
+                                        <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'checked' : ''; ?>>
                                     <?php echo $item['tendichvu']; ?>
-                                </option>
+                                </div>
                         <?php
                             }
                         }
                         ?>
-                    </select>
+                    </div>
                     <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 

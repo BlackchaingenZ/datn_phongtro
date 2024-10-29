@@ -13,29 +13,13 @@ layout('breadcrumb', 'admin', $data);
 
 $allRoom = getRaw("SELECT id, tenphong, soluong FROM room ORDER BY tenphong");
 $allTenant = getRaw("
-    SELECT tenant.id, tenant.tenkhach, room.tenphong 
-    FROM tenant 
+    SELECT tenant.id, tenant.tenkhach, room.tenphong, contract.id AS contract_id FROM tenant 
     INNER JOIN room ON room.id = tenant.room_id 
     LEFT JOIN contract ON contract.tenant_id = tenant.id OR contract.tenant_id_2 = tenant.id 
-    WHERE contract.tenant_id IS NULL AND contract.tenant_id_2 IS NULL
     ORDER BY room.tenphong
 ");
-
-
-
 $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
-$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $allRoomId = getRaw("SELECT room_id FROM contract");
-$roomsByArea = [];
-foreach ($allRoom as $room) {
-    $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
-    foreach ($areaIds as $area) {
-        $roomsByArea[$area['area_id']][] = $room;
-    }
-}
-
-
-
 // Xử lý hiện dữ liệu cũ của người dùng
 $body = getBody();
 $id = $_GET['id'];
@@ -49,6 +33,8 @@ if (!empty($body['id'])) {
     } else {
         redirect('?module=contract');
     }
+    $contractServices = getRaw("SELECT services_id FROM contract_services WHERE contract_id = $contractId");
+    $selectedServices = array_column($contractServices, 'services_id');
 }
 // Gán giá trị từ contractDetail vào các biến nếu có
 if (!empty($contractDetail)) {
@@ -67,17 +53,15 @@ if (isPost()) {
     $body = getBody();
     $errors = [];  // Mảng lưu trữ các lỗi
 
-    // Validate họ tên: Bắt buộc phải nhập, >=5 ký tự
+    // Validate các trường bắt buộc như trước
     if (empty(trim($body['room_id']))) {
         $errors['room_id']['required'] = '** Bạn chưa chọn phòng lập hợp đồng!';
     }
 
-    // Kiểm tra người thuê
     if (empty(trim($body['tenant_id'])) && empty(trim($body['tenant_id_2']))) {
         $errors['tenant_id']['required'] = '** Hãy chọn ít nhất 1 người thuê!';
     }
 
-    // Kiểm tra ngày lập hợp đồng
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
     }
@@ -86,7 +70,6 @@ if (isPost()) {
         $errors['tinhtrangcoc']['required'] = '** Bạn chưa chọn tình trạng cọc!';
     }
 
-    // Kiểm tra số lượng thành viên
     if (empty(trim($body['soluongthanhvien']))) {
         $errors['soluongthanhvien']['required'] = '** Bạn chưa nhập số lượng thành viên!';
     } elseif (!is_numeric($body['soluongthanhvien']) || intval($body['soluongthanhvien']) <= 0) {
@@ -94,33 +77,66 @@ if (isPost()) {
     }
 
     // Kiểm tra dịch vụ
-    $tendichvuId = !empty($_POST['tendichvu']) ? array_map('trim', $_POST['tendichvu']) : []; // Trimming các phần tử trong mảng
+    // Xử lý dịch vụ
+    $serviceIds = !empty($body['tendichvu']) ? array_map('trim', $body['tendichvu']) : [];
+
+    if (empty($errors)) {
+        delete('contract_services', "contract_id = $id");
+        foreach ($serviceIds as $serviceId) {
+            insert('contract_services', ['contract_id' => $id, 'services_id' => $serviceId]);
+        }
+    }
 
     // Kiểm tra mảng error
     if (empty($errors)) {
-        // Không có lỗi nào
-        $dataUpdate = [
-            'room_id' => $body['room_id'],
-            'tenant_id' => $body['tenant_id'],
-            'tenant_id_2' => empty(trim($body['tenant_id_2'])) ? null : $body['tenant_id_2'], // Sử dụng null nếu không có giá trị
-            'tinhtrangcoc' => $body['tinhtrangcoc'],
-            'ngaylaphopdong' => $body['ngaylaphopdong'],
-            'ngayvao' => $body['ngayvao'],
-            'ngayra' => $body['ngayra'],
-            'create_at' => date('Y-m-d H:i:s'),
-            'ghichu' => $body['ghichu'],
-            'soluongthanhvien' => intval($body['soluongthanhvien']),
-        ];
+        // Không có lỗi nào, chuẩn bị dữ liệu để cập nhật
+        $dataUpdate = [];
 
-        $condition = "id=$id";
-        $updateStatus = update('contract', $dataUpdate, $condition);
-        if ($updateStatus) {
-            setFlashData('msg', 'Cập nhật thông tin hợp đồng thành công');
-            setFlashData('msg_type', 'suc');
-            redirect('?module=contract');
+        // Chỉ cập nhật các trường có thay đổi, nếu không thì giữ nguyên
+        if ($body['room_id'] !== $contractDetail['room_id']) {
+            $dataUpdate['room_id'] = $body['room_id'];
+        }
+        if ($body['tenant_id'] !== $contractDetail['tenant_id']) {
+            $dataUpdate['tenant_id'] = $body['tenant_id'];
+        }
+        if (empty(trim($body['tenant_id_2'])) !== empty(trim($contractDetail['tenant_id_2']))) {
+            $dataUpdate['tenant_id_2'] = empty(trim($body['tenant_id_2'])) ? null : $body['tenant_id_2'];
+        }
+        if ($body['tinhtrangcoc'] !== $contractDetail['tinhtrangcoc']) {
+            $dataUpdate['tinhtrangcoc'] = $body['tinhtrangcoc'];
+        }
+        if ($body['ngaylaphopdong'] !== $contractDetail['ngaylaphopdong']) {
+            $dataUpdate['ngaylaphopdong'] = $body['ngaylaphopdong'];
+        }
+        if ($body['ngayvao'] !== $contractDetail['ngayvao']) {
+            $dataUpdate['ngayvao'] = $body['ngayvao'];
+        }
+        if ($body['ngayra'] !== $contractDetail['ngayra']) {
+            $dataUpdate['ngayra'] = $body['ngayra'];
+        }
+        if ($body['ghichu'] !== $contractDetail['ghichu']) {
+            $dataUpdate['ghichu'] = $body['ghichu'];
+        }
+        if ($body['soluongthanhvien'] !== $contractDetail['soluongthanhvien']) {
+            $dataUpdate['soluongthanhvien'] = intval($body['soluongthanhvien']);
+        }
+
+        // Nếu không có thay đổi nào, không cần gọi update
+        if (!empty($dataUpdate)) {
+            $condition = "id=$id";
+            $updateStatus = update('contract', $dataUpdate, $condition);
+            if ($updateStatus) {
+                setFlashData('msg', 'Cập nhật thông tin hợp đồng thành công');
+                setFlashData('msg_type', 'suc');
+                redirect('?module=contract');
+            } else {
+                setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+                setFlashData('msg_type', 'err');
+            }
         } else {
-            setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
-            setFlashData('msg_type', 'err');
+            // Nếu không có thay đổi nào, thông báo không có thay đổi
+            setFlashData('msg', 'Không có thay đổi nào để cập nhật.');
+            setFlashData('msg_type', 'info');
         }
     } else {
         // Có lỗi xảy ra
@@ -132,6 +148,7 @@ if (isPost()) {
 
     redirect('?module=contract&action=edit&id=' . $contractId);
 }
+
 
 // Nếu có dữ liệu cũ, gán cho các biến
 if (!empty($contractDetail)) {
@@ -165,33 +182,27 @@ layout('navbar', 'admin', $data);
     <div class="box-content">
         <form action="" method="post" class="row">
             <div class="col-5">
+
                 <div class="form-group">
-                    <label for="">Chọn khu vực <span style="color: red">*</span></label>
-                    <select name="area_id" id="area-select" class="form-select">
-                        <option value="">Chọn khu vực</option>
+                    <label for="">Phòng <span style="color: red">*</span></label>
+                    <select name="room_id" id="" class="form-select">
+                        <option value="">Chọn phòng</option>
                         <?php
-                        if (!empty($allArea)) {
-                            foreach ($allArea as $item) {
+                        if (!empty($allRoom)) {
+                            foreach ($allRoom as $item) {
                         ?>
-                                <option value="<?php echo $item['id'] ?>"
-                                    <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>>
-                                    <?php echo $item['tenkhuvuc'] ?></option>
+                                <option value="<?php echo $item['id']; ?>"
+                                    <?php echo (isset($room_id) && $room_id == $item['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $item['tenphong']; ?> (<?php echo $item['soluong']; ?> người)
+                                </option>
                         <?php
                             }
                         }
                         ?>
                     </select>
-                    <?php echo form_error('area_id', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Chọn phòng lập hợp đồng <span style="color: red">*</span></label>
-                    <select name="room_id" id="room-select" class="form-select">
-                        <option value="">Chọn phòng</option>
-                        <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
-                    </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
 
 
                 <div class="form-group">
@@ -203,8 +214,8 @@ layout('navbar', 'admin', $data);
                             foreach ($allTenant as $item) {
                         ?>
                                 <option value="<?php echo $item['id']; ?>"
-                                    <?php echo (!empty($tenantId) && $tenantId == $item['id']) ? 'selected' : ''; ?>>
-                                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenkhach']; ?>
+                                    <?php echo (!empty($tenant_id) && $tenant_id == $item['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $item['tenkhach']; ?> - Phòng: <?php echo $item['tenphong']; ?>
                                 </option>
                         <?php
                             }
@@ -214,17 +225,18 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('tenant_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
+
                 <div class="form-group">
-                    <label for="">Người thuê 2</label>
+                    <label for="">Người thuê 2 <span style="color: red">*</span></label>
                     <select name="tenant_id_2" id="" class="form-select">
-                        <option value="">Trống</option> <!-- Tùy chọn không có người thuê -->
+                        <option value="">Trống</option>
                         <?php
                         if (!empty($allTenant)) {
                             foreach ($allTenant as $item) {
                         ?>
                                 <option value="<?php echo $item['id']; ?>"
-                                    <?php echo (!empty($tenantId2) && $tenantId2 == $item['id']) ? 'selected' : ''; ?>>
-                                    <?php echo $item['tenkhach']; ?> - <?php echo $item['tenkhach']; ?>
+                                    <?php echo (!empty($tenant_id_2) && $tenant_id_2 == $item['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $item['tenkhach']; ?> - Phòng: <?php echo $item['tenphong']; ?>
                                 </option>
                         <?php
                             }
@@ -283,24 +295,24 @@ layout('navbar', 'admin', $data);
                 ?>
 
                 <div class="form-group">
-                    <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
-                    <select name="tendichvu[]" id="" class="form-select" multiple style="height:150px">
-                        <!-- <option value="">Trống</option> -->
+                    <label for="">Dịch vụ</label><br>
+                    <div class="checkbox-container">
                         <?php
                         if (!empty($allServices)) {
-                            foreach ($allServices as $item) {
+                            foreach ($allServices as $service) {
                         ?>
-                                <option value="<?php echo $item['id']; ?>"
-                                    <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'selected' : ''; ?>>
-                                    <?php echo $item['tendichvu']; ?>
-                                </option>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="tendichvu[]" value="<?php echo $service['id']; ?>"
+                                        <?php echo in_array($service['id'], $selectedServices) ? 'checked' : ''; ?>>
+                                    <?php echo $service['tendichvu']; ?><br>
+                                </div>
                         <?php
                             }
                         }
                         ?>
-                    </select>
-                    <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
+                    </div>
                 </div>
+
 
                 <div class="form-group">
                     <label for="">Ghi chú<span style="color: red">*</label>
@@ -320,27 +332,6 @@ layout('navbar', 'admin', $data);
     </form>
 </div>
 </div>
-
-<script>
-    const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
-    const areaSelect = document.getElementById('area-select');
-    const roomSelect = document.getElementById('room-select');
-
-    areaSelect.addEventListener('change', function() {
-        const areaId = this.value;
-        roomSelect.innerHTML = '<option value="">Chọn phòng</option>'; // Reset danh sách phòng
-
-        if (areaId && roomsByArea[areaId]) {
-            roomsByArea[areaId].forEach(room => {
-                const option = document.createElement('option');
-                option.value = room.id;
-                option.textContent = room.tenphong;
-                roomSelect.appendChild(option);
-            });
-        }
-    });
-</script>
-
 
 <?php
 layout('footer', 'admin');

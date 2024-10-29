@@ -1136,7 +1136,7 @@ th {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     /* Tăng bóng đổ khi hover */
 }
-
+/* của dịch vụ*/
 .scroll-container {
     width: 400px;
     /* Chiều rộng của khung chứa */
@@ -1148,4 +1148,12 @@ th {
     /* Đường viền cho khung chứa */
     padding: 20px;
     /* Khoảng cách giữa nội dung và đường viền */
+}
+
+.checkbox-container {
+    display: flex;           /* Sử dụng flexbox để sắp xếp hàng ngang */
+    flex-wrap: wrap;        /* Cho phép các mục tự động xuống dòng nếu không đủ chỗ */
+}
+.checkbox-item {
+    margin-right: 20px;     /* Khoảng cách giữa các checkbox */
 }
