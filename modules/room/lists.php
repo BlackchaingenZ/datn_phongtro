@@ -204,7 +204,7 @@ layout('navbar', 'admin', $data);
             <a href="<?php echo getLinkAdmin('room', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
             <a href="<?php echo getLinkAdmin('room', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <a href="<?php echo getLinkAdmin('room', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a>
+            <!-- <a href="<?php echo getLinkAdmin('room', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a> -->
             <a href="<?php echo getLinkAdmin('room', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
             <table class="table table-bordered mt-3">
