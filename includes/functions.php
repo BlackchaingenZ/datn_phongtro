@@ -517,3 +517,10 @@ function executeResult($query, $params = [])
         return [];
     }
 }
+/*Khi bạn thêm một khách thuê mới vào bảng tenant, bạn cần biết ID của khách thuê đó để có thể thêm hợp đồng liên quan đến khách thuê đó. 
+Nếu bạn không có ID này, bạn sẽ không thể liên kết hợp đồng với đúng khách thuê.*/
+function lastInsertId() {
+    global $pdo; // Giả sử $pdo là biến toàn cục của kết nối PDO
+    return $pdo->lastInsertId();
+}
+

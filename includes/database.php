@@ -39,6 +39,35 @@ function insert($table, $dataInsert)
     return query($sql, $dataInsert);
 }
 
+function insertMutiple($table, $dataInsert)
+{
+    if (is_array($dataInsert) && count($dataInsert) > 0) {
+        $keyArr = array_keys($dataInsert[0]);
+        $fieldStr = implode(', ', $keyArr);
+
+        // Tạo placeholder cho nhiều bản ghi
+        $placeholders = [];
+        foreach ($dataInsert as $record) {
+            $placeholders[] = '(' . implode(', ', array_fill(0, count($keyArr), '?')) . ')';
+        }
+        $valueStr = implode(', ', $placeholders);
+
+        // Xây dựng câu lệnh SQL
+        $sql = 'INSERT INTO ' . $table . ' (' . $fieldStr . ') VALUES ' . $valueStr;
+
+        // Phẳng mảng dữ liệu để thực hiện truy vấn
+        $params = [];
+        foreach ($dataInsert as $record) {
+            $params = array_merge($params, array_values($record));
+        }
+
+        // Thực hiện truy vấn
+        return query($sql, $params);
+    }
+    return false; // Trả về false nếu dữ liệu không hợp lệ
+}
+
+
 function update($table, $dataUpdate, $condition = '')
 {
 
@@ -57,6 +86,7 @@ function update($table, $dataUpdate, $condition = '')
 
     return query($sql, $dataUpdate);
 }
+
 
 function delete($table, $condition = '')
 {
@@ -144,3 +174,22 @@ function getRows($sql)
 
 //Lấy id vừa insert
 function insertId() {}
+
+function linkTenantToContract($tenantId, $contractId) {
+    global $pdo; // Kết nối đến cơ sở dữ liệu
+
+    // Chuẩn bị câu truy vấn
+    $sql = "INSERT INTO contract_tenant (tenant_id_1, contract_id_1) VALUES (:tenant_id_1, :contract_id_1)";
+
+    // Thực hiện truy vấn
+    try {
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindParam(':tenant_id_1', $tenantId);
+        $stmt->bindParam(':contract_id_1', $contractId);
+        $stmt->execute();
+
+        return ['success' => true, 'message' => 'Liên kết khách thuê với hợp đồng thành công.'];
+    } catch (PDOException $e) {
+        return ['success' => false, 'message' => 'Lỗi khi liên kết: ' . $e->getMessage()];
+    }
+}

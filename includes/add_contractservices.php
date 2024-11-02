@@ -1,5 +1,5 @@
 <?php
-function addContract($dataInsert, $services_ids)
+function addContractservices($dataInsert, $services_ids)
 {
     try {
         // Kết nối cơ sở dữ liệu
@@ -14,16 +14,13 @@ function addContract($dataInsert, $services_ids)
         $stmt->execute(['room_id' => $dataInsert['room_id'], 'tenant_id' => $dataInsert['tenant_id']]);
         $existingContract = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($existingContract) {
-            // Nếu hợp đồng đã tồn tại, lấy ID hợp đồng
-            $contract_id = $existingContract['id'];
-        } else {
-            // Nếu không có hợp đồng, tạo hợp đồng mới
-            $stmt = $pdo->prepare("INSERT INTO contract (room_id, tenant_id, tenant_id_2, tinhtrangcoc,soluongthanhvien, ngaylaphopdong, ngayvao, ngayra, create_at, ghichu )
-             VALUES (:room_id, :tenant_id, :tenant_id_2, :tinhtrangcoc, :soluongthanhvien, :ngaylaphopdong, :ngayvao, :ngayra, :create_at, :ghichu )");
-            $stmt->execute($dataInsert);
-            $contract_id = $pdo->lastInsertId(); // Lấy ID của hợp đồng mới
+        if (!$existingContract) {
+            // Nếu không có hợp đồng, trả về thông báo lỗi
+            return ['success' => false, 'message' => 'Không tìm thấy hợp đồng cho phòng này.'];
         }
+
+        // Lấy ID hợp đồng
+        $contract_id = $existingContract['id'];
 
         // Kiểm tra và chuyển đổi $services_ids sang mảng nếu là chuỗi
         if (is_string($services_ids)) {
@@ -42,21 +39,21 @@ function addContract($dataInsert, $services_ids)
             $service = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($service) {
                 $service_names[] = $service['tendichvu'];
-            }
 
-            // Thêm dịch vụ vào hợp đồng
-            $serviceInsert = [
-                'contract_id' => $contract_id,
-                'services_id' => trim($service_id),
-            ];
-            $stmt = $pdo->prepare("INSERT INTO contract_services (contract_id, services_id) VALUES (:contract_id, :services_id)");
-            $stmt->execute($serviceInsert);
+                // Thêm dịch vụ vào hợp đồng
+                $serviceInsert = [
+                    'contract_id' => $contract_id,
+                    'services_id' => trim($service_id),
+                ];
+                $stmt = $pdo->prepare("INSERT INTO contract_services (contract_id, services_id) VALUES (:contract_id, :services_id)");
+                $stmt->execute($serviceInsert);
+            }
         }
 
         // Gộp tên dịch vụ thành một chuỗi
         $all_service_names = implode(', ', $service_names);
 
-        // Có thể cập nhật bảng hợp đồng với tên dịch vụ
+        // Có thể cập nhật bảng hợp đồng với tên dịch vụ (nếu cần)
         // $stmt = $pdo->prepare("UPDATE contract SET service_names = :service_names WHERE id = :contract_id");
         // $stmt->execute(['service_names' => $all_service_names, 'contract_id' => $contract_id]);
 
@@ -69,5 +66,4 @@ function addContract($dataInsert, $services_ids)
         return ['success' => false, 'message' => $e->getMessage()];
     }
 }
-
 ?>

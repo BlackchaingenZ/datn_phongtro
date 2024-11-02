@@ -206,6 +206,20 @@ if (isset($_POST['deleteMultip'])) {
     } else {
         $extract_id = implode(',', $numberCheckbox);
 
+        // Kiểm tra có tenant nào liên kết với hợp đồng qua bảng contract_tenant
+        $checkTenants = get('contract_tenant', "contract_id_1 IN($extract_id)");
+
+        if (!empty($checkTenants)) {
+            // Xóa liên kết tenant trước khi xóa hợp đồng
+            $deleteTenants = delete('contract_tenant', "contract_id_1 IN($extract_id)");
+            if (!$deleteTenants) {
+                setFlashData('msg', 'Không thể xóa liên kết tenant!');
+                setFlashData('msg_type', 'err');
+                redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
+                exit;
+            }
+        }
+
         // Xóa dịch vụ liên kết với hợp đồng
         $deleteServices = delete('contract_services', "contract_id IN($extract_id)");
 
@@ -221,14 +235,18 @@ if (isset($_POST['deleteMultip'])) {
                     setFlashData('msg', 'Xóa hợp đồng thành công!');
                     setFlashData('msg_type', 'suc');
                 } else {
-                    setFlashData('msg', 'Không thể xóa hợp đồng!');
+                    setFlashData('msg', 'Không thể xóa phòng liên kết với hợp đồng!');
                     setFlashData('msg_type', 'err');
                 }
+            } else {
+                setFlashData('msg', 'Không thể xóa hợp đồng!');
+                setFlashData('msg_type', 'err');
             }
         }
     }
     redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
 }
+
 
 
 
