@@ -11,12 +11,13 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-include 'includes/add_contracts.php';
+include 'includes/add_contract.php';
 // kiểm tra nếu phòng nào có hợp đồng rồi thì không hiện
 $allRoom = getRaw("
     SELECT room.id, room.tenphong, room.soluong 
     FROM room 
-    WHERE room.id NOT IN (SELECT room_id FROM contract)
+    LEFT JOIN contract ON contract.room_id = room.id
+    WHERE contract.id IS NULL
     ORDER BY room.tenphong
 ");
 
@@ -24,52 +25,32 @@ $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
 $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $allRoomId = getRaw("SELECT room_id FROM contract");
 //phân loại phòng theo khu vực
-// Phân loại phòng theo khu vực
 $roomsByArea = [];
 foreach ($allRoom as $room) {
-    // Lấy số lượng người hiện tại trong phòng từ bảng tenant
-    $soluong = getRaw("SELECT COUNT(*) AS soluong FROM tenant WHERE room_id = " . $room['id'])[0]['soluong'];
+    // Giả sử bạn có một cách để lấy số người hiện tại trong phòng, có thể từ cơ sở dữ liệu
+    $soluong = getRaw("SELECT COUNT(*) AS soluong FROM room WHERE id = " . $room['id'])[0]['soluong']; // Hoặc sử dụng cách khác nếu có thông tin
 
     $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
     foreach ($areaIds as $area) {
-        // Thêm thông tin số người vào mỗi phòng theo khu vực
+        // Thêm thông tin số người vào mỗi phòng
         $roomsByArea[$area['area_id']][] = [
             'id' => $room['id'],
-            'tenphong' => $room['tenphong'],
+            'tenphong' => $room['tenphong'], // Giả sử bạn có trường này trong $room
             'soluong' => $soluong
         ];
     }
 }
 
-// Kiểm tra nếu có thông báo từ URL
-if (isset($_GET['message'])) {
-    $message = htmlspecialchars($_GET['message']); // Bảo vệ khỏi XSS
-    echo '<div id="notification" style="position: fixed; top: 20px; right: 20px; background-color: #f8d7da; color: #721c24; padding: 10px; border: 1px solid #f5c6cb; border-radius: 5px; z-index: 1000;">
-            ' . $message . '
-          </div>';
-    echo '<script>
-            // Tự động ẩn thông báo sau 3 giây
-            setTimeout(function() {
-                var notification = document.getElementById("notification");
-                if (notification) {
-                    notification.style.display = "none"; // Ẩn thông báo
-                }
-            }, 3000); // Thay đổi thời gian nếu cần
-          </script>';
-}
 
-// Xử lý thêm hợp đồng
-// Thêm hợp đồng
 if (isPost()) {
     // Validate form
-    $body = getBody(); // lấy tất cả dữ liệu trong form
-    $errors = [];  // mảng lưu trữ các lỗi
+    $body = getBody();
+    $errors = []; // mảng lưu trữ các lỗi
 
-    // Validate họ tên: Bắt buộc phải nhập, >=5 ký tự
+    // Validate room_id: Bắt buộc phải nhập
     if (empty(trim($body['room_id']))) {
         $errors['room_id']['required'] = '** Bạn chưa chọn phòng lập hợp đồng!';
     } else {
-        // Kiểm tra trùng phòng lập hợp đồng
         $dataRoom = trim($body['room_id']);
         foreach ($allRoomId as $item) {
             if ($dataRoom == $item['room_id']) {
@@ -79,42 +60,13 @@ if (isPost()) {
         }
     }
 
+    // Kiểm tra ngày lập hợp đồng
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
     }
-    // Kiểm tra mảng error
-    if (empty($errors)) {
-        // không có lỗi nào
-        $dataInsert = [
-            'room_id' => $_POST['room_id'] ?? null,
-            'tinhtrangcoc' => $_POST['tinhtrangcoc'] ?? null,
-            'ngaylaphopdong' => $_POST['ngaylaphopdong'] ?? null,
-            'ngayvao' => $_POST['ngayvao'] ?? null,
-            'ngayra' => $_POST['ngayra'] ?? null,
-            'create_at' => date('Y-m-d H:i:s'),
-            'ghichu' => $_POST['ghichu'] ?? null,
-        ];
-        // Thêm dịch vụ vào hợp đồng
-        if (!empty($_POST['services'])) {
-            $services = implode(',', $_POST['services']); // Chuyển đổi mảng dịch vụ thành chuỗi
-            // Thêm mã thêm dịch vụ vào cơ sở dữ liệu (cần có xử lý cho phần này)
-        }
-        if ($result['success']) {
-            setFlashData('msg', 'Thêm hợp đồng mới và dịch vụ thành công');
-            setFlashData('msg_type', 'suc');
-            redirect('?module=contract');
-        } else {
-            setFlashData('msg', 'Lỗi: ' . $result['message']);
-            setFlashData('msg_type', 'err');
-        }
-    } else {
-        setFlashData('msg', 'Vui lòng kiểm tra lại thông tin đã nhập.');
-        setFlashData('msg_type', 'err');
-        setFlashData('errors', $errors);
-        setFlashData('old', $body);
-    }
 
-    redirect('?module=contract&action=add');
+    // Kiểm tra dịch vụ
+    $tendichvuId = !empty($_POST['tendichvu']) ? array_map('trim', $_POST['tendichvu']) : [];
 }
 
 $msg = getFlashData('msg');
@@ -130,19 +82,10 @@ layout('navbar', 'admin', $data);
     <div id="MessageFlash">
         <?php getMsg($msg, $msgType); ?>
     </div>
-    <div class="box-content">
-        <form id="contractForm" action="http://localhost:85/datn/includes/add_contracts.php" method="post" class="row">
-            <div class="col-4">
-                <label for="">Danh sách khách vừa tạo</label>
-                <div class="form-group">
-                    <!-- Khu vực để hiển thị danh sách khách tạm thời -->
-                    <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 450px; background-color: #f9f9f9;">
-                        <div id="tempCustomerInfo" style="color: green;"></div>
-                    </div>
 
-                </div>
-            </div>
-            <div class="col-4">
+    <div class="box-content">
+        <form action="" method="post" class="row">
+            <div class="col-5">
                 <div class="form-group">
                     <label for="">Chọn khu vực <span style="color: red">*</span></label>
                     <select name="area_id" id="area-select" class="form-select">
@@ -170,6 +113,7 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
                 <div class="form-group">
                     <button type="button" class="btn btn-secondary" onclick="openPopup()"> <i class="fa fa-plus"> </i>Thêm khách</button>
                 </div>
@@ -218,26 +162,33 @@ layout('navbar', 'admin', $data);
                             <button type="button" class="btn btn-secondary" onclick="addTempCustomer()">
                                 <i class="fa fa-plus"></i> Thêm khách
                             </button>
+
                         </div>
                     </div>
                 </div>
+                <div>
+                    <!-- Khu vực để hiển thị danh sách khách tạm thời -->
+                    <div id="tempCustomerInfo" style="margin-top: 10px; color: green;"></div>
+                </div>
 
-                <form id="contractForm" action="add_contracts.php" method="post">
-                    <div class="form-group">
-                        <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
-                        <input type="date" name="ngaylaphopdong" id="" class="form-control"
-                            value="<?php echo old('ngaylaphopdong', $old); ?>">
-                        <?php echo form_error('ngaylaphopdong', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Ngày vào ở <span style="color: red">*</span></label>
-                        <input type="date" name="ngayvao" id="" class="form-control"
-                            value="<?php echo old('ngayvao', $old); ?>">
-                        <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
+                <div class="form-group">
+                    <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
+                    <input type="date" name="ngaylaphopdong" id="" class="form-control"
+                        value="<?php echo old('ngaylaphopdong', $old); ?>">
+                    <?php echo form_error('ngaylaphopdong', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="">Ngày vào ở <span style="color: red">*</span></label>
+                    <input type="date" name="ngayvao" id="" class="form-control"
+                        value="<?php echo old('ngayvao', $old); ?>">
+                    <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
             </div>
 
-            <div class="col-4">
+            <div class="col-5">
+
                 <div class="form-group">
                     <label for="">Ngày hết hạn hợp đồng <span style="color: red">*</span></label>
                     <input type="date" name="ngayra" id="" class="form-control"
@@ -253,23 +204,45 @@ layout('navbar', 'admin', $data);
                         <option value="1">Đã thu tiền</option>
                     </select>
                 </div>
-                <!-- Phần chọn dịch vụ -->
+
+                <?php
+                // Khởi tạo biến $tendichvuId nếu chưa được xác định
+                $tendichvuId = isset($tendichvuId) ? $tendichvuId : [];
+                ?>
                 <div class="form-group">
-                    <label for="">Chọn dịch vụ <span style="color: red">*</span></label>
+                    <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
                     <div class="checkbox-container">
-                        <?php foreach ($allServices as $service) { ?>
-                            <div class="checkbox-item">
-                                <input type="checkbox" name="services[]" id="service-<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>" required>
-                                <label for="service-<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php echo htmlspecialchars($service['tendichvu'], ENT_QUOTES, 'UTF-8'); ?>
-                                </label>
-                            </div>
-                        <?php } ?>
+                        <!-- Checkbox "Chọn tất cả" -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="select-all">
+                            <label for="select-all">Chọn tất cả</label>
+                        </div>
+
+                        <?php
+                        if (!empty($allServices)) {
+                            foreach ($allServices as $item) {
+                        ?>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" class="service-checkbox" name="tendichvu[]" value="<?php echo $item['id']; ?>"
+                                        <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'checked' : ''; ?>>
+                                    <?php echo $item['tendichvu']; ?>
+                                </div>
+                        <?php
+                            }
+                        }
+                        ?>
                     </div>
-                    <?php if (isset($errors['services'])) { ?>
-                        <span class="error" style="color: red;"><?php echo htmlspecialchars($errors['services'], ENT_QUOTES, 'UTF-8'); ?></span>
-                    <?php } ?>
+                    <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
+                <script>
+                    document.getElementById('select-all').addEventListener('change', function() {
+                        const checkboxes = document.querySelectorAll('.service-checkbox');
+                        checkboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                    });
+                </script>
 
 
                 <div class="form-group">
@@ -277,34 +250,19 @@ layout('navbar', 'admin', $data);
                     <input type="text" placeholder="" name="ghichu" class="form-control" value="<?php echo old('ghichu', $old); ?>" style="width: 100%;height:100px">
                     <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-                <!-- Input ẩn để lưu danh sách khách thuê tạm -->
 
-                <input type="hidden" name="tempCustomersData" id="tempCustomersData">
-                <a style="margin-right: 20px " href="<?php echo getLinkAdmin('contract') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                <button type="button" class="btn btn-secondary" onclick="submitFormWithTempCustomers()"> <i class="fa fa-plus"> </i>Thêm hợp đồng</button>
-        </form>
+            </div>
+            <div class="from-group">
+                <div class="btn-row">
+                    <a style="margin-right: 20px" href="<?php echo getLinkAdmin('contract') ?>"
+                        class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
+                    <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm hợp đồng</button>
+                </div>
+            </div>
     </div>
-
-
-    <div id="tempCustomerInfo"></div>
     </form>
-
 </div>
-
 </div>
-
-<script>
-    function submitFormWithTempCustomers() {
-        // Lưu danh sách khách thuê tạm vào input ẩn
-        document.getElementById('tempCustomersData').value = JSON.stringify(tempCustomers);
-        document.getElementById('contractForm').submit();
-    }
-</script>
-<script>
-    function addTempCustomersToForm() {
-        document.getElementById('customers_data').value = JSON.stringify(tempCustomers);
-    }
-</script>
 <script>
     const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
     const areaSelect = document.getElementById('area-select');
@@ -325,53 +283,85 @@ layout('navbar', 'admin', $data);
     });
 </script>
 <script>
-    let tempCustomers = [];
+    let tempCustomers = []; // Mảng lưu thông tin nhiều khách hàng tạm thời
 
     function addTempCustomer() {
-        const tenkhach = document.querySelector('[name="tenkhach"]').value;
-        const ngaysinh = document.querySelector('[name="ngaysinh"]').value;
-        const gioitinh = document.querySelector('[name="gioitinh"]').value;
-        const diachi = document.querySelector('[name="diachi"]').value;
-        const cmnd = document.querySelector('[name="cmnd"]').value;
+        // Lấy thông tin từ popup
+        const tenkhach = document.querySelector('input[name="tenkhach"]').value;
+        const cmnd = document.querySelector('input[name="cmnd"]').value;
+        const ngaysinh = document.querySelector('input[name="ngaysinh"]').value;
+        const gioitinh = document.querySelector('select[name="gioitinh"]').value;
+        const diachi = document.querySelector('input[name="diachi"]').value;
 
-        if (tenkhach && ngaysinh && gioitinh && diachi && cmnd) {
-            // Thêm khách thuê vào danh sách tạm
-            tempCustomers.push({
-                tenkhach,
-                ngaysinh,
-                gioitinh,
-                diachi,
-                cmnd
-            });
+        // Lấy room_id từ select
+        const roomId = document.querySelector('select[name="room_id"]').value; // Lấy giá trị từ select
 
-            // Hiển thị danh sách khách thuê tạm
-            document.getElementById('tempCustomerInfo').innerHTML += `
-            <p>${tenkhach} - ${ngaysinh} - ${gioitinh} - ${diachi} - ${cmnd}</p>
-        `;
-
-            // Reset form input
-            document.querySelector('[name="tenkhach"]').value = '';
-            document.querySelector('[name="ngaysinh"]').value = '';
-            document.querySelector('[name="gioitinh"]').value = '';
-            document.querySelector('[name="diachi"]').value = '';
-            document.querySelector('[name="cmnd"]').value = '';
-        } else {
-            alert('Vui lòng nhập đầy đủ thông tin khách thuê.');
+        // Kiểm tra xem có trường nào bị bỏ trống không
+        if (!tenkhach || !cmnd || !ngaysinh || !gioitinh || !diachi || !roomId) {
+            alert("Vui lòng điền đầy đủ thông tin.");
+            return;
         }
+
+        // Kiểm tra khách hàng đã tồn tại dựa trên số CMND/CCCD
+        const isCustomerExists = tempCustomers.some(customer => customer.cmnd === cmnd);
+        if (isCustomerExists) {
+            alert("Khách hàng này đã được thêm trước đó.");
+            return;
+        }
+
+        // Tạo đối tượng khách hàng mới và thêm vào mảng
+        const newCustomer = {
+            tenkhach,
+            cmnd,
+            ngaysinh,
+            gioitinh,
+            diachi,
+            roomId // Thêm room_id vào đối tượng khách hàng mới
+        };
+        tempCustomers.push(newCustomer);
+
+        // Cập nhật danh sách khách hàng trên form chính
         updateTempCustomerList();
+
+        // Đóng popup
+        closePopup();
     }
 
     function updateTempCustomerList() {
         const customerInfoList = tempCustomers.map((customer, index) =>
-            `<div>
-            Khách ${index + 1}: ${customer.tenkhach}-${customer.cmnd}-${customer.ngaysinh}-${customer.gioitinh}-${customer.diachi}
-            <button onclick="removeTempCustomer(${index})">Xóa</button>
-        </div>`
+            <div>
+            Khách ${index + 1}: ${customer.tenkhach}, CMND/CCCD: ${customer.cmnd}, Ngày sinh: ${customer.ngaysinh}, Giới tính: ${customer.gioitinh}, Địa chỉ: ${customer.diachi}, Room ID: ${customer.roomId}
+        </div>
         ).join('');
 
         document.getElementById('tempCustomerInfo').innerHTML = customerInfoList; // Cập nhật nội dung HTML
-
+        // Gửi danh sách khách hàng vào cơ sở dữ liệu
+        sendCustomersToDatabase(tempCustomers);
     }
+
+    function sendCustomersToDatabase(customers) {
+        fetch('includes/add_customer.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(customers) // Chuyển đổi mảng khách hàng thành chuỗi JSON
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // Chuyển đổi phản hồi từ server thành JSON
+            })
+            .then(data => {
+                console.log('Dữ liệu đã được gửi thành công:', data);
+                // Thực hiện các hành động cần thiết sau khi gửi thành công
+            })
+            .catch(error => {
+                console.error('Có lỗi xảy ra khi gửi dữ liệu:', error);
+            });
+    }
+
 
     function removeTempCustomer(index) {
         // Xoá khách hàng tại vị trí index trong mảng
@@ -388,6 +378,7 @@ layout('navbar', 'admin', $data);
         document.getElementById('popupForm').style.display = 'none';
     }
 </script>
+
 
 <?php
 layout('footer', 'admin');

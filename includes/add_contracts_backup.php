@@ -104,14 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             linkContractTenant($contract_id, $tenant_id);
         }
 
-        $message = "Thêm hợp đồng thành công.";
-        // Chuyển hướng đến trang cụ thể với thông báo
-        header("Location: http://localhost:85/datn/?module=contract&message=" . urlencode($message));
-        exit; // Ngăn không cho thực hiện thêm mã sau khi chuyển hướng
+        echo "Hợp đồng, khách thuê và dịch vụ đã được thêm thành công!";
     } else {
-        $message = "Thiếu thông tin cần thiết để thêm hợp đồng.";
-        // Chuyển hướng đến trang cụ thể với thông báo
-        header("Location: http://localhost:85/datn/?module=contract&action=add&message=" . urlencode($message));
-        exit; // Ngăn không cho thực hiện thêm mã sau khi chuyển hướng
+        echo "Thiếu thông tin cần thiết để thêm hợp đồng.";
+
+
     }
 }

@@ -291,23 +291,23 @@ layout('navbar', 'admin', $data);
 
 
                 <div class="form-group">
-                    <label for="">Dịch vụ</label><br>
-                    <div class="checkbox-container">
-                        <?php
-                        if (!empty($allServices)) {
-                            foreach ($allServices as $service) {
-                        ?>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" name="tendichvu[]" value="<?php echo $service['id']; ?>"
-                                        <?php echo in_array($service['id'], $selectedServices) ? 'checked' : ''; ?>>
-                                    <?php echo $service['tendichvu']; ?><br>
-                                </div>
-                        <?php
-                            }
-                        }
-                        ?>
-                    </div>
+    <label for="">Chọn dịch vụ <span style="color: red">*</span></label><br>
+    <div class="checkbox-container">
+        <?php if (!empty($allServices)) {
+            foreach ($allServices as $service) { ?>
+                <div class="checkbox-item" style="margin-bottom: 10px;">
+                    <input type="checkbox" name="services[]" value="<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>"
+                        <?php echo in_array($service['id'], $selectedServices) ? 'checked' : ''; ?>>
+                    <?php echo htmlspecialchars($service['tendichvu'], ENT_QUOTES, 'UTF-8'); ?><br>
                 </div>
+        <?php }
+        } ?>
+    </div>
+    <?php if (isset($errors['services'])) { ?>
+        <span class="error" style="color: red;"><?php echo htmlspecialchars($errors['services'], ENT_QUOTES, 'UTF-8'); ?></span>
+    <?php } ?>
+</div>
+
 
 
                 <div class="form-group">

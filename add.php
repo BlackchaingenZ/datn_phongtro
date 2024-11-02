@@ -40,8 +40,6 @@ foreach ($allRoom as $room) {
         ];
     }
 }
-
-
 // Xử lý thêm hợp đồng
 // Thêm hợp đồng
 if (isPost()) {
@@ -66,39 +64,23 @@ if (isPost()) {
     if (empty(trim($body['ngaylaphopdong']))) {
         $errors['ngaylaphopdong']['required'] = '** Bạn chưa nhập ngày lập hợp đồng!';
     }
-
-    if (!empty($_POST['tendichvu'])) {
-        $tendichvuId = $_POST['tendichvu']; // Đây sẽ là mảng
-
-        // Nếu bạn cần trim từng phần tử trong mảng
-        $tendichvuId = array_map('trim', $tendichvuId);
-    } else {
-        $tendichvuId = []; // Nếu không có dịch vụ nào được chọn
-    }
-
-
     // Kiểm tra mảng error
     if (empty($errors)) {
         // không có lỗi nào
         $dataInsert = [
             'room_id' => $_POST['room_id'] ?? null,
-            'tenant_id' => $_POST['tenant_id'] ?? null, // Cần có tenant_id từ biểu mẫu
-            'tenant_id_2' => empty(trim($_POST['tenant_id_2'])) ? null : $_POST['tenant_id_2'],
             'tinhtrangcoc' => $_POST['tinhtrangcoc'] ?? null,
             'ngaylaphopdong' => $_POST['ngaylaphopdong'] ?? null,
             'ngayvao' => $_POST['ngayvao'] ?? null,
             'ngayra' => $_POST['ngayra'] ?? null,
             'create_at' => date('Y-m-d H:i:s'),
             'ghichu' => $_POST['ghichu'] ?? null,
-            'soluongthanhvien' => intval($_POST['soluongthanhvien'] ?? 0), // Chuyển đổi thành số nguyên
         ];
-
-
-
-
-        // Gọi hàm thêm hợp đồng
-        $result = addContractservices($dataInsert, $body['tendichvu']); // Chuyển dịch vụ
-
+        // Thêm dịch vụ vào hợp đồng
+        if (!empty($_POST['services'])) {
+            $services = implode(',', $_POST['services']); // Chuyển đổi mảng dịch vụ thành chuỗi
+            // Thêm mã thêm dịch vụ vào cơ sở dữ liệu (cần có xử lý cho phần này)
+        }
         if ($result['success']) {
             setFlashData('msg', 'Thêm hợp đồng mới và dịch vụ thành công');
             setFlashData('msg_type', 'suc');
@@ -130,9 +112,7 @@ layout('navbar', 'admin', $data);
     <div id="MessageFlash">
         <?php getMsg($msg, $msgType); ?>
     </div>
-
     <div class="box-content">
-
         <form id="contractForm" action="http://localhost:85/datn/includes/add_contracts.php" method="post">
             <div class="col-5">
                 <div class="form-group">
@@ -153,7 +133,6 @@ layout('navbar', 'admin', $data);
                     </select>
                     <?php echo form_error('area_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-
 
                 <div class="form-group">
                     <label for="">Chọn phòng lập hợp đồng <span style="color: red">*</span></label>
@@ -251,46 +230,20 @@ layout('navbar', 'admin', $data);
                         <option value="1">Đã thu tiền</option>
                     </select>
                 </div>
-
-                <?php
-                // Khởi tạo biến $tendichvuId nếu chưa được xác định
-                $tendichvuId = isset($tendichvuId) ? $tendichvuId : [];
-                ?>
+                <!-- Phần chọn dịch vụ -->
                 <div class="form-group">
-                    <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
-                    <div class="checkbox-container">
-                        <!-- Checkbox "Chọn tất cả" -->
-                        <div class="checkbox-item">
-                            <input type="checkbox" id="select-all">
-                            <label for="select-all">Chọn tất cả</label>
-                        </div>
-
-                        <?php
-                        if (!empty($allServices)) {
-                            foreach ($allServices as $item) {
-                        ?>
-                                <div class="checkbox-item">
-                                    <input type="checkbox" class="service-checkbox" name="tendichvu[]" value="<?php echo $item['id']; ?>"
-                                        <?php echo (in_array($item['id'], (array)$tendichvuId)) ? 'checked' : ''; ?>>
-                                    <?php echo $item['tendichvu']; ?>
-                                </div>
-                        <?php
-                            }
-                        }
-                        ?>
-                    </div>
-                    <?php echo form_error('tendichvu', $errors, '<span class="error">', '</span>'); ?>
+                    <label for="">Chọn dịch vụ <span style="color: red">*</span></label>
+                    <select name="services[]" class="form-select" multiple required>
+                        <?php foreach ($allServices as $service) { ?>
+                            <option value="<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($service['tendichvu'], ENT_QUOTES, 'UTF-8'); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                    <?php if (isset($errors['services'])) { ?>
+                        <span class="error" style="color: red;"><?php echo htmlspecialchars($errors['services'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    <?php } ?>
                 </div>
-
-                <script>
-                    document.getElementById('select-all').addEventListener('change', function() {
-                        const checkboxes = document.querySelectorAll('.service-checkbox');
-                        checkboxes.forEach(checkbox => {
-                            checkbox.checked = this.checked;
-                        });
-                    });
-                </script>
-
 
                 <div class="form-group">
                     <label for="">Ghi chú<span style="color: red">*</label>
@@ -309,7 +262,7 @@ layout('navbar', 'admin', $data);
         </form>
     </div>
 </div>
-</div>
+
 <script>
     function submitFormWithTempCustomers() {
         // Lưu danh sách khách thuê tạm vào input ẩn

@@ -1155,7 +1155,7 @@ th {
     flex-wrap: wrap;        /* Cho phép các mục tự động xuống dòng nếu không đủ chỗ */
 }
 .checkbox-item {
-    margin-right: 20px;     /* Khoảng cách giữa các checkbox */
+    margin-right: 3px;     /* Khoảng cách giữa các checkbox */
 }
 
 

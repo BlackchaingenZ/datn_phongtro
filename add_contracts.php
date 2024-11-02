@@ -12,6 +12,7 @@ try {
 } catch (PDOException $e) {
     die("Kết nối thất bại: " . $e->getMessage());
 }
+
 function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu)
 {
     global $pdo;
@@ -52,6 +53,16 @@ function linkContractTenant($contract_id, $tenant_id)
     ]);
 }
 
+function linkContractService($contract_id, $services_id)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract_services (contract_id, services_id) VALUES (:contract_id, :services_id)");
+    $stmt->execute([
+        ':contract_id' => $contract_id,
+        ':services_id' => $services_id
+    ]);
+}
+
 // Lấy dữ liệu hợp đồng từ POST
 $room_id = $_POST['room_id'] ?? null;
 $ngaylaphopdong = $_POST['ngaylaphopdong'] ?? null;
@@ -61,6 +72,9 @@ $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? null;
 $create_at = date("Y-m-d H:i:s");
 $ghichu = $_POST['ghichu'] ?? null;
 
+// Lấy danh sách dịch vụ từ POST
+$services = $_POST['services'] ?? []; // Danh sách dịch vụ được gửi từ form
+
 // Giải mã danh sách khách thuê tạm từ JSON
 $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
 $tempCustomers = json_decode($tempCustomersData, true);
@@ -68,6 +82,11 @@ $tempCustomers = json_decode($tempCustomersData, true);
 if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc) {
     // Thêm hợp đồng
     $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu);
+
+    // Thêm từng dịch vụ vào bảng contract_services
+    foreach ($services as $services_id) {
+        linkContractService($contract_id, $services_id);
+    }
 
     // Thêm từng khách thuê từ danh sách tạm vào cơ sở dữ liệu
     foreach ($tempCustomers as $customer) {
@@ -78,13 +97,13 @@ if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc) {
         $cmnd = $customer['cmnd'];
 
         // Thêm khách thuê vào bảng tenant và lấy tenant_id
-        $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
+        $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id);
 
         // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
         linkContractTenant($contract_id, $tenant_id);
     }
 
-    echo "Hợp đồng và khách thuê đã được thêm thành công!";
+    echo "Hợp đồng, khách thuê và dịch vụ đã được thêm thành công!";
 } else {
     echo "Thiếu thông tin cần thiết để thêm hợp đồng.";
 }
