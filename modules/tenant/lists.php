@@ -23,7 +23,7 @@ layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
 // Xóa hết
-if (isset($_POST['deleteMultip'])) {
+if (isset($_POST['deleteMultip'])) { 
     $numberCheckbox = $_POST['records'];
     $extract_id = implode(',', $numberCheckbox);
 
@@ -31,26 +31,11 @@ if (isset($_POST['deleteMultip'])) {
     $checkTenantInContract = getRaw("SELECT tenant_id_1 FROM contract_tenant WHERE tenant_id_1 IN($extract_id)");
 
     if ($checkTenantInContract) {
-        // Nếu có liên kết, xóa các bản ghi trong contract_tenant trước
-        $deleteContracts = delete('contract_tenant', "tenant_id_1 IN($extract_id)");
-
-        if ($deleteContracts) {
-            // Sau khi xóa bản ghi liên kết, tiếp tục xóa bản ghi tenant
-            $checkDelete = delete('tenant', "id IN($extract_id)");
-
-            if ($checkDelete) {
-                setFlashData('msg', 'Xóa thông tin khách thuê thành công');
-                setFlashData('msg_type', 'success');
-            } else {
-                setFlashData('msg', 'Đã xảy ra lỗi khi xóa khách thuê');
-                setFlashData('msg_type', 'error');
-            }
-        } else {
-            setFlashData('msg', 'Đã xảy ra lỗi khi xóa hợp đồng liên quan');
-            setFlashData('msg_type', 'error');
-        }
+        // Nếu có liên kết, không thực hiện xóa và thông báo cho người dùng
+        setFlashData('msg', 'Không thể xóa khách thuê vì đang có hợp đồng liên quan');
+        setFlashData('msg_type', 'error');
     } else {
-        // Nếu không có liên kết, chỉ xóa khách thuê
+        // Nếu không có liên kết, thực hiện xóa tenant
         $checkDelete = delete('tenant', "id IN($extract_id)");
 
         if ($checkDelete) {
@@ -64,6 +49,7 @@ if (isset($_POST['deleteMultip'])) {
 
     redirect('?module=tenant');
 }
+
 // Xử lý lọc dữ liệu
 $allRoom = getRaw("SELECT id, tenphong, soluong, trangthai FROM room ORDER BY tenphong");
 $filter = '';

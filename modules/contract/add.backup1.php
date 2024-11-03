@@ -11,7 +11,7 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-// include 'includes/add_contracts.php';
+include 'includes/add_contracts.php';
 // kiểm tra nếu phòng nào có hợp đồng rồi thì không hiện
 $allRoom = getRaw("
     SELECT room.id, room.tenphong, room.soluong 

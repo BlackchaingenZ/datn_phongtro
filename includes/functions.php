@@ -519,8 +519,59 @@ function executeResult($query, $params = [])
 }
 /*Khi bạn thêm một khách thuê mới vào bảng tenant, bạn cần biết ID của khách thuê đó để có thể thêm hợp đồng liên quan đến khách thuê đó. 
 Nếu bạn không có ID này, bạn sẽ không thể liên kết hợp đồng với đúng khách thuê.*/
-function lastInsertId() {
+function lastInsertId()
+{
     global $pdo; // Giả sử $pdo là biến toàn cục của kết nối PDO
     return $pdo->lastInsertId();
 }
 
+function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract (room_id, ngaylaphopdong, ngayvao, ngayra, tinhtrangcoc, create_at, ghichu) VALUES (:room_id, :ngaylaphopdong, :ngayvao, :ngayra, :tinhtrangcoc, :create_at, :ghichu)");
+    $stmt->execute([
+        ':room_id' => $room_id,
+        ':ngaylaphopdong' => $ngaylaphopdong,
+        ':ngayvao' => $ngayvao,
+        ':ngayra' => $ngayra,
+        ':tinhtrangcoc' => $tinhtrangcoc,
+        ':create_at' => $create_at,
+        ':ghichu' => $ghichu
+    ]);
+    return $pdo->lastInsertId(); // Trả về ID của hợp đồng vừa được tạo
+}
+
+function addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO tenant (tenkhach, ngaysinh, gioitinh, diachi, room_id, cmnd) VALUES (:tenkhach, :ngaysinh, :gioitinh, :diachi, :room_id, :cmnd)");
+    $stmt->execute([
+        ':tenkhach' => $tenkhach,
+        ':ngaysinh' => $ngaysinh,
+        ':gioitinh' => $gioitinh,
+        ':diachi' => $diachi,
+        ':room_id' => $room_id,
+        ':cmnd' => $cmnd,
+    ]);
+    return $pdo->lastInsertId(); // Trả về ID của khách thuê vừa được tạo
+}
+
+function linkContractTenant($contract_id, $tenant_id)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract_tenant (contract_id_1, tenant_id_1) VALUES (:contract_id, :tenant_id)");
+    $stmt->execute([
+        ':contract_id' => $contract_id,
+        ':tenant_id' => $tenant_id
+    ]);
+}
+
+function linkContractService($contract_id, $services_id)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract_services (contract_id, services_id) VALUES (:contract_id, :services_id)");
+    $stmt->execute([
+        ':contract_id' => $contract_id,
+        ':services_id' => $services_id
+    ]);
+}
