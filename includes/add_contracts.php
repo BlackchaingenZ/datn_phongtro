@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
     $tempCustomers = json_decode($tempCustomersData, true);
 
-    if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc) {
+    if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu) {
         // Thêm hợp đồng
         $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu);
 
