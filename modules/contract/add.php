@@ -295,7 +295,7 @@ layout('navbar', 'admin', $data);
         </form>
     </div>
 
-    <div id="tempCustomerInfo"></div>
+    <!-- <div id="tempCustomerInfo"></div> -->
     </form>
 
 </div>
@@ -379,6 +379,7 @@ layout('navbar', 'admin', $data);
             alert('Vui lòng nhập đầy đủ thông tin khách thuê.');
         }
         updateTempCustomerList();
+
     }
 
     function updateTempCustomerList() {
