@@ -148,19 +148,18 @@ $listAllcontract = getRaw("
         contract.id, 
         tenphong, 
         cost.giathue,
-        tenant1.tenkhach AS tenant_name_1, 
-        tenant2.tenkhach AS tenant_name_2, 
         tiencoc, 
         soluongthanhvien, 
         contract.ngayvao AS ngayvaoo, 
         contract.ngayra AS thoihanhopdong, 
         contract.ghichu,
         tinhtrangcoc, 
+        GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
         GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
     FROM contract 
     INNER JOIN room ON contract.room_id = room.id
-    LEFT JOIN tenant AS tenant1 ON contract.tenant_id = tenant1.id
-    LEFT JOIN tenant AS tenant2 ON contract.tenant_id_2 = tenant2.id
+    INNER JOIN contract_tenant ON contract.id = contract_tenant.contract_id_1
+    INNER JOIN tenant ON contract_tenant.tenant_id_1 = tenant.id
     INNER JOIN cost_room ON room.id = cost_room.room_id 
     INNER JOIN cost ON cost_room.cost_id = cost.id
     LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
@@ -347,7 +346,7 @@ layout('navbar', 'admin', $data);
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
                         <th style="width: 6%; text-align: center;">Người làm hợp đồng</th>
                         <th>Đang ở</th>
-                        <th style="width: 2%; text-align: center;">Tổng người</th>
+                        <!-- <th style="width: 2%; text-align: center;">Tổng người</th> -->
                         <th>Giá thuê</th>
                         <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
                         <th style="width: 6%; text-align: center;">Trạng thái cọc</th>
@@ -385,8 +384,8 @@ layout('navbar', 'admin', $data);
                                 <td><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tenphong']; ?></b></td>
                                 <td>
-                                    <b><?php echo $item['tenant_name_1']; ?></b><br>
-                                    <b><?php echo $item['tenant_name_2']; ?></b>
+                                    <!--echo n12br tự động xuống dòng mỗi tên -->
+                                    <b><?php echo nl2br($item['tenant_id_1']); ?></b><br>
                                 </td>
                                 <td>
                                     <?php if (!empty($tenants)) {
@@ -399,7 +398,7 @@ layout('navbar', 'admin', $data);
                                         echo '<i>Chưa có ai</i>';
                                     } ?>
                                 </td>
-                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td>
+                                <!-- <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td> -->
                                 <td><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
                                 <td><?php echo $item['tinhtrangcoc'] == 0 ? '<span class="btn-kyhopdong-err">Chưa thu tiền</span>' : '<span class="btn-kyhopdong-suc">Đã thu tiền</span>' ?></td>

@@ -318,7 +318,7 @@ layout('navbar', 'admin', $data);
             roomsByArea[areaId].forEach(room => {
                 const option = document.createElement('option');
                 option.value = room.id;
-                option.textContent = `${room.tenphong} (${room.soluong} người)`; // Hiển thị tên phòng và số người
+                option.textContent = `${room.tenphong} đang ở (${room.soluong} người)`; // Hiển thị tên phòng và số người
                 roomSelect.appendChild(option);
             });
         }

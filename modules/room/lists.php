@@ -260,7 +260,7 @@ layout('navbar', 'admin', $data);
                                 <td><?php echo $item['dientich'] ?> m2</td>
                                 <td><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
-                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?>/2 người</td>
+                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td>
                                 <td>Ngày <?php echo $item['ngaylaphd'] ?></td>
                                 <td><?php echo $item['chuky'] ?> tháng</td>
                                 <td><?php echo $item['ngayvao'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvao'], 'd-m-Y'); ?></td>
