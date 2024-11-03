@@ -29,16 +29,17 @@ function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc
     return $pdo->lastInsertId(); // Trả về ID của hợp đồng vừa được tạo
 }
 
-function addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id)
+function addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd)
 {
     global $pdo;
-    $stmt = $pdo->prepare("INSERT INTO tenant (tenkhach, ngaysinh, gioitinh, diachi, room_id) VALUES (:tenkhach, :ngaysinh, :gioitinh, :diachi, :room_id)");
+    $stmt = $pdo->prepare("INSERT INTO tenant (tenkhach, ngaysinh, gioitinh, diachi, room_id, cmnd) VALUES (:tenkhach, :ngaysinh, :gioitinh, :diachi, :room_id, :cmnd)");
     $stmt->execute([
         ':tenkhach' => $tenkhach,
         ':ngaysinh' => $ngaysinh,
         ':gioitinh' => $gioitinh,
         ':diachi' => $diachi,
-        ':room_id' => $room_id
+        ':room_id' => $room_id,
+        ':cmnd' => $cmnd,
     ]);
     return $pdo->lastInsertId(); // Trả về ID của khách thuê vừa được tạo
 }
@@ -98,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cmnd = $customer['cmnd'];
 
             // Thêm khách thuê vào bảng tenant và lấy tenant_id
-            $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id);
+            $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
 
             // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
             linkContractTenant($contract_id, $tenant_id);
