@@ -575,3 +575,4 @@ function linkContractService($contract_id, $services_id)
         ':services_id' => $services_id
     ]);
 }
+

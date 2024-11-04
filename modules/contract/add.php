@@ -41,23 +41,6 @@ foreach ($allRoom as $room) {
     }
 }
 
-// Kiểm tra nếu có thông báo từ URL
-if (isset($_GET['message'])) {
-    $message = htmlspecialchars($_GET['message']); // Bảo vệ khỏi XSS
-    echo '<div id="notification" style="position: fixed; top: 20px; right: 20px; background-color: #f8d7da; color: #721c24; padding: 10px; border: 1px solid #f5c6cb; border-radius: 5px; z-index: 1000;">
-            ' . $message . '
-          </div>';
-    echo '<script>
-            // Tự động ẩn thông báo sau 3 giây
-            setTimeout(function() {
-                var notification = document.getElementById("notification");
-                if (notification) {
-                    notification.style.display = "none"; // Ẩn thông báo
-                }
-            }, 3000); // Thay đổi thời gian nếu cần
-          </script>';
-}
-
 if (!empty($_POST['services'])) {
     $services = implode(',', $_POST['services']); // Chuyển đổi mảng dịch vụ thành chuỗi
     // Thêm mã thêm dịch vụ vào cơ sở dữ liệu (cần có xử lý cho phần này)
@@ -182,10 +165,17 @@ layout('navbar', 'admin', $data);
                         <span class="close-btn" onclick="closePopup()">&times;</span>
 
                         <!-- Nội dung bên trong popup -->
+
                         <div class="form-group">
                             <label for="">Tên khách <span style="color: red">*</span></label>
                             <input type="text" placeholder="Tên khách thuê" name="tenkhach" id="" class="form-control" value="<?php echo old('tenkhach', $old); ?>">
                             <?php echo form_error('tenkhach', $errors, '<span class="error">', '</span>'); ?>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="">Số CMND/CCCD <span style="color: red">*</span></label>
+                            <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="" class="form-control" value="<?php echo old('cmnd', $old); ?>">
+                            <?php echo form_error('cmnd', $errors, '<span class="error">', '</span>'); ?>
                         </div>
 
                         <div class="form-group">
@@ -207,12 +197,6 @@ layout('navbar', 'admin', $data);
                             <label for="">Địa chỉ <span style="color: red">*</span></label>
                             <input type="text" placeholder="Địa chỉ" name="diachi" id="" class="form-control" value="<?php echo old('diachi', $old); ?>">
                             <?php echo form_error('diachi', $errors, '<span class="error">', '</span>'); ?>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="">Số CMND/CCCD <span style="color: red">*</span></label>
-                            <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="" class="form-control" value="<?php echo old('cmnd', $old); ?>">
-                            <?php echo form_error('cmnd', $errors, '<span class="error">', '</span>'); ?>
                         </div>
 
                         <div class="col-12">
@@ -272,7 +256,6 @@ layout('navbar', 'admin', $data);
                         <span class="error" style="color: red;"><?php echo htmlspecialchars($errors['services'], ENT_QUOTES, 'UTF-8'); ?></span>
                     <?php } ?>
                 </div>
-
 
                 <div class="form-group">
                     <label for="">Ghi chú<span style="color: red">*</label>
@@ -355,32 +338,58 @@ layout('navbar', 'admin', $data);
         const cmnd = document.querySelector('[name="cmnd"]').value;
 
         if (tenkhach && ngaysinh && gioitinh && diachi && cmnd) {
-            // Thêm khách thuê vào danh sách tạm
-            tempCustomers.push({
-                tenkhach,
-                ngaysinh,
-                gioitinh,
-                diachi,
-                cmnd
-            });
+            // Kiểm tra xem CMND đã tồn tại trong danh sách tạm hay chưa
+            const isDuplicate = tempCustomers.some(customer => customer.cmnd === cmnd);
 
-            // Hiển thị danh sách khách thuê tạm
-            document.getElementById('tempCustomerInfo').innerHTML += `
-            <p>${tenkhach} - ${ngaysinh} - ${gioitinh} - ${diachi} - ${cmnd}</p>
-        `;
+            if (isDuplicate) {
+                alert("CMND/CCCD đã tồn tại trong danh sách khách vừa tạo.");
+            }
+            // Gửi yêu cầu kiểm tra CMND
+            fetch('includes/check_cmnd.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cmnd: cmnd
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu.');
+                    } else {
+                        // Thêm khách thuê vào danh sách tạm
+                        tempCustomers.push({
+                            tenkhach,
+                            ngaysinh,
+                            gioitinh,
+                            diachi,
+                            cmnd
+                        });
 
-            // Reset form input
-            document.querySelector('[name="tenkhach"]').value = '';
-            document.querySelector('[name="ngaysinh"]').value = '';
-            document.querySelector('[name="gioitinh"]').value = '';
-            document.querySelector('[name="diachi"]').value = '';
-            document.querySelector('[name="cmnd"]').value = '';
+                        // Hiển thị danh sách khách thuê tạm
+                        document.getElementById('tempCustomerInfo').innerHTML += `
+                <p>${tenkhach} - ${ngaysinh} - ${gioitinh} - ${diachi} - ${cmnd}</p>
+                `;
+
+                        // Reset form input
+                        document.querySelector('[name="tenkhach"]').value = '';
+                        document.querySelector('[name="ngaysinh"]').value = '';
+                        document.querySelector('[name="gioitinh"]').value = '';
+                        document.querySelector('[name="diachi"]').value = '';
+                        document.querySelector('[name="cmnd"]').value = '';
+                    }
+                    updateTempCustomerList();
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                });
         } else {
             alert('Vui lòng nhập đầy đủ thông tin khách thuê.');
         }
-        updateTempCustomerList();
-
     }
+
 
     function updateTempCustomerList() {
         const customerInfoList = tempCustomers.map((customer, index) =>
@@ -412,3 +421,4 @@ layout('navbar', 'admin', $data);
 
 <?php
 layout('footer', 'admin');
+?>
