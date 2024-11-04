@@ -23,7 +23,7 @@ layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
 // Xóa hết
-if (isset($_POST['deleteMultip'])) { 
+if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records'];
     $extract_id = implode(',', $numberCheckbox);
 
@@ -33,17 +33,17 @@ if (isset($_POST['deleteMultip'])) {
     if ($checkTenantInContract) {
         // Nếu có liên kết, không thực hiện xóa và thông báo cho người dùng
         setFlashData('msg', 'Không thể xóa khách thuê vì đang có hợp đồng liên quan');
-        setFlashData('msg_type', 'error');
+        setFlashData('msg_type', 'err');
     } else {
         // Nếu không có liên kết, thực hiện xóa tenant
         $checkDelete = delete('tenant', "id IN($extract_id)");
 
         if ($checkDelete) {
             setFlashData('msg', 'Xóa thông tin khách thuê thành công');
-            setFlashData('msg_type', 'success');
+            setFlashData('msg_type', 'suc');
         } else {
             setFlashData('msg', 'Đã xảy ra lỗi khi xóa khách thuê');
-            setFlashData('msg_type', 'error');
+            setFlashData('msg_type', 'err');
         }
     }
 
@@ -110,9 +110,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
     $queryString = trim($queryString, '&');
     $queryString = '&' . $queryString;
 }
-
-
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');

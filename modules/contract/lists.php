@@ -194,23 +194,6 @@ if (!empty($_SERVER['QUERY_STRING'])) {
     $queryString = '&' . $queryString;
 }
 
-// Kiểm tra nếu có thông báo từ URL
-if (isset($_GET['message'])) {
-    $message = htmlspecialchars($_GET['message']); // Bảo vệ khỏi XSS
-    echo '<div id="notification" style="position: fixed; top: 20px; right: 20px; background-color: #f8d7da; color: #721c24; padding: 10px; border: 1px solid #f5c6cb; border-radius: 5px; z-index: 1000;">
-            ' . $message . '
-          </div>';
-    echo '<script>
-            // Tự động ẩn thông báo sau 3 giây
-            setTimeout(function() {
-                var notification = document.getElementById("notification");
-                if (notification) {
-                    notification.style.display = "none"; // Ẩn thông báo
-                }
-            }, 3000); // Thay đổi thời gian nếu cần
-          </script>';
-}
-
 if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records'];
 
@@ -260,9 +243,6 @@ if (isset($_POST['deleteMultip'])) {
     }
     redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
 }
-
-
-
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
