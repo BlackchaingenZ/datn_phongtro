@@ -165,19 +165,19 @@ layout('navbar', 'admin', $data);
                         <span class="close-btn" onclick="closePopup()">&times;</span>
 
                         <!-- Nội dung bên trong popup -->
-                         
+
                         <div class="form-group">
                             <label for="">Tên khách <span style="color: red">*</span></label>
                             <input type="text" placeholder="Tên khách thuê" name="tenkhach" id="" class="form-control" value="<?php echo old('tenkhach', $old); ?>">
                             <?php echo form_error('tenkhach', $errors, '<span class="error">', '</span>'); ?>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="">Số CMND/CCCD <span style="color: red">*</span></label>
                             <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="" class="form-control" value="<?php echo old('cmnd', $old); ?>">
                             <?php echo form_error('cmnd', $errors, '<span class="error">', '</span>'); ?>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="">Ngày sinh <span style="color: red">*</span></label>
                             <input type="date" name="ngaysinh" id="" class="form-control" value="<?php echo old('ngaysinh', $old); ?>">
@@ -338,32 +338,64 @@ layout('navbar', 'admin', $data);
         const cmnd = document.querySelector('[name="cmnd"]').value;
 
         if (tenkhach && ngaysinh && gioitinh && diachi && cmnd) {
-            // Thêm khách thuê vào danh sách tạm
-            tempCustomers.push({
-                tenkhach,
-                ngaysinh,
-                gioitinh,
-                diachi,
-                cmnd
-            });
+            // Kiểm tra định dạng CMND phải là 9 hoặc 12 chữ số
+            const countcmnd = /^[0-9]{9}$|^[0-9]{12}$/;
+            if (!countcmnd.test(cmnd)) {
+                alert("CMND/CCCD phải có dạng là 9 hoặc 12 chữ số.");
+                return;
+            }
+            // Kiểm tra xem CMND đã tồn tại trong danh sách tạm hay chưa
+            const isDuplicate = tempCustomers.some(customer => customer.cmnd === cmnd);
 
-            // Hiển thị danh sách khách thuê tạm
-            document.getElementById('tempCustomerInfo').innerHTML += `
-            <p>${tenkhach} - ${ngaysinh} - ${gioitinh} - ${diachi} - ${cmnd}</p>
-        `;
+            if (isDuplicate) {
+                alert("CMND/CCCD đã tồn tại trong danh sách khách vừa tạo.");
+            }
+            // Gửi yêu cầu kiểm tra CMND
+            fetch('includes/check_cmnd.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cmnd: cmnd
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu.');
+                    } else {
+                        // Thêm khách thuê vào danh sách tạm
+                        tempCustomers.push({
+                            tenkhach,
+                            ngaysinh,
+                            gioitinh,
+                            diachi,
+                            cmnd
+                        });
 
-            // Reset form input
-            document.querySelector('[name="tenkhach"]').value = '';
-            document.querySelector('[name="ngaysinh"]').value = '';
-            document.querySelector('[name="gioitinh"]').value = '';
-            document.querySelector('[name="diachi"]').value = '';
-            document.querySelector('[name="cmnd"]').value = '';
+                        // Hiển thị danh sách khách thuê tạm
+                        document.getElementById('tempCustomerInfo').innerHTML += `
+                <p>${tenkhach} - ${ngaysinh} - ${gioitinh} - ${diachi} - ${cmnd}</p>
+                `;
+
+                        // Reset form input
+                        document.querySelector('[name="tenkhach"]').value = '';
+                        document.querySelector('[name="ngaysinh"]').value = '';
+                        document.querySelector('[name="gioitinh"]').value = '';
+                        document.querySelector('[name="diachi"]').value = '';
+                        document.querySelector('[name="cmnd"]').value = '';
+                    }
+                    updateTempCustomerList();
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                });
         } else {
             alert('Vui lòng nhập đầy đủ thông tin khách thuê.');
         }
-        updateTempCustomerList();
-
     }
+
 
     function updateTempCustomerList() {
         const customerInfoList = tempCustomers.map((customer, index) =>

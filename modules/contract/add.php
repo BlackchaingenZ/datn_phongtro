@@ -338,6 +338,17 @@ layout('navbar', 'admin', $data);
         const cmnd = document.querySelector('[name="cmnd"]').value;
 
         if (tenkhach && ngaysinh && gioitinh && diachi && cmnd) {
+            // Kiểm tra tên khách phải lớn hơn 5 ký tự
+            if (tenkhach.length <= 5) {
+                alert("Tên khách phải lớn hơn 5 ký tự.");
+                return;
+            }
+            // Kiểm tra định dạng CMND phải là 9 hoặc 12 chữ số
+            const countcmnd = /^[0-9]{9}$|^[0-9]{12}$/;
+            if (!countcmnd.test(cmnd)) {
+                alert("CMND/CCCD phải có dạng là 9 hoặc 12 chữ số.");
+                return;
+            }
             // Kiểm tra xem CMND đã tồn tại trong danh sách tạm hay chưa
             const isDuplicate = tempCustomers.some(customer => customer.cmnd === cmnd);
 
