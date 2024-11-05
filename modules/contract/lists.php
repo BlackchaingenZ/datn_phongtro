@@ -324,11 +324,11 @@ layout('navbar', 'admin', $data);
                         <!-- <th></th> -->
                         <th width="2%">STT</th>
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
-                        <th style="width: 6%; text-align: center;">Người làm hợp đồng</th>
+                        <th style="width: 9%; text-align: center;">Người làm hợp đồng</th>
                         <th>Đang ở</th>
                         <!-- <th style="width: 2%; text-align: center;">Tổng người</th> -->
                         <th>Giá thuê</th>
-                        <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
+                        <th style="width: 6%; text-align: center;">Giá tiền cọc</th>
                         <th style="width: 6%; text-align: center;">Trạng thái cọc</th>
                         <th style="width: 4%; text-align: center;">Chu kỳ thu </th>
                         <th>Ngày lập</th>
@@ -361,7 +361,7 @@ layout('navbar', 'admin', $data);
                                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/contracts.png" class="image__room-img" alt="">
                                     </div>
                                 </td> -->
-                                <td><?php echo $count; ?></td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tenphong']; ?></b></td>
                                 <td>
                                     <!--echo n12br tự động xuống dòng mỗi tên -->
@@ -400,7 +400,13 @@ layout('navbar', 'admin', $data);
                                     }
                                     ?>
                                 </td>
-                                <td><b><?php echo $item['ghichu']; ?></b></td>
+                                <td style="text-align: center;">
+                                    <!-- Thông tin -->
+                                    <span class="tooltip-icon">
+                                        <i class="fa fa-info-circle"></i> 
+                                        <span class="tooltiptext"><?php echo $item['ghichu']; ?></span>
+                                    </span>
+                                </td>
                                 <td class="">
                                     <div class="action">
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>

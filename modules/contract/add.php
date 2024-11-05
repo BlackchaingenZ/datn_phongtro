@@ -339,13 +339,11 @@ layout('navbar', 'admin', $data);
         const cmnd = document.querySelector('[name="cmnd"]').value;
 
         if (tenkhach && ngaysinh && gioitinh && diachi && cmnd) {
-            // Kiểm tra tên khách phải là chữ, không có ký tự đặc biệt và có hơn 5 ký tự
-            const counttenkhach = /^[a-zA-Z]{6,}$/;
-            if (!counttenkhach.test(tenkhach)) {
-                alert("Tên khách phải là chữ và lớn hơn 5 ký tự.");
+            // Kiểm tra tên khách phải lớn hơn 5 ký tự
+            if (tenkhach.length <= 5) {
+                alert("Tên khách phải lớn hơn 5 ký tự.");
                 return;
             }
-
             // Kiểm tra định dạng CMND phải là 9 hoặc 12 chữ số
             const countcmnd = /^[0-9]{9}$|^[0-9]{12}$/;
             if (!countcmnd.test(cmnd)) {

@@ -1222,3 +1222,41 @@ th {
     text-decoration: none;
     cursor: pointer;
 }
+
+.tooltip {
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    color: blue;
+}
+
+.tooltip-icon {
+    font-size: 15px;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: blue;
+    margin-left: 5px;
+}
+
+.tooltip-icon .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Vị trí tooltip */
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.tooltip-icon:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

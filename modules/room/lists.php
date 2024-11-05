@@ -234,7 +234,7 @@ layout('navbar', 'admin', $data);
                         <th>Ngày vào ở</th>
                         <th>Ngày hết hạn</th>
                         <th>Trạng thái</th>
-                        <th style="width: 6%; text-align: center;">Cơ sở vật chất</th>
+                        <th style="width: 5%; text-align: center;">Cơ sở vật chất</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -270,7 +270,14 @@ layout('navbar', 'admin', $data);
                                     echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>' : '<span class="btn-status-err">Đang trống</span>';
                                     ?>
                                 </td>
-                                <td><b><?php echo $item['tenthietbi']; ?></b></td>
+                                <td style="text-align: center;">
+                                    <!-- Thông tin -->
+                                    <span class="tooltip-icon">
+                                        <i class="fa fa-info-circle"></i>
+                                        <span class="tooltiptext"><?php echo $item['tenthietbi']; ?></span>
+                                    </span>
+                                </td>
+
                                 <td class="">
                                     <a href="<?php echo getLinkAdmin('room', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('room', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
