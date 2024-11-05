@@ -163,7 +163,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Nghề nghiệp <span style="color: red">*</span></label>
+                    <label for="">Nghề nghiệp</label>
                     <input type="text" placeholder="Nghề nghiệp" name="nghenghiep" id="" class="form-control" value="<?php echo old('nghenghiep', $old); ?>">
                     <?php echo form_error('nghenghiep', $errors, '<span class="error">', '</span>'); ?>
                 </div>
@@ -183,7 +183,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="name">Ảnh mặt trước <span style="color: red">*</span></label>
+                    <label for="name">Ảnh mặt trước </label>
                     <div class="row ckfinder-group">
                         <div class="col-11">
                             <input type="text" placeholder="Ảnh mặt trước" name="anhmattruoc" id="name" class="form-control image-render" value="<?php echo old('anhmattruoc', $old); ?>">
@@ -195,7 +195,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="name">Ảnh mặt sau <span style="color: red">*</span></label>
+                    <label for="name">Ảnh mặt sau</label>
                     <div class="row ckfinder-group">
                         <div class="col-11">
                             <input type="text" placeholder="Ảnh mặt sau" name="anhmatsau" id="name" class="form-control image-render" value="<?php echo old('anhmatsau', $old); ?>">
@@ -207,7 +207,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Zalo <span style="color: red">*</span></label>
+                    <label for="">Zalo</label>
                     <input type="text" placeholder="Link zalo" name="zalo" id="" class="form-control" value="<?php echo old('zalo', $old); ?>">
                     <?php echo form_error('zalo', $errors, '<span class="error">', '</span>'); ?>
                 </div>
