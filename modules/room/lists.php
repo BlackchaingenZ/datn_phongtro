@@ -248,24 +248,24 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td>
+                                <td style="text-align: center;">
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
 
 
-                                <td><?php echo $count; ?></td>
-                                <td><img style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt=""></td>
-                                <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
-                                <td><b><?php echo $item['tenphong']; ?></b></td>
-                                <td><?php echo $item['dientich'] ?> m2</td>
-                                <td><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
-                                <td><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
-                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td>
-                                <td>Ngày <?php echo $item['ngaylaphd'] ?></td>
-                                <td><?php echo $item['chuky'] ?> tháng</td>
-                                <td><?php echo $item['ngayvao'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvao'], 'd-m-Y'); ?></td>
-                                <td><?php echo $item['ngayra']  == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayra'], 'd-m-Y'); ?></td>
-                                <td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
+                                <td style="text-align: center;"><img style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt=""></td>
+                                <td style="text-align: center;"><b><?php echo $item['tenkhuvuc']; ?></b></td>
+                                <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
+                                <td style="text-align: center;"><?php echo $item['dientich'] ?> m2</td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td>
+                                <td style="text-align: center;">Ngày <?php echo $item['ngaylaphd'] ?></td>
+                                <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
+                                <td style="text-align: center;"><?php echo $item['ngayvao'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvao'], 'd-m-Y'); ?></td>
+                                <td style="text-align: center;"><?php echo $item['ngayra']  == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayra'], 'd-m-Y'); ?></td>
+                                <td style="text-align: center;">
                                     <?php
                                     echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>' : '<span class="btn-status-err">Đang trống</span>';
                                     ?>
@@ -273,12 +273,12 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <!-- Thông tin -->
                                     <span class="tooltip-icon">
-                                        <i class="fa fa-info-circle"></i>
+                                    <i class="fa-solid fa-eye"></i>
                                         <span class="tooltiptext"><?php echo $item['tenthietbi']; ?></span>
                                     </span>
                                 </td>
 
-                                <td class="">
+                                <td class="" style="text-align: center;">
                                     <a href="<?php echo getLinkAdmin('room', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('room', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>

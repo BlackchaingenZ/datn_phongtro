@@ -525,10 +525,10 @@ function lastInsertId()
     return $pdo->lastInsertId();
 }
 
-function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu)
+function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3)
 {
     global $pdo;
-    $stmt = $pdo->prepare("INSERT INTO contract (room_id, ngaylaphopdong, ngayvao, ngayra, tinhtrangcoc, create_at, ghichu) VALUES (:room_id, :ngaylaphopdong, :ngayvao, :ngayra, :tinhtrangcoc, :create_at, :ghichu)");
+    $stmt = $pdo->prepare("INSERT INTO contract (room_id, ngaylaphopdong, ngayvao, ngayra, tinhtrangcoc, create_at, ghichu, sotiencoc, dieukhoan1, dieukhoan2, dieukhoan3) VALUES (:room_id, :ngaylaphopdong, :ngayvao, :ngayra, :tinhtrangcoc, :create_at, :ghichu, :sotiencoc, :dieukhoan1, :dieukhoan2, :dieukhoan3)");
     $stmt->execute([
         ':room_id' => $room_id,
         ':ngaylaphopdong' => $ngaylaphopdong,
@@ -536,7 +536,11 @@ function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc
         ':ngayra' => $ngayra,
         ':tinhtrangcoc' => $tinhtrangcoc,
         ':create_at' => $create_at,
-        ':ghichu' => $ghichu
+        ':ghichu' => $ghichu,
+        ':sotiencoc' => $sotiencoc,
+        ':dieukhoan1' => $dieukhoan1,
+        ':dieukhoan2' => $dieukhoan2,
+        ':dieukhoan3' => $dieukhoan3
     ]);
     return $pdo->lastInsertId(); // Trả về ID của hợp đồng vừa được tạo
 }

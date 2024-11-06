@@ -201,16 +201,16 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td>
+                                <td style="text-align: center;">
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
 
-                                <td><?php echo $count; ?></td>
-                                <td><b><?php echo $item['tenkhach']; ?></b></td>
-                                <td>0<?php echo $item['sdt'] ?> </td>
-                                <td><?php echo ($item['ngaysinh']) ?> </td>
-                                <td><?php echo $item['gioitinh'] ?></td>
-                                <td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
+                                <td style="text-align: center;"><b><?php echo $item['tenkhach']; ?></b></td>
+                                <td style="text-align: center;">0<?php echo $item['sdt'] ?> </td>
+                                <td style="text-aligin:center";><?php echo ($item['ngaysinh']) ?> </td>
+                                <td style="text-align: center;"><?php echo $item['gioitinh'] ?></td>
+                                <td style="text-align: center;">
                                     <div>
                                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/local.svg" alt=""><b style="font-size: 13px">Địa chỉ:</b>
                                         <?php echo $item['diachi'] ?>
@@ -220,11 +220,11 @@ layout('navbar', 'admin', $data);
                                         <?php echo $item['nghenghiep'] ?>
                                     </div>
                                 </td>
-                                <td><?php echo $item['cmnd'] ?></td>
+                                <td style="text-align:center";><?php echo $item['cmnd'] ?></td>
                                 <td><?php echo $item['ngaycap'] ?></td>
-                                <td><a href="<?php echo getLinkAdmin('tenant', 'view-pre', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmattruoc'])) ? $item['anhmattruoc'] : '<img src="' . $item['anhmattruoc'] . '"  width=70 height=50/>' ?></a></td>
-                                <td><a href="<?php echo getLinkAdmin('tenant', 'view-after', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmatsau'])) ? $item['anhmatsau'] : '<img src="' . $item['anhmatsau'] . '"  width=70 height=50/>' ?></a></td>
-                                <td>
+                                <td style="text-align: center;"><a href="<?php echo getLinkAdmin('tenant', 'view-pre', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmattruoc'])) ? $item['anhmattruoc'] : '<img src="' . $item['anhmattruoc'] . '"  width=70 height=50/>' ?></a></td>
+                                <td style="text-align: center;"><a href="<?php echo getLinkAdmin('tenant', 'view-after', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmatsau'])) ? $item['anhmatsau'] : '<img src="' . $item['anhmatsau'] . '"  width=70 height=50/>' ?></a></td>
+                                <td style="text-align: center;">
                                     <?php if (!empty($item['tenphong'])) { ?>
                                         <p class="btn btn-primary btn-sm" style="color: #fff; font-size: 12px"><?php echo $item['tenphong'] ?></p>
                                     <?php } else {
@@ -233,8 +233,8 @@ layout('navbar', 'admin', $data);
                                     <?php
                                     } ?>
                                 </td>
-                                <td><?php echo $item['ngayvao'] ?></td>
-                                <td class="">
+                                <td style="text-align: center;"><?php echo $item['ngayvao'] ?></td>
+                                <td class="" style="text-align: center;">
                                     <a target="_blank" href="<?php echo $item['zalo'] ?>"><img style="width: 30px; height: 30px" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/zalo.jpg" alt=""></a>
                                     <a href="<?php echo getLinkAdmin('tenant', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('tenant', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>

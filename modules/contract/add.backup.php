@@ -258,10 +258,11 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Ghi chú<span style="color: red">*</label>
-                    <input type="text" placeholder="" name="ghichu" class="form-control" value="<?php echo old('ghichu', $old); ?>" style="width: 100%;height:100px">
+                    <label for="">Ghi chú<span style="color: red">*</span></label>
+                    <textarea name="ghichu" class="form-control" rows="4" style="width: 100%; height: 100px;"><?php echo old('ghichu', $old); ?></textarea>
                     <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
                 <!-- Input ẩn để lưu danh sách khách thuê tạm -->
 
                 <form id="contractForm" method="post" action="">
@@ -338,6 +339,11 @@ layout('navbar', 'admin', $data);
         const cmnd = document.querySelector('[name="cmnd"]').value;
 
         if (tenkhach && ngaysinh && gioitinh && diachi && cmnd) {
+            // Kiểm tra tên khách phải lớn hơn 5 ký tự
+            if (tenkhach.length <= 5) {
+                alert("Tên khách phải lớn hơn 5 ký tự.");
+                return;
+            }
             // Kiểm tra định dạng CMND phải là 9 hoặc 12 chữ số
             const countcmnd = /^[0-9]{9}$|^[0-9]{12}$/;
             if (!countcmnd.test(cmnd)) {
@@ -349,6 +355,7 @@ layout('navbar', 'admin', $data);
 
             if (isDuplicate) {
                 alert("CMND/CCCD đã tồn tại trong danh sách khách vừa tạo.");
+                return;
             }
             // Gửi yêu cầu kiểm tra CMND
             fetch('includes/check_cmnd.php', {

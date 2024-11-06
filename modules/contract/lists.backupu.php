@@ -1,22 +1,20 @@
 <?php
 
-if (!defined('_INCODE')) {
+if (!defined('_INCODE'))
     die('Access denied...');
-}
 
 // Ngăn chặn quyền truy cập
 $userId = isLogin()['user_id'];
 $userDetail = getUserInfo($userId);
 
-$groupId = $userDetail['group_id'];
+$grouId = $userDetail['group_id'];
 
-if ($groupId != 7) {
+if ($grouId != 7) {
     setFlashData('msg', 'Trang bạn muốn truy cập không tồn tại');
     setFlashData('msg_type', 'err');
     redirect('/?module=dashboard');
 }
 
-$pageTitle = 'Quản lý hợp đồng thuê trọ';
 $data = [
     'pageTitle' => 'Quản lý hợp đồng thuê trọ'
 ];
@@ -24,28 +22,74 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-// Xử lý hành động thanh lý hợp đồng
-if (isset($_POST['terminate'])) {
-    if (isset($_POST['terminate'])) {
-        $contractId = $_POST['contract_id'];
-        $contract = getContractById($contractId);
+// Xử lý lọc dữ liệu
+$filter = '';
+if (isGet()) {
+    $body = getBody('get');
 
-        if ($contract) {
-            // Thêm vào bảng lịch sử
-            addContractToHistory($contract);
+    // Mảng để lưu trữ các điều kiện lọc
+    $filterConditions = [];
 
-            // Xóa khỏi bảng hợp đồng
-            deleteContract($contractId);
+    // Xử lý lọc Status theo trạng thái hợp đồng
+    if (!empty($body['status'])) {
+        $status = $body['status'];
 
-            setFlashData('msg', 'Thanh lý hợp đồng thuê trọ thành công');
-            setFlashData('msg_type', 'suc');
-        } else {
-            setFlashData('msg', 'Không tìm thấy hợp đồng');
-            setFlashData('msg_type', 'err');
+        // Xử lý trạng thái "Trong thời hạn", "Đã hết hạn" và "Sắp hết hạn"
+        if ($status == 1) {
+            // Trong thời hạn: Hợp đồng có ngày kết thúc lớn hơn ngày hiện tại
+            $statusSql = "DATEDIFF(contract.ngayra, NOW()) > 30";
+        } elseif ($status == 2) {
+            // Đã hết hạn: Hợp đồng có ngày kết thúc nhỏ hơn hoặc bằng ngày hiện tại
+            $statusSql = "DATEDIFF(contract.ngayra, NOW()) <= 0";
+        } elseif ($status == 3) {
+            // Sắp hết hạn: Hợp đồng có ngày kết thúc trong vòng 30 ngày tới và lớn hơn ngày hiện tại
+            $statusSql = "DATEDIFF(contract.ngayra, NOW()) <= 30 AND DATEDIFF(contract.ngayra, NOW()) > 0";
         }
 
-        redirect('?module=contract');
+        // Thêm điều kiện vào mảng
+        $filterConditions[] = $statusSql;
     }
+
+    // Xử lý lọc Status theo tình trạng cọc
+    if (!empty($body['coc'])) {
+        $status2 = $body['coc'];
+
+        if ($status2 == 2) {
+            $statusSql2 = "tinhtrangcoc=0";
+        } else {
+            $statusSql2 = "tinhtrangcoc=$status2";
+        }
+
+        // Thêm điều kiện vào mảng
+        $filterConditions[] = $statusSql2;
+    }
+
+    // Kết hợp các điều kiện thành một chuỗi SQL
+    if (!empty($filterConditions)) {
+        $filter = 'WHERE ' . implode(' AND ', $filterConditions);
+    }
+}
+
+// Xử lý hành động thanh lý hợp đồng
+if (isset($_POST['terminate'])) {
+    $contractId = $_POST['contract_id'];
+    $contract = getContractById($contractId);
+
+    if ($contract) {
+        // Thêm vào bảng lịch sử
+        addContractToHistory($contract);
+
+        // Xóa khỏi bảng hợp đồng
+        deleteContract($contractId);
+
+        setFlashData('msg', 'Thanh lý hợp đồng thuê trọ thành công');
+        setFlashData('msg_type', 'suc');
+    } else {
+        setFlashData('msg', 'Không tìm thấy hợp đồng');
+        setFlashData('msg_type', 'err');
+    }
+
+    redirect('?module=contract');
 }
 
 function getContractById($id)
@@ -81,61 +125,74 @@ function getTenantsByRoomId($roomId)
     return getRaw("SELECT * FROM tenant WHERE room_id = $roomId");
 }
 
-$searchContract = isset($_POST['search_contract']) ? $_POST['search_contract'] : '';
 
-// Xử lý truy vấn SQL với điều kiện tìm kiếm
-if (!empty($searchContract)) {
-    $listAllcontract = getRaw("
-        SELECT *, 
-            contract.id, 
-            tenphong, 
-            cost.giathue,
-            sotiencoc, 
-            soluongthanhvien, 
-            contract.ngayvao AS ngayvaoo, 
-            contract.ngayra AS thoihanhopdong, 
-            contract.ghichu,
-            tinhtrangcoc, 
-            GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
-            GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
-        FROM contract 
-        INNER JOIN room ON contract.room_id = room.id
-        INNER JOIN contract_tenant ON contract.id = contract_tenant.contract_id_1
-        INNER JOIN tenant ON contract_tenant.tenant_id_1 = tenant.id
-        INNER JOIN cost_room ON room.id = cost_room.room_id 
-        INNER JOIN cost ON cost_room.cost_id = cost.id
-        LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
-        LEFT JOIN services ON contract_services.services_id = services.id 
-        WHERE room.tenphong LIKE '%$searchContract%' OR tenant.tenkhach LIKE '%$searchContract%' OR tenant.cmnd LIKE '%$searchContract%'
-        GROUP BY contract.id
-    ");
+$allTenant = getRows("SELECT id FROM contract $filter");
+$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
+$maxPage = ceil($allTenant / $perPage);
+
+
+
+// 3. Xử lý số trang dựa vào phương thức GET
+if (!empty(getBody()['page'])) {
+    $page = getBody()['page'];
+    if ($page < 1 and $page > $maxPage) {
+        $page = 1;
+    }
 } else {
-    // Nếu không có tìm kiếm, lấy tất cả hợp đồng
-    $listAllcontract = getRaw("
-        SELECT *, 
-            contract.id, 
-            tenphong, 
-            cost.giathue,
-            sotiencoc, 
-            soluongthanhvien, 
-            contract.ngayvao AS ngayvaoo, 
-            contract.ngayra AS thoihanhopdong, 
-            contract.ghichu,
-            tinhtrangcoc, 
-            GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
-            GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
-        FROM contract 
-        INNER JOIN room ON contract.room_id = room.id
-        INNER JOIN contract_tenant ON contract.id = contract_tenant.contract_id_1
-        INNER JOIN tenant ON contract_tenant.tenant_id_1 = tenant.id
-        INNER JOIN cost_room ON room.id = cost_room.room_id 
-        INNER JOIN cost ON cost_room.cost_id = cost.id
-        LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
-        LEFT JOIN services ON contract_services.services_id = services.id 
-        GROUP BY contract.id
-    ");
+    $page = 1;
+}
+$offset = ($page - 1) * $perPage;
+//lấy giá thuê từ bảng cost,không lấy từ room
+$listAllcontract = getRaw("
+    SELECT *, 
+        contract.id, 
+        tenphong, 
+        cost.giathue,
+        sotiencoc, 
+        soluongthanhvien, 
+        contract.ngayvao AS ngayvaoo, 
+        contract.ngayra AS thoihanhopdong, 
+        contract.ghichu,
+        tinhtrangcoc, 
+        GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
+        GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
+    FROM contract 
+    INNER JOIN room ON contract.room_id = room.id
+    INNER JOIN contract_tenant ON contract.id = contract_tenant.contract_id_1
+    INNER JOIN tenant ON contract_tenant.tenant_id_1 = tenant.id
+    INNER JOIN cost_room ON room.id = cost_room.room_id 
+    INNER JOIN cost ON cost_room.cost_id = cost.id
+    LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
+    LEFT JOIN services ON contract_services.services_id = services.id 
+    $filter 
+GROUP BY 
+        contract.id
+    LIMIT 
+        $offset, $perPage
+");
+
+
+
+// Danh sách các hợp đồng sắp hết hạn
+$expiringContracts = [];
+
+// Thêm các hợp đồng sắp hết hạn vào danh sách
+foreach ($listAllcontract as $contract) {
+    $daysUntilExpiration = getContractStatus($contract['thoihanhopdong']);
+    if ($daysUntilExpiration == "Sắp hết hạn") {
+        $expiringContracts[] = $contract;
+    }
 }
 
+// Xử lý query string tìm kiếm với phân trang
+$queryString = null;
+if (!empty($_SERVER['QUERY_STRING'])) {
+    $queryString = $_SERVER['QUERY_STRING'];
+    $queryString = str_replace('module=contract', '', $queryString);
+    $queryString = str_replace('&page=' . $page, '', $queryString);
+    $queryString = trim($queryString, '&');
+    $queryString = '&' . $queryString;
+}
 
 if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records'];
@@ -186,6 +243,7 @@ if (isset($_POST['deleteMultip'])) {
     }
     redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
 }
+
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -216,21 +274,42 @@ layout('navbar', 'admin', $data);
                 </button>
             </div>
         <?php } ?>
-        <form action="" method="POST" class="mt-3">
+        <!-- Tìm kiếm , Lọc dưz liệu -->
+        <form action="" method="get">
+            
             <div class="row">
-                <div class="col-4"></div> <!-- Cột trống bên trái để canh giữa -->
-
-                <div class="col-4"> <!-- Cột chứa ô tìm kiếm -->
-                    <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
+                <div class="col-3">
+                    <div class="form-group">
+                        <select name="status" id="" class="form-select">
+                            <option value=""disabled selected>Chọn trạng thái hợp đồng</option>
+                            <option value="1" <?php echo (!empty($status) && $status == 1) ? 'selected' : false; ?>>Trong thời hạn</option>
+                            <option value="2" <?php echo (!empty($status) && $status == 2) ? 'selected' : false; ?>>Đã hết hạn</option>
+                            <option value="3" <?php echo (!empty($status) && $status == 3) ? 'selected' : false; ?>>Sắp hết hạn</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="col"> <!-- Cột chứa nút tìm kiếm -->
-                    <button style="height: 50px; width: 50px" type="submit" name="search" class="btn btn-secondary">
-                        <i class="fa fa-search"></i> <!-- Icon tìm kiếm -->
-                    </button>
+                <div class="col-3">
+                    <div class="form-group">
+                        <select name="coc" id="" class="form-select">
+                            <option value=""disabled selected>Chọn trạng thái cọc</option>
+                            <option value="1" <?php echo (!empty($status2) && $status2 == 1) ? 'selected' : false; ?>>Đã thu</option>
+                            <option value="2" <?php echo (!empty($status2) && $status2 == 2) ? 'selected' : false; ?>>Chưa thu</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary"> <i class="fa fa-search"></i></button>
                 </div>
             </div>
+            <input type="hidden" name="module" value="contract">
+        </form>
 
+        <form action="" method="POST" class="mt-3">
+            <div>
+
+            </div>
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
             <a href="<?php echo getLinkAdmin('contract'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
@@ -281,11 +360,11 @@ layout('navbar', 'admin', $data);
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
                                 <!-- 
-                            <td>
-                                <div class="image__contract">
-                                    <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/contracts.png" class="image__room-img" alt="">
-                                </div>
-                            </td> -->
+                                <td>
+                                    <div class="image__contract">
+                                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/contracts.png" class="image__room-img" alt="">
+                                    </div>
+                                </td> -->
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
                                 <td style="text-align: center;">
@@ -380,13 +459,49 @@ layout('navbar', 'admin', $data);
                         <?php endif; ?>
                 </tbody>
             </table>
+
+            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+                <ul class="pagination pagination-sm">
+                    <?php
+                    if ($page > 1) {
+                        $prePage = $page - 1;
+                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=contract' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
+                    }
+                    ?>
+
+                    <?php
+                    // Giới hạn số trang
+                    $begin = $page - 2;
+                    $end = $page + 2;
+                    if ($begin < 1) {
+                        $begin = 1;
+                    }
+                    if ($end > $maxPage) {
+                        $end = $maxPage;
+                    }
+                    for ($index = $begin; $index <= $end; $index++) {  ?>
+                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
+                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=contract' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
+                        </li>
+                    <?php  } ?>
+
+                    <?php
+                    if ($page < $maxPage) {
+                        $nextPage = $page + 1;
+                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=contract' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
+                    }
+                    ?>
+                </ul>
+            </nav>
     </div>
+
 </div>
 
 <?php
 
 layout('footer', 'admin');
 ?>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Select all action buttons

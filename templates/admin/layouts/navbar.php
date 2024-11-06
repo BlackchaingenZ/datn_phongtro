@@ -33,18 +33,18 @@
       <div class="menu__list">
 
         <!-- Item 1 -->
-        <a href="<?php echo getLinkAdmin('area') ?>" class="link__menu ">
-          <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/area.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Quản lý khu vực</p>
-          </div>
-        </a>
-
-        <!-- Item 2 -->
         <a href="<?php echo getLinkAdmin('room') ?>" class="link__menu ">
           <div class="menu__item">
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/apartment.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Quản lý phòng</p>
+          </div>
+        </a>
+
+        <!-- Item 2 -->
+        <a href="<?php echo getLinkAdmin('area') ?>" class="link__menu ">
+          <div class="menu__item">
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/area.png" class="menu__item-image" alt="">
+            <p class="menu__item-title">Quản lý khu vực</p>
           </div>
         </a>
         <!-- Item 3 -->
