@@ -61,23 +61,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ngayra = $_POST['ngayra'] ?? null;
     $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? null;
     $create_at = date("Y-m-d H:i:s") ?? null;
-    $ghichu = $_POST['ghichu'] ?? 'Bỏ Trống';
+    $ghichu = $_POST['ghichu'] ?? Null;
     if (empty(trim($ghichu))) {
-        $ghichu = 'Sử dụng nhà đúng mục đích đã thoả thuận';
+        $ghichu = 'Bỏ trống';
     }
     $sotiencoc = $_POST['sotiencoc'] ?? null;
     // Nếu `dieukhoan1` trống, gán giá trị mặc định
-    $dieukhoan1 = $_POST['dieukhoan1'] ?? 'Sử dụng nhà đúng mục đích đã thoả thuận';
+    $dieukhoan1 = $_POST['dieukhoan1'] ?? 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.';
     if (empty(trim($dieukhoan1))) {
-        $dieukhoan1 = 'Sử dụng nhà đúng mục đích đã thoả thuận';
+        $dieukhoan1 = 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường. ';
     }
-    $dieukhoan2 = $_POST['dieukhoan2'] ?? 'Trả đủ tiền thuê nhà đúng kỳ hạn đã thỏa thuận';
+    $dieukhoan2 = $_POST['dieukhoan2'] ?? 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.';
     if (empty(trim($dieukhoan2))) {
-        $dieukhoan2 = 'Trả đủ tiền thuê nhà đúng kỳ hạn đã thỏa thuận';
+        $dieukhoan2 = 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận ,Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.';
     }
-    $dieukhoan3 = $_POST['dieukhoan3'] ?? 'Tôn trọng quy tắc sinh hoạt công cộng';
+    $dieukhoan3 = $_POST['dieukhoan3'] ?? 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất';
     if (empty(trim($dieukhoan3))) {
-        $dieukhoan3 = 'Tôn trọng quy tắc sinh hoạt công cộng';
+        $dieukhoan3 = 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất';
     }
 
     // Lấy danh sách dịch vụ từ POST
@@ -254,10 +254,18 @@ layout('navbar', 'admin', $data);
                     </div>
                     <div class="form-group">
                         <label for="">Số tiền cọc <span style="color: red">*</span></label>
-                        <input type="number" placeholder="Nhập số tiền" name="sotiencoc" id="" class="form-control"
-                            value="<?php echo old('sotiencoc', $old); ?>" step="0.01" min="0">
+                        <input type="text" placeholder="Nhập số tiền" name="sotiencoc" id="sotiencoc" class="form-control"
+                            value="<?php echo old('sotiencoc', $old); ?>" inputmode="decimal" oninput="validateNumber(this)">
                         <?php echo form_error('sotiencoc', $errors, '<span class="error">', '</span>'); ?>
                     </div>
+
+                    <script>
+                        // Hàm kiểm tra chỉ cho phép nhập số
+                        function validateNumber(input) {
+                            input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        }
+                    </script>
+
 
 
                     <div class="form-group">
@@ -271,17 +279,17 @@ layout('navbar', 'admin', $data);
             <div class="col-4">
                 <div class="form-group">
                     <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan1', $old) ?? 'Sử dụng nhà đúng mục đích đã thoả thuận'); ?></textarea>
+                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan1', $old) ?? 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.'); ?></textarea>
                     <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan2', $old) ?? 'Trả đủ tiền thuê nhà đúng kỳ hạn đã thỏa thuận'); ?></textarea>
+                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan2', $old) ?? 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.'); ?></textarea>
                     <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan3', $old) ?? 'Tôn trọng quy tắc sinh hoạt công cộng'); ?></textarea>
+                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan3', $old) ?? 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'); ?></textarea>
 
                     <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
                 </div>

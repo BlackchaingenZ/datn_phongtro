@@ -26,27 +26,48 @@ layout('breadcrumb', 'admin', $data);
 
 // Xử lý hành động thanh lý hợp đồng
 if (isset($_POST['terminate'])) {
-    if (isset($_POST['terminate'])) {
-        $contractId = $_POST['contract_id'];
-        $contract = getContractById($contractId);
+    $contractId = $_POST['contract_id'];
+    $contract = getContractById($contractId);
 
-        if ($contract) {
-            // Thêm vào bảng lịch sử
-            addContractToHistory($contract);
+    if ($contract) {
+        // Thêm vào bảng lịch sử
+        addContractToHistory($contract);
 
+        // Kiểm tra có tenant nào liên kết với hợp đồng qua bảng contract_tenant
+        $checkTenants = get('contract_tenant', "contract_id_1 = $contractId");
+
+        if (!empty($checkTenants)) {
+            // Xóa liên kết tenant trước khi xóa hợp đồng
+            $deleteTenants = delete('contract_tenant', "contract_id_1 = $contractId");
+            if (!$deleteTenants) {
+                setFlashData('msg', 'Không thể xóa liên kết tenant!');
+                setFlashData('msg_type', 'err');
+                redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
+                exit;
+            }
+        }
+
+        // Xóa dịch vụ liên kết với hợp đồng
+        $deleteServices = delete('contract_services', "contract_id = $contractId");
+
+        if ($deleteServices) {
             // Xóa khỏi bảng hợp đồng
             deleteContract($contractId);
 
             setFlashData('msg', 'Thanh lý hợp đồng thuê trọ thành công');
             setFlashData('msg_type', 'suc');
         } else {
-            setFlashData('msg', 'Không tìm thấy hợp đồng');
+            setFlashData('msg', 'Không thể xóa dịch vụ liên kết với hợp đồng!');
             setFlashData('msg_type', 'err');
         }
-
-        redirect('?module=contract');
+    } else {
+        setFlashData('msg', 'Không tìm thấy hợp đồng');
+        setFlashData('msg_type', 'err');
     }
+
+    redirect('?module=contract');
 }
+
 
 function getContractById($id)
 {
@@ -60,7 +81,6 @@ function addContractToHistory($contract)
     $data = [
         'contract_id' => $contract['id'],
         'room_id' => $contract['room_id'],
-        'soluongthanhvien' => $contract['soluongthanhvien'],
         'ngaylaphopdong' => $contract['ngaylaphopdong'],
         'ngayvao' => $contract['ngayvao'],
         'ngayra' => $contract['ngayra'],
@@ -231,15 +251,16 @@ layout('navbar', 'admin', $data);
                     </button>
                 </div>
             </div>
+            <p></p>
 
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
             <a href="<?php echo getLinkAdmin('contract'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <!-- <a href="<?php echo getLinkAdmin('contract', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a> -->
+            <a href="<?php echo getLinkAdmin('contract', 'renatal_history') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa-regular fa-file"></i> Lịch sử hợp đồng</a>
             <a href="<?php echo getLinkAdmin('contract', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
-            <table class="table table-bordered mt-3">
-                <thead>
+            <table class="table table-bordered mt-4">
+            <thead>
                     <tr>
                         <th>
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
@@ -257,7 +278,7 @@ layout('navbar', 'admin', $data);
                         <th style="text-align: center;">Ngày lập</th>
                         <th style="text-align: center;">Ngày vào ở</th>
                         <th style="width: 6%; text-align: center;">Thời hạn hợp đồng</th>
-                        <th style="width: 9%;text-align: center;">Tình trạng</th>
+                        <th style="width: 7%;text-align: center;">Tình trạng</th>
                         <th style="text-align: center;">Dịch vụ</th>
                         <th style="text-align: center;">Ghi chú</th>
                         <th style="text-align: center;">Điều khoản 1</th>
@@ -266,6 +287,7 @@ layout('navbar', 'admin', $data);
                         <th style="width: 3%; text-align: center;">Thao tác</th>
                     </tr>
                 </thead>
+
                 <tbody id="contractData">
 
                     <?php
@@ -374,7 +396,7 @@ layout('navbar', 'admin', $data);
                             <?php endforeach;
                     else: ?>
                             <tr>
-                                <td colspan="16">
+                                <td colspan="19">
                                     <div class="alert alert-danger text-center">Không có dữ liệu hợp đồng</div>
                                 </td>
                             </tr>

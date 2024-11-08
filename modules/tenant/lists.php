@@ -208,7 +208,23 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenkhach']; ?></b></td>
                                 <td style="text-align: center;">0<?php echo $item['sdt'] ?> </td>
-                                <td style="text-aligin:center";><?php echo ($item['ngaysinh']) ?> </td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngaysinh'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngaysinh']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngaysinh']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Không có dữ liệu ngày";
+                                    }
+                                    ?>
+                                </td>
                                 <td style="text-align: center;"><?php echo $item['gioitinh'] ?></td>
                                 <td style="text-align: center;">
                                     <div>
@@ -220,8 +236,24 @@ layout('navbar', 'admin', $data);
                                         <?php echo $item['nghenghiep'] ?>
                                     </div>
                                 </td>
-                                <td style="text-align:center";><?php echo $item['cmnd'] ?></td>
-                                <td><?php echo $item['ngaycap'] ?></td>
+                                <td style="text-align:center" ;><?php echo $item['cmnd'] ?></td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngaycap'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngaycap']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngaycap']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Không có dữ liệu ngày";
+                                    }
+                                    ?>
+                                </td>
                                 <td style="text-align: center;"><a href="<?php echo getLinkAdmin('tenant', 'view-pre', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmattruoc'])) ? $item['anhmattruoc'] : '<img src="' . $item['anhmattruoc'] . '"  width=70 height=50/>' ?></a></td>
                                 <td style="text-align: center;"><a href="<?php echo getLinkAdmin('tenant', 'view-after', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmatsau'])) ? $item['anhmatsau'] : '<img src="' . $item['anhmatsau'] . '"  width=70 height=50/>' ?></a></td>
                                 <td style="text-align: center;">
@@ -233,7 +265,24 @@ layout('navbar', 'admin', $data);
                                     <?php
                                     } ?>
                                 </td>
-                                <td style="text-align: center;"><?php echo $item['ngayvao'] ?></td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngayvao'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngayvao']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngayvao']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Không có dữ liệu ngày";
+                                    }
+                                    ?>
+                                </td>
+
                                 <td class="" style="text-align: center;">
                                     <a target="_blank" href="<?php echo $item['zalo'] ?>"><img style="width: 30px; height: 30px" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/zalo.jpg" alt=""></a>
                                     <a href="<?php echo getLinkAdmin('tenant', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>

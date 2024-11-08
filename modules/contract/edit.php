@@ -46,10 +46,7 @@ if ($contract_id) {
     // Lấy danh sách dịch vụ đã chọn cho hợp đồng
     $selectedServices = getRaw("SELECT services.id FROM contract_services JOIN services ON contract_services.services_id = services.id WHERE contract_services.contract_id = $contract_id");
     $selectedServiceIds = array_column($selectedServices, 'id');
-
-    // Lấy danh sách các phòng, dịch vụ và khu vực
-    $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
-    $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
+    
     // Nếu form được submit
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $room_id = $_POST['room_id'] ?? $contract['room_id'];

@@ -1228,6 +1228,7 @@ th {
     margin-left: -100px;
     opacity: 0;
     transition: opacity 0.3s;
+    font-size: 10px; /* Thêm thuộc tính giảm cỡ chữ */
 }
 
 .tooltip-icon:hover .tooltiptext {
