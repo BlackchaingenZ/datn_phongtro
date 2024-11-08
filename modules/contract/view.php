@@ -222,18 +222,12 @@ GROUP BY contract.id");
                         <div style="padding: 10px;height: 150px;width: 100%;text-align: center;overflow: hidden;">
                             <span></span>
                         </div>
-                        <div>
-                            Nguyễn Minh Thảo
-                        </div>
                     </div>
                     <div style="flex: 0 0 auto;width: 50%;float: left;text-align: center">
                         <strong>BÊN B</strong><br>
                         <i>Ký và ghi rõ họ tên</i>
                         <div style="padding: 10px;height: 150px;width: 100%;text-align: center;overflow: hidden;">
                             <span></span>
-                        </div>
-                        <div>
-                            <?php echo $tenantDetail['tenkhach']; ?>
                         </div>
                     </div>
                 </div>

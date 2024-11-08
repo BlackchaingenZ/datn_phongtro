@@ -220,7 +220,6 @@ layout('navbar', 'admin', $data);
                     <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 150px; background-color: #f9f9f9;">
                         <div id="tempCustomerInfo" style="color: green;"></div>
                     </div>
-
                 </div>
                 <div class="form-group">
                     <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
@@ -353,11 +352,6 @@ layout('navbar', 'admin', $data);
     });
 </script>
 <script>
-    function addTempCustomersToForm() {
-        document.getElementById('customers_data').value = JSON.stringify(tempCustomers);
-    }
-</script>
-<script>
     const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
     const areaSelect = document.getElementById('area-select');
     const roomSelect = document.getElementById('room-select');
@@ -376,6 +370,12 @@ layout('navbar', 'admin', $data);
         }
     });
 </script>
+<script>
+    function addTempCustomersToForm() {
+        document.getElementById('customers_data').value = JSON.stringify(tempCustomers);
+    }
+</script>
+
 <script>
     let tempCustomers = [];
 

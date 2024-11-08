@@ -51,51 +51,66 @@ if ($contract_id) {
 
     // In thông tin khách hàng
     echo nl2br($tenant_info);  // nl2br để chuyển đổi ký tự xuống dòng thành <br> trong HTML
-    // Lấy danh sách các phòng và dịch vụ
+    // Lấy danh sách các phòng, dịch vụ và khu vực
     $allRoom = getRaw("SELECT room.id, room.tenphong FROM room ORDER BY room.tenphong");
     $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
+    $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 
     // Lấy danh sách dịch vụ đã chọn cho hợp đồng
     $selectedServices = getRaw("SELECT services.id FROM contract_services JOIN services ON contract_services.services_id = services.id WHERE contract_services.contract_id = $contract_id");
     $selectedServiceIds = array_column($selectedServices, 'id');
 
-    // Nếu form được submit
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $room_id = $_POST['room_id'] ?? $contract['room_id'];
-        $ngaylaphopdong = $_POST['ngaylaphopdong'] ?? $contract['ngaylaphopdong'];
-        $ngayvao = $_POST['ngayvao'] ?? $contract['ngayvao'];
-        $ngayra = $_POST['ngayra'] ?? $contract['ngayra'];
-        $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? $contract['tinhtrangcoc'];
-        $ghichu = $_POST['ghichu'] ?? $contract['ghichu'];
-        $services = $_POST['services'] ?? []; // Danh sách dịch vụ được chọn từ form
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        // Kiểm tra và lưu thông tin hợp đồng
+        $area_id = $_POST['area_id'];
+        $room_id = $_POST['room_id'];
+        $ngaylaphopdong = $_POST['ngaylaphopdong'];
+        $ngayvao = $_POST['ngayvao'];
+        $ngayra = $_POST['ngayra'];
+        $tinhtrangcoc = $_POST['tinhtrangcoc'];
+        $sotiencoc = $_POST['sotiencoc'];
+        $ghichu = $_POST['ghichu'];
+        $dieukhoan1 = $_POST['dieukhoan1'];
+        $dieukhoan2 = $_POST['dieukhoan2'];
+        $dieukhoan3 = $_POST['dieukhoan3'];
 
-        // Cập nhật hợp đồng trong cơ sở dữ liệu
-        $update = update('contract', [
-            'room_id' => $room_id,
-            'ngaylaphopdong' => $ngaylaphopdong,
-            'ngayvao' => $ngayvao,
-            'ngayra' => $ngayra,
-            'tinhtrangcoc' => $tinhtrangcoc,
-            'ghichu' => $ghichu
-        ], "id = $contract_id");
+        // Cập nhật thông tin hợp đồng
+        $updateContract = "UPDATE contract SET 
+            area_id = ?, room_id = ?, ngaylaphopdong = ?, ngayvao = ?, ngayra = ?, 
+            tinhtrangcoc = ?, sotiencoc = ?, ghichu = ?, dieukhoan1 = ?, dieukhoan2 = ?, dieukhoan3 = ?
+            WHERE id = ?";
+        $stmt = $pdo->prepare($updateContract);
+        $stmt->execute([
+            $area_id,
+            $room_id,
+            $ngaylaphopdong,
+            $ngayvao,
+            $ngayra,
+            $tinhtrangcoc,
+            $sotiencoc,
+            $ghichu,
+            $dieukhoan1,
+            $dieukhoan2,
+            $dieukhoan3,
+            $contract_id
+        ]);
 
-        // Xóa các dịch vụ cũ và thêm các dịch vụ mới liên quan đến hợp đồng
-        delete('contract_services', "contract_id = $contract_id");
-        foreach ($services as $services_id) {
-            linkContractService($contract_id, $services_id);
+        // Cập nhật thông tin khách thuê, kiểm tra các trường hợp đã thay đổi
+        if (!empty($_POST['tenkhach'])) {
+            $tenkhach = $_POST['tenkhach'];
+            $cmnd = $_POST['cmnd'];
+            $ngaysinh = $_POST['ngaysinh'];
+            $gioitinh = $_POST['gioitinh'];
+            $diachi = $_POST['diachi'];
+
+            // Cập nhật hoặc thêm khách thuê mới
+            $insertTenant = "INSERT INTO tenant (tenkhach, cmnd, ngaysinh, gioitinh, diachi, room_id) 
+                             VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $pdo->prepare($insertTenant);
+            $stmt->execute([$tenkhach, $cmnd, $ngaysinh, $gioitinh, $diachi, $room_id]);
         }
-
-        // Thông báo cập nhật thành công
-        setFlashData('msg', 'Hợp đồng đã được cập nhật thành công!');
-        setFlashData('msg_type', 'suc');
-        redirect('?module=contract'); // Chuyển hướng đến trang danh sách hợp đồng
     }
-} else {
-    // Chuyển hướng về danh sách hợp đồng nếu không có ID hợp đồng
-    redirect('?module=contract');
 }
-
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -305,6 +320,75 @@ layout('navbar', 'admin', $data);
     // Khởi tạo danh sách phòng nếu khu vực đã được chọn trước đó
     if (areaSelect.value) {
         updateRoomSelect(areaSelect.value);
+    }
+</script>
+<script>
+    let tenants = <?php echo json_encode($tenants); ?>;
+    let editIndex = null;
+
+    function openPopup() {
+        document.getElementById('popupForm').style.display = 'block';
+    }
+
+    function closePopup() {
+        document.getElementById('popupForm').style.display = 'none';
+        clearForm();
+        editIndex = null;
+    }
+
+    function editTenant(index) {
+        openPopup();
+        editIndex = index;
+        const tenant = tenants[index];
+        document.getElementById('tenkhach').value = tenant.tenkhach;
+        document.getElementById('cmnd').value = tenant.cmnd;
+        document.getElementById('ngaysinh').value = tenant.ngaysinh;
+        document.getElementById('gioitinh').value = tenant.gioitinh;
+        document.getElementById('diachi').value = tenant.diachi;
+    }
+
+    function saveTenant() {
+        const tenkhach = document.getElementById('tenkhach').value;
+        const cmnd = document.getElementById('cmnd').value;
+        const ngaysinh = document.getElementById('ngaysinh').value;
+        const gioitinh = document.getElementById('gioitinh').value;
+        const diachi = document.getElementById('diachi').value;
+
+        if (editIndex !== null) {
+            tenants[editIndex] = {
+                tenkhach,
+                cmnd,
+                ngaysinh,
+                gioitinh,
+                diachi
+            };
+        } else {
+            tenants.push({
+                tenkhach,
+                cmnd,
+                ngaysinh,
+                gioitinh,
+                diachi
+            });
+        }
+        closePopup();
+        updateTenantList();
+    }
+
+    function clearForm() {
+        document.getElementById('tenkhach').value = '';
+        document.getElementById('cmnd').value = '';
+        document.getElementById('ngaysinh').value = '';
+        document.getElementById('gioitinh').value = '';
+        document.getElementById('diachi').value = '';
+    }
+
+    function updateTenantList() {
+        const tenantInfoDiv = document.getElementById('tenantInfo');
+        tenantInfoDiv.innerHTML = '';
+        tenants.forEach((tenant, index) => {
+            tenantInfoDiv.innerHTML += `<div><strong>Tên:</strong> ${tenant.tenkhach} - <strong>CMND:</strong> ${tenant.cmnd} -<strong> Ngày sinh:</strong> ${tenant.ngaysinh} - <strong> Địa chỉ:</strong> ${tenant.diachi} <button onclick="editTenant(${index})">Chỉnh sửa</button></div>`;
+        });
     }
 </script>
 

@@ -579,4 +579,9 @@ function linkContractService($contract_id, $services_id)
         ':services_id' => $services_id
     ]);
 }
-
+function getAll($query, $params = []) {
+    global $pdo; // Giả sử bạn đang dùng PDO để kết nối CSDL
+    $stmt = $pdo->prepare($query); // Chuẩn bị câu lệnh SQL
+    $stmt->execute($params); // Truyền tham số vào execute
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Trả về kết quả
+}
