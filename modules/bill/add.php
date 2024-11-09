@@ -103,7 +103,7 @@ if (isPost()) {
         if ($insertStatus) {
             setFlashData('msg', 'Thêm thông tin hóa đơn thành công');
             setFlashData('msg_type', 'suc');
-            redirect('?module=bill');
+            redirect('?module=bill&action=bills');
         } else {
             setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');

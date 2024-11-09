@@ -1,22 +1,20 @@
 <?php
 
-if (!defined('_INCODE')) die('Access denied...');
+if (!defined('_INCODE'))
+    die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Thu/Chi - Tổng kết'
+    'pageTitle' => 'Quản lý Khu vực'
 ];
 
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
+
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
-
-// // Sau khi thêm hóa đơn thành công
-// header("Location: " . getLinkAdmin('bill', 'bills'));
-// exit;
 ?>
 
 <?php
@@ -24,77 +22,89 @@ layout('navbar', 'admin', $data);
 ?>
 
 <div class="container-fluid">
+
     <div id="MessageFlash">
         <?php getMsg($msg, $msgType); ?>
     </div>
 
-    <div class="box-content sumary-content">
-        <div class="sumary-left">
-            <a href="<?php echo getLinkAdmin('bill', 'bills') ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Hoá đơn</a>
-            <a href="<?php echo getLinkAdmin('collect'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý danh mục thu</a>
-            <a href="<?php echo getLinkAdmin('receipt'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý phiếu thu</a>
 
-        </div>
-        <div class="container-fluid" style="text-align: center;">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/banner.png" class="img-fluid" alt="Banner" style="transform: scale(0.75); display: block; margin: 0 auto;">
+
+    <div class="box-content box-service">
+        <div class="collect-left">
+            <div class="collect-left_top">
+                <div>
+                    <h3>Các danh mục chính </h3>
+                    <p></p>
+                </div>
+            </div>
+            <div class="collect-list">
+
+                <div class="collect-item">
+                    <div class="service-item_left">
+                        <div class="service-item_icon">
+                            <a href="<?php echo getLinkAdmin('bill', 'bills'); ?>">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/area.svg" alt="">
+
+                            </a>
+                        </div>
+                        <div>
+                            <h6>Hoá đơn</h6>
+                            <i>Đang áp dụng cho hệ thống</i>
+                        </div>
+                    </div>
+                    <div class="service-item_right">
+                        <a class="edit" href="<?php echo getLinkAdmin('bill', 'bills'); ?>">
+                            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/edit.png" class="image__equipment-img" alt="">
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="collect-item">
+                    <div class="service-item_left">
+                        <div class="service-item_icon">
+                            <a href="<?php echo getLinkAdmin('collect', 'lists'); ?>">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/area.svg" alt="">
+
+                            </a>
+                        </div>
+                        <div>
+                            <h6>Danh mục thu</h6>
+                            <i>Đang áp dụng cho hệ thống</i>
+                        </div>
+                    </div>
+                    <div class="service-item_right">
+                        <a class="edit" href="<?php echo getLinkAdmin('collect', 'lists'); ?>">
+                            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/edit.png" class="image__equipment-img" alt="">
+                        </a>
+                    </div>
+                </div>
+                <div class="collect-item">
+                    <div class="service-item_left">
+                        <div class="service-item_icon">
+                            <a href="<?php echo getLinkAdmin('receipt', 'lists'); ?>">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/area.svg" alt="">
+
+                            </a>
+                        </div>
+                        <div>
+                            <h6>Phiếu Thu</h6>
+                            <i>Đang áp dụng cho hệ thống</i>
+                        </div>
+                    </div>
+                    <div class="service-item_right">
+                        <a class="edit" href="<?php echo getLinkAdmin('receipt', 'lists'); ?>">
+                            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/edit.png" class="image__equipment-img" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+    <div>
+    </div>
 
-</div>
+    <?php
 
-<?php
-layout('footer', 'admin');
-?>
-
-<script>
-    function toggleInputType() {
-        const filterType = document.querySelector('select[name="filter_type"]').value;
-        const dateInput = document.querySelector('input[name="date_input"]');
-        const submitButton = document.querySelector('button[type="submit"]');
-
-        if (!filterType) {
-            dateInput.disabled = true;
-            submitButton.disabled = true;
-        } else {
-            dateInput.disabled = false;
-            submitButton.disabled = false;
-        }
-
-        if (filterType === 'year') {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'year');
-        } else if (filterType === 'quarter') {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'quarter');
-        } else {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'month');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleInputType();
-    });
-
-    const ctx = document.getElementById('profitChart').getContext('2d');
-    const profitChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($labels); ?>,
-            datasets: [{
-                label: 'Lợi nhuận',
-                data: <?php echo json_encode($profits); ?>,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
+    layout('footer', 'admin');
+    ?>
