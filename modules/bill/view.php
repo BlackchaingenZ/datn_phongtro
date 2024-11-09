@@ -22,9 +22,9 @@
 <body style="display: flex; justify-content: center; margin-top: 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7fafc;">
     <div class="bill-content" style="width: 60%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
         <img style="width: 150px; " src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logo-final.png" alt="">
-        <h2 style="font-size: 28px; margin: 10px 0;">Hóa đơn tiền thuê nhà</h2>
+        <h2 style="font-size: 28px; margin: 10px 0;">Hóa đơn tiền thuê phòng</h2>
         <h3 style="margin-top: 10px;">Tháng <?php echo $date['month'] ?>/<?php echo $date['year'] ?></h3>
-        <p style="font-size: 14px;">Địa chỉ: 597 - Nguyễn Bỉnh Khiêm, Đằng Lâm, Hải An, Hải Phòng</p>
+        <p style="font-size: 14px;">Địa chỉ: 56 - Nam Pháp, Ngô Quyền, Hải Phòng</p>
         <p>Mã hóa đơn: <b style="color: red; font-size: 18px"><?php echo $billDetail['mahoadon'] ?></b></p>
         <div class="rowTwo" style="display: flex; justify-content: space-around; margin-top: 0px;">
             <p style="font-size: 14px;">Đơn vị: <b><?php echo $roomtDetail['tenphong'] ?></b></p>
@@ -87,7 +87,7 @@
                 <td style="font-size: 14px;"><b>Thanh toán</b></td>
                 <td colspan="2">
                    <div style="display: flex; gap: 50px">
-                        <img style="width: 200px; height: 200px;" src="https://jeju.com.vn/wp-content/uploads/2020/05/vnpay-qr-23-06-2020-2.jpg" alt="">
+                        <img style="width: 200px; height: 200px;" src="/datn/templates/admin/assets/img/QR.jpg" alt="">
                         <div>
                             <p style="color: red"><i><b>Lưu ý:</b></i></p>
                             <p>Nội dung thanh toán: <b><i>Mã hóa đơn + Tên phòng + Tháng</i></b></p>

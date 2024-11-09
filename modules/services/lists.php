@@ -153,7 +153,7 @@ layout('navbar', 'admin', $data);
             </div>
             <p></p>
             <div class="box-container">
-                <div class="row justify-content-center">
+            <div class="d-flex flex-wrap justify-content-start">
                     <?php foreach ($allService as $item) { ?>
                         <div class="col-md-4"> <!-- Mỗi dịch vụ chiếm 1/3 chiều rộng của hàng -->
                             <div class="service-items">

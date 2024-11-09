@@ -172,18 +172,20 @@ layout('navbar', 'admin', $data);
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label for="">Số ngày lẻ <span style="color: red">*</span></label>
-                        <input type="text" name="songayle" id="songayle" class="form-control">
-                        <?php echo form_error('songayle', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
                         <label for="">Số tháng <span style="color: red">*</span></label>
                         <input type="text" name="chuky" id="chuky" class="form-control">
                         <?php echo form_error('chuky', $errors, '<span class="error">', '</span>'); ?>
                     </div>
                 </div>
+
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="">Số ngày lẻ <span style="color: red">*</span></label>
+                        <input type="text" name="songayle" id="songayle" class="form-control">
+                        <?php echo form_error('songayle', $errors, '<span class="error">', '</span>'); ?>
+                    </div>
+                </div>
+
                 <div class="col-3">
                     <div class="form-group">
                         <label for="tienphong">Tiền Phòng</label>
@@ -408,6 +410,10 @@ layout('footer', 'admin');
             calculateTotal();
         }
 
+
+
+
+
         function updateChuky(chuky) {
             document.getElementById('chuky').value = chuky;
         }
@@ -417,7 +423,7 @@ layout('footer', 'admin');
         }
 
         function updateCSD(cs) {
-
+            console.log("Cơ sở vật chất:", cs);
         }
 
         function calculateTienNuoc() {
@@ -493,18 +499,5 @@ layout('footer', 'admin');
             document.getElementById('nocu').value = removeCommas(document.getElementById('nocu').value);
             document.getElementById('tongtien').value = removeCommas(document.getElementById('tongtien').value);
         });
-        // Hàm địng dạng thành YYYY-mm-dd
-        function reverseDateFormat(dateString) {
-            const [year, month, day] = dateString.split('-');
-            return `${year}-${month}-${day}`;
-        }
-
-        // Hàm lấy tháng và năm hiện tại (trả về chuỗi 'YYYY-MM')
-        function getCurrentMonthYear() {
-            const currentDate = new Date();
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth() + 1; // Lưu ý: getMonth() trả về index bắt đầu từ 0
-            return year + '-' + (month < 10 ? '0' : '') + month;
-        }
     });
 </script>

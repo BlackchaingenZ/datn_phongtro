@@ -585,3 +585,4 @@ function getAll($query, $params = []) {
     $stmt->execute($params); // Truyền tham số vào execute
     return $stmt->fetchAll(PDO::FETCH_ASSOC); // Trả về kết quả
 }
+

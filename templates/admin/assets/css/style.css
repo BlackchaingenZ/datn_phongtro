@@ -1237,6 +1237,7 @@ th {
 }
 
 .service-items {
+    
     display: flex; /* Sử dụng flexbox cho dịch vụ */
     justify-content: space-between; /* Căn giữa nội dung */
     align-items: center; /* Căn giữa theo chiều dọc */

@@ -21,9 +21,8 @@ $allRoom = getRaw("
 ");
 
 $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");
-$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $allRoomId = getRaw("SELECT room_id FROM contract");
-
+$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 // Phân loại phòng theo khu vực
 $roomsByArea = [];
 foreach ($allRoom as $room) {
@@ -325,8 +324,6 @@ layout('navbar', 'admin', $data);
 
         </form>
     </div>
-
-    <!-- <div id="tempCustomerInfo"></div> -->
     </form>
 
 </div>
