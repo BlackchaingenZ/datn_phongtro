@@ -54,16 +54,6 @@ if (isPost()) {
             $errors['cmnd']['length'] = '** CMND phải có đúng 9 hoặc 12 chữ số!';
         }
     }
-    if (empty(trim($body['sdt']))) {
-        $errors['sdt']['required'] = '** Bạn chưa nhập số điện thoại!';
-    } else {
-        $sdt = trim($body['sdt']);
-        if (!is_numeric($sdt)) {
-            $errors['sdt']['numeric'] = '** Số điện thoại phải là số!';
-        } elseif (strlen($sdt) != 10) {
-            $errors['sdt']['length'] = '** Số điện thoại có 10 chữ số!';
-        }
-    }
     
 
     // Kiểm tra mảng error

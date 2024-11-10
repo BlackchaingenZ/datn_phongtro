@@ -207,7 +207,16 @@ layout('navbar', 'admin', $data);
 
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenkhach']; ?></b></td>
-                                <td style="text-align: center;">0<?php echo $item['sdt'] ?> </td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (empty($item['sdt'])) {
+                                        echo "Chưa có dữ liệu";
+                                    } else {
+                                        echo "" . $item['sdt'];
+                                    }
+                                    ?>
+                                </td>
+
                                 <td style="text-align: center;">
                                     <?php
                                     if (!empty($item['ngaysinh'])) {
@@ -250,7 +259,7 @@ layout('navbar', 'admin', $data);
                                             echo "Không đúng định dạng ngày";
                                         }
                                     } else {
-                                        echo "Không có dữ liệu ngày";
+                                        echo "Chưa có dữ liệu";
                                     }
                                     ?>
                                 </td>
@@ -278,7 +287,7 @@ layout('navbar', 'admin', $data);
                                             echo "Không đúng định dạng ngày";
                                         }
                                     } else {
-                                        echo "Không có dữ liệu ngày";
+                                        echo "Chưa có dữ liệu";
                                     }
                                     ?>
                                 </td>
