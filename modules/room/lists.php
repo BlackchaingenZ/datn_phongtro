@@ -187,7 +187,7 @@ layout('navbar', 'admin', $data);
                 <div class="col-3">
                     <div class="form-group">
                         <select name="status" id="" class="form-select">
-                            <option value="0">Chọn trạng thái</option>
+                            <option value="0" disabled selected>Chọn trạng thái</option>
                             <option value="1" <?php echo (!empty($status) && $status == 1) ? 'selected' : false; ?>>Đang ở</option>
                             <option value="2" <?php echo (!empty($status) && $status == 2) ? 'selected' : false; ?>>Đang trống</option>
                         </select>

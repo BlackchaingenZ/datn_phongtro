@@ -91,9 +91,15 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
 
                 <div class="form-group">
                     <label for="">Giá thiết bị <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Giá thiết bị (đ)" name="giathietbi" class="form-control" value="<?php echo old('giathietbi', $old); ?>">
+                    <input type="text" placeholder="Giá thiết bị (đ)" name="giathietbi" class="form-control" value="<?php echo old('giathietbi', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('giathietbi', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="">Ngày nhập <span style="color: red">*</span></label>

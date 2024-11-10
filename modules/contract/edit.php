@@ -172,7 +172,12 @@ layout('navbar', 'admin', $data);
                                     $diachi = !empty($tenant['diachi']) ? $tenant['diachi'] : 'Chưa có địa chỉ';
                                     $tenant_id = !empty($tenant['id']) ? $tenant['id'] : 'Không có ID';
 
-                                    // Hiển thị thông tin khách hàng và nút xóa
+                                    // Định dạng ngày sinh nếu có giá trị
+                                    if ($ngaysinh !== 'Chưa có ngày sinh') {
+                                        $date = new DateTime($ngaysinh);
+                                        $ngaysinh = $date->format('d/m/Y'); // Định dạng tùy ý, ví dụ: ngày-tháng-năm
+                                    }
+
                                     echo "<div>
                         Khách " . ($index + 1) . ": {$tenkhach} - {$cmnd} - {$ngaysinh} - {$gioitinh} - {$diachi}
 

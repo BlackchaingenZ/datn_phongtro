@@ -166,7 +166,7 @@ $listRoomAndCost = getRoomAndCostList();
                 <div class="form-group">
                     <label for="">Chọn tên giá <span style="color: red">*</span></label>
                     <select name="cost_id" class="form-control">
-                        <option value="">Chọn tên giá</option>
+                        <option value="" disabled selected>Chọn tên giá</option>
                         <?php
                         if (!empty($listAllCost)) {
                             foreach ($listAllCost as $item) {

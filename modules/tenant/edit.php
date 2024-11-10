@@ -54,7 +54,17 @@ if (isPost()) {
             $errors['cmnd']['length'] = '** CMND phải có đúng 9 hoặc 12 chữ số!';
         }
     }
-    
+    if (empty(trim($body['sdt']))) {
+        $errors['sdt']['required'] = '** Bạn chưa nhập số điện thoại!';
+    } else {
+        $sdt = trim($body['sdt']);
+        if (!is_numeric($sdt)) {
+            $errors['sdt']['numeric'] = '** Số điện thoại phải là số!';
+        } elseif (strlen($sdt) != 10) {
+            $errors['sdt']['length'] = '** Số điện thoại có 10 chữ số!';
+        }
+    }
+
 
     // Kiểm tra mảng error
     if (empty($errors)) {
@@ -127,9 +137,15 @@ layout('navbar', 'admin', $data);
 
                 <div class="form-group">
                     <label for="">Số điện thoại <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Số điện thoại" name="sdt" id="" class="form-control" value="<?php echo old('sdt', $old); ?>">
+                    <input type="text" placeholder="Số điện thoại" name="sdt" id="" class="form-control" value="<?php echo old('sdt', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('sdt', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="">Ngày sinh <span style="color: red">*</span></label>
@@ -162,9 +178,15 @@ layout('navbar', 'admin', $data);
             <div class="col-5">
                 <div class="form-group">
                     <label for="">Số CMND/CCCD <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="" class="form-control" value="<?php echo old('cmnd', $old); ?>">
+                    <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="" class="form-control" value="<?php echo old('cmnd', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('cmnd', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="">Ngày cấp <span style="color: red">*</span></label>

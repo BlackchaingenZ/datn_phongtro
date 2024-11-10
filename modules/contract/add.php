@@ -248,6 +248,12 @@ layout('navbar', 'admin', $data);
                             value="<?php echo old('sotiencoc', $old); ?>" inputmode="decimal" oninput="validateNumber(this)">
                         <?php echo form_error('sotiencoc', $errors, '<span class="error">', '</span>'); ?>
                     </div>
+                    <script>
+                        // Hàm kiểm tra chỉ cho phép nhập số
+                        function validateNumber(input) {
+                            input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        }
+                    </script>
                     <div class="form-group">
                         <label for="">Tình trạng cọc<span style="color: red">*</label>
                         <select name="tinhtrangcoc" class="form-select">
@@ -256,14 +262,6 @@ layout('navbar', 'admin', $data);
                             <option value="1">Đã thu tiền</option>
                         </select>
                     </div>
-                    <script>
-                        // Hàm kiểm tra chỉ cho phép nhập số
-                        function validateNumber(input) {
-                            input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
-                        }
-                    </script>
-
-
 
                     <div class="form-group">
                         <label for="">Ghi chú<span style="color: red">*</span></label>
@@ -449,16 +447,25 @@ layout('navbar', 'admin', $data);
 
 
     function updateTempCustomerList() {
-        const customerInfoList = tempCustomers.map((customer, index) =>
-            `<div>
-            Khách ${index + 1}: ${customer.tenkhach}-${customer.cmnd}-${customer.ngaysinh}-${customer.gioitinh}-${customer.diachi}
+        const customerInfoList = tempCustomers.map((customer, index) => {
+            // chuyển định dạng ngày hiển thị
+            const date = new Date(customer.ngaysinh);
+            const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và thêm 0 nếu cần
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Lấy tháng (lưu ý: tháng bắt đầu từ 0)
+            const year = date.getFullYear(); // Lấy năm
+
+            // Tạo định dạng tùy ý, ví dụ: tháng/ngày/năm
+            const formattedDate = `${day}/${month}/${year}`;
+
+            return `<div>
+            Khách ${index + 1}: ${customer.tenkhach} - ${customer.cmnd} - ${formattedDate} - ${customer.gioitinh} - ${customer.diachi}
             <button onclick="removeTempCustomer(${index})">Xóa</button>
-        </div>`
-        ).join('');
+        </div>`;
+        }).join('');
 
         document.getElementById('tempCustomerInfo').innerHTML = customerInfoList; // Cập nhật nội dung HTML
-
     }
+
 
     function removeTempCustomer(index) {
         // Xoá khách hàng tại vị trí index trong mảng

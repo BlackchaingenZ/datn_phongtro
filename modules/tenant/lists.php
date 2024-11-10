@@ -242,7 +242,13 @@ layout('navbar', 'admin', $data);
                                     </div>
                                     <div style="margin-top: 5px">
                                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/work.svg" alt=""><b style="font-size: 13px">Nghề nghiệp:</b>
-                                        <?php echo $item['nghenghiep'] ?>
+                                        <?php
+                                        if (empty($item['nghenghiep'])) {
+                                            echo "Trống";
+                                        } else {
+                                            echo "" . $item['nghenghiep'];
+                                        }
+                                        ?>
                                     </div>
                                 </td>
                                 <td style="text-align:center" ;><?php echo $item['cmnd'] ?></td>
@@ -259,7 +265,7 @@ layout('navbar', 'admin', $data);
                                             echo "Không đúng định dạng ngày";
                                         }
                                     } else {
-                                        echo "Chưa có dữ liệu";
+                                        echo "Trống";
                                     }
                                     ?>
                                 </td>
@@ -287,7 +293,7 @@ layout('navbar', 'admin', $data);
                                             echo "Không đúng định dạng ngày";
                                         }
                                     } else {
-                                        echo "Chưa có dữ liệu";
+                                        echo "Trống";
                                     }
                                     ?>
                                 </td>
