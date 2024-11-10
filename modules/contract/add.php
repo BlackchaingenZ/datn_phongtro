@@ -243,6 +243,12 @@ layout('navbar', 'admin', $data);
                         <?php echo form_error('ngayra', $errors, '<span class="error">', '</span>'); ?>
                     </div>
                     <div class="form-group">
+                        <label for="">Số tiền cọc <span style="color: red">*</span></label>
+                        <input type="text" placeholder="Nhập số tiền" name="sotiencoc" id="sotiencoc" class="form-control"
+                            value="<?php echo old('sotiencoc', $old); ?>" inputmode="decimal" oninput="validateNumber(this)">
+                        <?php echo form_error('sotiencoc', $errors, '<span class="error">', '</span>'); ?>
+                    </div>
+                    <div class="form-group">
                         <label for="">Tình trạng cọc<span style="color: red">*</label>
                         <select name="tinhtrangcoc" class="form-select">
                             <option value="" disabled selected>Chọn trạng thái</option>
@@ -250,13 +256,6 @@ layout('navbar', 'admin', $data);
                             <option value="1">Đã thu tiền</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="">Số tiền cọc <span style="color: red">*</span></label>
-                        <input type="text" placeholder="Nhập số tiền" name="sotiencoc" id="sotiencoc" class="form-control"
-                            value="<?php echo old('sotiencoc', $old); ?>" inputmode="decimal" oninput="validateNumber(this)">
-                        <?php echo form_error('sotiencoc', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
-
                     <script>
                         // Hàm kiểm tra chỉ cho phép nhập số
                         function validateNumber(input) {

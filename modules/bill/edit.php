@@ -16,9 +16,28 @@ $donGiaNuoc = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền
 $dongiaDien = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền điện'");
 $dongiaRac = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền rác'");
 $dongiaWifi = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền Wifi'");
+$allTenant = getRaw("SELECT tenant.id, tenant.tenkhach, room.tenphong 
+                     FROM tenant 
+                     INNER JOIN contract_tenant ON contract_tenant.tenant_id_1 = tenant.id 
+                     INNER JOIN contract ON contract_tenant.contract_id_1 = contract.id 
+                     INNER JOIN room ON tenant.room_id = room.id 
+                     ORDER BY room.tenphong");
 
-$allTenant = getRaw("SELECT tenant.id, tenkhach, tenphong FROM tenant INNER JOIN contract ON contract.tenant_id = tenant.id INNER JOIN room ON tenant.room_id = room.id ORDER BY tenphong");
-$allRoom = getRaw("SELECT room.id, tenphong, giathue, soluong, chuky FROM room INNER JOIN contract ON contract.room_id  = room.id ORDER BY tenphong");
+
+$allRoom = getRaw("
+    SELECT 
+        room.id, 
+        tenphong, 
+        cost.giathue, 
+        soluong, 
+        chuky, 
+        room.ngayvao 
+    FROM room 
+    INNER JOIN contract ON contract.room_id = room.id
+    INNER JOIN cost_room ON cost_room.room_id = room.id
+    INNER JOIN cost ON cost.id = cost_room.cost_id
+    ORDER BY tenphong
+");
 
 // Xử lý hiện dữ liệu cũ của người dùng
 $body = getBody();
@@ -308,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var tienphong = formattedThang + formattedSongayle;
 
         // Định dạng số tiền với dấu phân cách hàng nghìn
-        document.getElementById('tienphong').value = numberWithCommas(tienphong) + ' đ';
+        document.getElementById('tienphong').value = numberWithCommas(tienphong) ;
         calculateTotal();
     }
     // Nếu là tháng đầu tiên vào ở thì thông báo 
@@ -365,7 +384,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const sonuoccu = parseFloat(document.getElementById('sonuoccu').value) || 0;
         const sonuocmoi = parseFloat(document.getElementById('sonuocmoi').value) || 0;
         const tiennuoc = (sonuocmoi - sonuoccu) * dongiaNuoc;
-        document.getElementById('tiennuoc').value = numberWithCommas(tiennuoc) + ' đ';
+        document.getElementById('tiennuoc').value = numberWithCommas(tiennuoc);
         calculateTotal();
     }
 
@@ -373,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const sodiencu = parseFloat(document.getElementById('sodiencu').value) || 0;
         const sodienmoi = parseFloat(document.getElementById('sodienmoi').value) || 0;
         const tiendien = (sodienmoi - sodiencu) * dongiaDien;
-        document.getElementById('tiendien').value = numberWithCommas(tiendien) + ' đ';
+        document.getElementById('tiendien').value = numberWithCommas(tiendien);
         calculateTotal();
     }
 
@@ -381,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const chuky = parseFloat(document.getElementById('chuky').value) || 1; // Chu kỳ mặc định là 1 tháng nếu không có giá trị
         const soluongNguoi = parseFloat(document.getElementById('soluongNguoi').value) || 1;
         const tienrac = soluongNguoi * dongiaRac * chuky;
-        document.getElementById('tienrac').value = numberWithCommas(tienrac) + ' đ';
+        document.getElementById('tienrac').value = numberWithCommas(tienrac) ;
         calculateTotal();
     }
 
@@ -391,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const tienmangThang = chuky * dongiaWifi;
         const tienmangNgayle = (dongiaWifi / 30) * songayle;
         let tienmang = Math.ceil(tienmangThang + tienmangNgayle);
-        document.getElementById('tienmang').value = numberWithCommas(tienmang) + ' đ';
+        document.getElementById('tienmang').value = numberWithCommas(tienmang);
         calculateTotal();
     }
 
@@ -404,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const nocu = parseFloat(document.getElementById('nocu').value.replace(/,/g, '').replace(' đ', '')) || 0;
 
         const tongtien = tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu;
-        document.getElementById('tongtien').value = numberWithCommas(tongtien) + ' đ';
+        document.getElementById('tongtien').value = numberWithCommas(tongtien);
     }
 
     document.getElementById('sotiendatra').addEventListener('input', function() {
@@ -415,7 +434,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Tính toán số tiền còn nợ
     var sotienconthieu = tongtien - sotiendatra;
     // Hiển thị số tiền còn nợ
-    document.getElementById('sotienconthieu').value = numberWithCommas(sotienconthieu) + ' đ';
+    document.getElementById('sotienconthieu').value = numberWithCommas(sotienconthieu) ;
 });
 
 

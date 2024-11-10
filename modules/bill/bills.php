@@ -151,7 +151,9 @@ layout('navbar', 'admin', $data);
                     <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary"> <i class="fa fa-search"></i></button>
                 </div>
             </div>
+            <!-- chuyển hướng khi tìm liếm-->
             <input type="hidden" name="module" value="bill">
+            <input type="hidden" name="action" value="bills">
         </form>
 
         <form action="" method="POST" class="mt-3">
@@ -167,7 +169,7 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-3" style="overflow-x: auto;">
                 <thead>
                     <tr>
-                        <th width="3%" rowspan="2"></th>
+                        <th width="3%" rowspan="2"> STT</th>
                         <th rowspan="2">Tên phòng</th>
                         <th colspan="3">Tiền phòng</th>
                         <th colspan="3">Tiền điện</th>
@@ -207,40 +209,36 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td>
-                                    <div class="image__bill">
-                                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill.png" class="image__bill-img" alt="">
-                                    </div>
-                                </td>
-                                <td><?php echo $item['tenphong']; ?></td>
-                                <td><?php echo $item['chuky']; ?></td>
-                                <td><?php echo $item['songayle']; ?></td>
-                                <td><b><?php echo number_format($item['tienphong'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo $item['sodiencu']; ?></td>
-                                <td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
+                                <td style="text-align: center;"><?php echo $item['tenphong']; ?></td>
+                                <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
+                                <td style="text-align: center;"><?php echo $item['songayle']; ?></td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['tienphong'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><?php echo $item['sodiencu']; ?></td>
+                                <td style="text-align: center;">
                                     <?php echo $item['sodienmoi']; ?>
                                     <a target="_blank" href="<?php echo getLinkAdmin('bill', 'img_sdm', ['id' => $item['id']]); ?>" class="fa fa-eye"></a>
                                 </td>
-                                <td><b><?php echo number_format($item['tiendien'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo $item['sonuoccu']; ?></td>
-                                <td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['tiendien'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><?php echo $item['sonuoccu']; ?></td>
+                                <td style="text-align: center;">
                                     <?php echo $item['sonuocmoi']; ?>
                                     <a target="_blank" href="<?php echo getLinkAdmin('bill', 'img_snm', ['id' => $item['id']]); ?>" class="fa fa-eye"></a>
                                 </td>
-                                <td><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo $item['songuoi']; ?></td>
-                                <td><b><?php echo number_format($item['tienrac'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo $item['chuky']; ?></td>
-                                <td><b><?php echo number_format($item['tienmang'], 0, ',', '.') ?> đ</b></td>
-                                <td><b><?php echo number_format($item['nocu'], 0, ',', '.') ?> đ</b></td>
-                                <td style="color: #ed6004">
+                                <td style="text-align: center;"><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><?php echo $item['songuoi']; ?></td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['tienrac'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['tienmang'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['nocu'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center ;color: #ed6004">
                                     <b><?php echo number_format($item['tongtien'], 0, ',', '.') ?> đ</b> <br />
                                     <i style="color: #000">Số tiền đã trả</i><br />
                                     <b style="color: #15a05c"><?php echo number_format($item['sotiendatra'], 0, ',', '.') ?> đ</b>
                                 </td>
-                                <td style="color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center; color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
                                 <td><?php echo getDateFormat($item['ngayvao'], 'm-d-Y') ?></td>
-                                <td>
+                                <td style="text-align: center;">
 
                                     <?php
                                     if ($item['trangthaihoadon'] == 1) {
@@ -253,14 +251,14 @@ layout('navbar', 'admin', $data);
                                     ?>
                                 </td>
 
-                                <td class="">
+                                <td class="" style="text-align: center;">
                                     <div class="action">
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
                                         <div class="box-action">
                                             <!-- Add your actions here -->
                                             <a target="_blank" href="<?php echo $item['zalo'] ?>"><img style="width: 30px; height: 30px" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/zalo.jpg" class="small"></a>
-                                            <a title="Xem hợp đồng" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
-                                            <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
+                                            <a title="Xem hoá đơn" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
+                                            <a title="In hoá đơn" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
                                             <?php
                                             if ($item['trangthaihoadon'] != 1) {
                                             ?>
