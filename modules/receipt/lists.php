@@ -39,7 +39,7 @@ layout('navbar', 'admin', $data);
                     <div class="service-item_left">
                         <div class="service-item_icon">
                             <a href="<?php echo getLinkAdmin('spend', 'lists'); ?>">
-                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill.svg" alt="">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/payment.svg" alt="">
 
                             </a>
                         </div>
@@ -58,7 +58,7 @@ layout('navbar', 'admin', $data);
                     <div class="service-item_left">
                         <div class="service-item_icon">
                             <a href="<?php echo getLinkAdmin('payment', 'lists'); ?>">
-                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill.svg" alt="">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/payment.svg" alt="">
 
                             </a>
                         </div>
