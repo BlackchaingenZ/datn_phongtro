@@ -215,9 +215,13 @@ layout('navbar', 'admin', $data);
                 </div>
                 <label for="">Danh sách khách vừa tạo</label>
                 <div class="form-group">
-                    <!-- Khu vực để hiển thị danh sách khách tạm thời -->
-                    <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 150px; background-color: #f9f9f9;">
-                        <div id="tempCustomerInfo" style="color: green;"></div>
+                    <div style="background-color: white; border: 0.5px solid #ccc; padding: 5px; border-radius: 5px; height: 135px; display: flex; flex-direction: column;">
+                        <ul style="max-height: 250px; overflow-y: auto; padding: 0; list-style-type: none;">
+                            <li>
+                                <div id="tempCustomerInfo" style="color: green;"></div>
+                            </li>
+                            <!-- Các phần tử khác sẽ được thêm vào dưới đây -->
+                        </ul>
                     </div>
                 </div>
                 <div class="form-group">
@@ -265,7 +269,7 @@ layout('navbar', 'admin', $data);
 
                     <div class="form-group">
                         <label for="">Ghi chú<span style="color: red">*</span></label>
-                        <textarea name="ghichu" class="form-control" rows="4" style="width: 100%; height: 116px;"><?php echo htmlspecialchars(old('ghichu', $old) ?? 'Bỏ trống'); ?></textarea>
+                        <textarea name="ghichu" class="form-control" rows="4" style="width: 100%; height: 92px;"><?php echo htmlspecialchars(old('ghichu', $old) ?? 'Bỏ trống'); ?></textarea>
                         <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
                     </div>
 
@@ -274,17 +278,17 @@ layout('navbar', 'admin', $data);
             <div class="col-4">
                 <div class="form-group">
                     <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan1', $old) ?? 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.'); ?></textarea>
+                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 75px;"><?php echo htmlspecialchars(old('dieukhoan1', $old) ?? 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.'); ?></textarea>
                     <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan2', $old) ?? 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.'); ?></textarea>
+                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 75px;"><?php echo htmlspecialchars(old('dieukhoan2', $old) ?? 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.'); ?></textarea>
                     <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan3', $old) ?? 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'); ?></textarea>
+                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 75px;"><?php echo htmlspecialchars(old('dieukhoan3', $old) ?? 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'); ?></textarea>
 
                     <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
                 </div>

@@ -74,7 +74,7 @@ if ($contract_id) {
         $services = $_POST['services'] ?? []; // Danh sách dịch vụ được chọn từ form
         $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
         $tempCustomers = json_decode($tempCustomersData, true);
-    
+
         // Kiểm tra điều kiện để cập nhật hợp đồng
         if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
             // Nếu hợp đồng đã có, thực hiện cập nhật
@@ -84,16 +84,16 @@ if ($contract_id) {
                 $stmt = $pdo->prepare($query);
                 $stmt->execute([$contract_id]);
                 $existingTenants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
                 // Cập nhật phòng cho từng khách thuê nếu khách chưa ở phòng mới
                 foreach ($existingTenants as $tenant) {
                     $tenant_id = $tenant['tenant_id_1'];
-    
+
                     // Kiểm tra xem khách đã ở phòng mới chưa
                     $stmt_check = $pdo->prepare("SELECT room_id FROM tenant WHERE id = ?");
                     $stmt_check->execute([$tenant_id]);
                     $tenant_room = $stmt_check->fetchColumn();
-    
+
                     // Nếu khách chưa ở phòng mới, cập nhật phòng cho khách
                     if ($tenant_room != $room_id) {
                         // Cập nhật phòng mới cho khách thuê
@@ -101,7 +101,7 @@ if ($contract_id) {
                         $stmt_update_room->execute([$room_id, $tenant_id]);
                     }
                 }
-    
+
                 // Cập nhật hợp đồng trong cơ sở dữ liệu
                 $update = update('contract', [
                     'room_id' => $room_id,
@@ -115,12 +115,12 @@ if ($contract_id) {
                     'dieukhoan2' => $dieukhoan2,
                     'dieukhoan3' => $dieukhoan3,
                 ], "id = $contract_id");
-    
+
                 // Cập nhật các dịch vụ nếu có thay đổi
                 foreach ($services as $services_id) {
                     linkContractService($contract_id, $services_id);
                 }
-    
+
                 // Thêm khách thuê mới vào hợp đồng, nếu có
                 foreach ($tempCustomers as $customer) {
                     $tenkhach = $customer['tenkhach'];
@@ -128,21 +128,21 @@ if ($contract_id) {
                     $gioitinh = $customer['gioitinh'];
                     $diachi = $customer['diachi'];
                     $cmnd = $customer['cmnd'];
-    
+
                     // Kiểm tra khách có tồn tại trong hợp đồng chưa
                     $stmt_check = $pdo->prepare("SELECT tenant_id_1 FROM contract_tenant WHERE contract_id_1 = ? AND tenant_id_1 = ?");
                     $stmt_check->execute([$contract_id, $customer['id']]);
-    
+
                     if ($stmt_check->rowCount() == 0) {
                         // Thêm khách thuê vào bảng tenant nếu chưa có
                         $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
-    
+
                         // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
                         linkContractTenant($contract_id, $tenant_id);
                     }
                 }
             }
-    
+
             // Thông báo thành công
             setFlashData('msg', 'Hợp đồng, khách thuê và dịch vụ đã được cập nhật thành công!');
             setFlashData('msg_type', 'suc');
@@ -154,9 +154,6 @@ if ($contract_id) {
             redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
         }
     }
-    
-    
-    
 }
 
 
@@ -222,11 +219,12 @@ layout('navbar', 'admin', $data);
                 </div>
                 <div class="form-group">
                     <label for="">Danh sách khách đã thêm</label>
-                    <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 150px; background-color: #f9f9f9;">
-                        <div id="tenantInfo" style="color: green;">
+                    <div>
+                        <div id="tenantInfo" style="background-color:white ;color: dark; max-height: 120px; overflow-y: auto;">
                             <?php
                             // Kiểm tra và hiển thị thông tin tenant
                             if (!empty($tenants)) {
+                                echo "<ul>";
                                 foreach ($tenants as $index => $tenant) {
                                     // Kiểm tra sự tồn tại và giá trị của các trường
                                     $tenkhach = !empty($tenant['tenkhach']) ? $tenant['tenkhach'] : 'Chưa có tên';
@@ -234,25 +232,25 @@ layout('navbar', 'admin', $data);
                                     $ngaysinh = !empty($tenant['ngaysinh']) ? $tenant['ngaysinh'] : 'Chưa có ngày sinh';
                                     $gioitinh = !empty($tenant['gioitinh']) ? $tenant['gioitinh'] : 'Chưa có giới tính';
                                     $diachi = !empty($tenant['diachi']) ? $tenant['diachi'] : 'Chưa có địa chỉ';
-                                    $tenant_id = !empty($tenant['id']) ? $tenant['id'] : 'Không có ID';
 
                                     // Định dạng ngày sinh nếu có giá trị
                                     if ($ngaysinh !== 'Chưa có ngày sinh') {
                                         $date = new DateTime($ngaysinh);
-                                        $ngaysinh = $date->format('d/m/Y'); // Định dạng tùy ý, ví dụ: ngày-tháng-năm
+                                        $ngaysinh = $date->format('d/m/Y');
                                     }
 
-                                    echo "<div>
-                        Khách " . ($index + 1) . ": {$tenkhach} - {$cmnd} - {$ngaysinh} - {$gioitinh} - {$diachi}
-
-                    </div>";
+                                    echo "<li>
+                    Khách " . ($index + 1) . ": {$tenkhach} - {$cmnd} - {$ngaysinh} - {$gioitinh} - {$diachi}
+                </li>";
                                 }
+                                echo "</ul>";
                             } else {
                                 echo "<p>Chưa có tenant nào được thêm.</p>";
                             }
                             ?>
                         </div>
                     </div>
+
                 </div>
                 <div class="form-group">
                     <button type="button" class="btn btn-secondary" onclick="openPopup()"> <i class="fa fa-plus"> </i>Thêm khách</button>
@@ -308,17 +306,22 @@ layout('navbar', 'admin', $data);
                 <label for="">Danh sách khách vừa tạo</label>
                 <div class="form-group">
                     <!-- Khu vực để hiển thị danh sách khách tạm thời -->
-                    <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 150px; background-color: #f9f9f9;">
-                        <div id="tempCustomerInfo" style="color: green;"></div>
+                    <div style="background-color: white; border: 0.5px solid #ccc; padding: 5px; border-radius: 5px; height: 135px; display: flex; flex-direction: column;">
+                        <ul style="max-height: 250px; overflow-y: auto; padding: 0; list-style-type: none;">
+                            <li>
+                                <div id="tempCustomerInfo" style="color: green;"></div>
+                            </li>
+                            <!-- Các phần tử khác sẽ được thêm vào dưới đây -->
+                        </ul>
                     </div>
                 </div>
+            </div>
+            <div class="col-4">
                 <div class="form-group">
                     <label for="">Ngày lập hợp đồng</label>
                     <input type="date" name="ngaylaphopdong" class="form-control"
                         value="<?php echo $contract['ngaylaphopdong']; ?>">
                 </div>
-            </div>
-            <div class="col-4">
                 <div class="form-group">
                     <label for="">Ngày vào ở</label>
                     <input type="date" name="ngayvao" class="form-control"
@@ -355,17 +358,17 @@ layout('navbar', 'admin', $data);
             <div class="col-4">
                 <div class="form-group">
                     <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo $contract['dieukhoan1']; ?>"></textarea>
+                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan1']; ?>"></textarea>
                     <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo $contract['dieukhoan2']; ?>"></textarea>
+                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan2']; ?>"></textarea>
                     <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo $contract['dieukhoan3']; ?>"></textarea>
+                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan3']; ?>"></textarea>
                     <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">

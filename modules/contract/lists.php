@@ -269,7 +269,7 @@ layout('navbar', 'admin', $data);
                         <th style="text-align: center;" width="2%">STT</th>
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
                         <th style="width: 9%; text-align: center;">Người làm hợp đồng</th>
-                        <th style="text-align: center;">Đang ở</th>
+                        <th style="width: 8%;text-align: center;">Đang ở</th>
                         <!-- <th style="width: 2%; text-align: center;">Tổng người</th> -->
                         <th style="text-align: center;">Giá thuê</th>
                         <th style="width: 6%; text-align: center;">Giá tiền cọc</th>
