@@ -285,7 +285,7 @@ layout('navbar', 'admin', $data);
 
                     <div class="from-group">                    
                             <div class="btn-row">
-                            <a style="margin-left: 20px " href="<?php echo getLinkAdmin('bill') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                            <a style="margin-left: 20px " href="<?php echo getLinkAdmin('bill', 'bills') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                                 <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i> Cập nhật</button>
                             </div>
                     </div>

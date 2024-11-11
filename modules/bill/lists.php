@@ -26,9 +26,6 @@ layout('navbar', 'admin', $data);
     <div id="MessageFlash">
         <?php getMsg($msg, $msgType); ?>
     </div>
-
-
-
     <div class="box-content box-service">
         <div class="collect-left">
             <div class="collect-left_top">
@@ -93,7 +90,7 @@ layout('navbar', 'admin', $data);
                         </div>
                     </div>
                     <div class="service-item_right">
-                        <a class="edit" href="<?php echo getLinkAdmin('receipt', 'lists'); ?>">
+                        <a class="edit" href="<?php echo getLinkAdmin('receipt', 'receipts'); ?>">
                             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/edit.png" class="image__equipment-img" alt="">
                         </a>
                     </div>
@@ -101,10 +98,9 @@ layout('navbar', 'admin', $data);
             </div>
         </div>
     </div>
-    <div>
-    </div>
+</div>
 
-    <?php
+<?php
 
-    layout('footer', 'admin');
-    ?>
+layout('footer', 'admin');
+?>

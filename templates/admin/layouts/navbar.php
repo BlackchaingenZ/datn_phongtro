@@ -90,10 +90,17 @@
         <!-- Item 8 -->
         <a href="<?php echo getLinkAdmin('bill'); ?>" class="link__menu ">
           <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill.png" class="menu__item-image" alt="">
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/receipt.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Quản lý phiếu thu</p>
           </div>
         </a>
+        <a href="<?php echo getLinkAdmin('receipt'); ?>" class="link__menu ">
+          <div class="menu__item">
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/payment.png" class="menu__item-image" alt="">
+            <p class="menu__item-title">Quản lý phiếu chi</p>
+          </div>
+        </a>
+        
 
         <!-- Item 9 -->
         <a href="<?php echo getLinkAdmin('sumary'); ?>" class="link__menu ">
@@ -109,13 +116,13 @@
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Người dùng hệ thống</p>
           </div>
-        <!-- Item 11 -->
-        <a href="<?php echo getLinkAdmin('sum'); ?>" class="link__menu ">
-          <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/report.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Báo cáo tổng hợp</p>
-          </div>
-        </a>
+          <!-- Item 11 -->
+          <a href="<?php echo getLinkAdmin('sum'); ?>" class="link__menu ">
+            <div class="menu__item">
+              <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/report.png" class="menu__item-image" alt="">
+              <p class="menu__item-title">Báo cáo tổng hợp</p>
+            </div>
+          </a>
 
       </div>
     </div>

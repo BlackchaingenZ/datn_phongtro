@@ -162,7 +162,7 @@ layout('navbar', 'admin', $data);
                     <div class="from-group">                    
                             <div class="btn-row">
                                 <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Cập nhật phiếu thu</button>
-                                <a style="margin-left: 20px " href="<?php echo getLinkAdmin('receipt') ?>" class="btn btn-success"><i class="fa fa-forward"></i></a>
+                                <a style="margin-left: 20px " href="<?php echo getLinkAdmin('receipt','receipts') ?>" class="btn btn-success"><i class="fa fa-forward"></i></a>
                             </div>
                     </div>
                 </form>
