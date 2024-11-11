@@ -116,7 +116,7 @@ if (!empty($searchContract)) {
             contract.ngayra AS thoihanhopdong, 
             contract.ghichu,
             tinhtrangcoc, 
-            GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
+GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1,  
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
         FROM contract 
         INNER JOIN room ON contract.room_id = room.id
@@ -142,7 +142,7 @@ if (!empty($searchContract)) {
             contract.ngayra AS thoihanhopdong, 
             contract.ghichu,
             tinhtrangcoc, 
-            GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
+GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
         FROM contract 
         INNER JOIN room ON contract.room_id = room.id
@@ -312,8 +312,16 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
                                 <td style="text-align: center;">
-                                    <!--echo n12br tự động xuống dòng mỗi tên -->
-                                    <b><?php echo nl2br($item['tenant_id_1']); ?></b><br>
+                                    <!--hiển thị nhưng không lấy ID -->
+                                    <?php
+                                    $tenkhachArray = explode("\n", $item['tenant_id_1']);  // Tách từng khách hàng ra
+                                    foreach ($tenkhachArray as $tenkhach) {
+                                        // Chỉ hiển thị tên khách hàng, ẩn ID
+                                        $name = explode(" (ID:", $tenkhach)[0];  // Tách tên khách hàng từ phần ID
+                                        echo "<b>{$name}</b><br>";  // Hiển thị tên khách hàng
+                                    }
+                                    ?>
+
                                 </td>
                                 <td style="text-align: center;">
                                     <?php if (!empty($tenants)) {

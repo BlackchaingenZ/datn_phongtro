@@ -47,10 +47,7 @@ if ($contract_id) {
         ['contract_id' => $contract_id]
     );
 
-    $tenant_info = ''; // Biến để chứa thông tin khách hàng
 
-    // In thông tin khách hàng
-    echo nl2br($tenant_info);  // nl2br để chuyển đổi ký tự xuống dòng thành <br> trong HTML
     // Lấy danh sách các phòng và dịch vụ
     $allRoom = getRaw("SELECT room.id, room.tenphong FROM room ORDER BY room.tenphong");
     $allServices = getRaw("SELECT * FROM services ORDER BY tendichvu ASC");

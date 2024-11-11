@@ -8,7 +8,7 @@ $contractDetail = firstRaw("SELECT * FROM contract WHERE id = $id");
 
 // Get tenant details associated with the contract
 $tenantDetails = firstRaw("SELECT 
-    GROUP_CONCAT(DISTINCT tenant.tenkhach ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS danh_sach_ten_khach, 
+GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS danh_sach_ten_khach, 
     GROUP_CONCAT(tenant.ngaysinh ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS danh_sach_ngay_sinh,
     GROUP_CONCAT(tenant.cmnd ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS danh_sach_cmnd,
     GROUP_CONCAT(tenant.ngaycap ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS danh_sach_ngay_cap,
@@ -108,19 +108,21 @@ $ngayCapList = explode("\n", $tenantDetails['danh_sach_ngay_cap']);
 $diaChiList = explode("\n", $tenantDetails['danh_sach_dia_chi']);
 
 foreach ($tenKhachList as $index => $tenKhach) {
+    // Tách tên khách hàng từ chuỗi có định dạng "Tên khách hàng (ID: X)"
+    $tenKhach = explode(" (ID:", $tenKhach)[0];  // Lấy phần tên trước " (ID:"
     $html .= "
         <tr><td><strong>Họ và tên: $tenKhach</strong></td></tr>
         <tr>
             <td>
                 <p>Ngày sinh: " . (isset($ngaySinhList[$index]) && $ngaySinhList[$index] != '0000-00-00'
-                    ? getDateFormat($ngaySinhList[$index], 'd-m-Y')
-                    : 'Không xác định') . "</p>
+        ? getDateFormat($ngaySinhList[$index], 'd-m-Y')
+        : 'Không xác định') . "</p>
             </td>
         </tr>
         <tr><td>CMND/CCCD: {$cmndList[$index]}</td></tr>
         <tr><td>Ngày cấp: " . (isset($ngayCapList[$index]) && $ngayCapList[$index] != '0000-00-00'
-                    ? getDateFormat($ngayCapList[$index], 'd-m-Y')
-                    : 'Không xác định') . " - Nơi cấp: Công an thành phố Hải Phòng</td></tr>
+        ? getDateFormat($ngayCapList[$index], 'd-m-Y')
+        : 'Không xác định') . " - Nơi cấp: Công an thành phố Hải Phòng</td></tr>
         <tr><td>Thường trú: {$diaChiList[$index]}</td></tr>";
 }
 
