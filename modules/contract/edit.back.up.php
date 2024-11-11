@@ -74,34 +74,14 @@ if ($contract_id) {
         $services = $_POST['services'] ?? []; // Danh sách dịch vụ được chọn từ form
         $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
         $tempCustomers = json_decode($tempCustomersData, true);
-    
-        // Kiểm tra điều kiện để cập nhật hợp đồng
+
+        // Kiểm tra điều kiện để thêm hợp đồng hoặc cập nhật hợp đồng
         if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
+            // Xử lý ngày tạo hợp đồng (create_at)
+            $create_at = date('Y-m-d H:i:s'); // Thời gian tạo hợp đồng
+
             // Nếu hợp đồng đã có, thực hiện cập nhật
             if (isset($contract_id)) {
-                // Lấy danh sách khách thuê của hợp đồng
-                $query = "SELECT tenant_id_1 FROM contract_tenant WHERE contract_id_1 = ?";
-                $stmt = $pdo->prepare($query);
-                $stmt->execute([$contract_id]);
-                $existingTenants = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-                // Cập nhật phòng cho từng khách thuê nếu khách chưa ở phòng mới
-                foreach ($existingTenants as $tenant) {
-                    $tenant_id = $tenant['tenant_id_1'];
-    
-                    // Kiểm tra xem khách đã ở phòng mới chưa
-                    $stmt_check = $pdo->prepare("SELECT room_id FROM tenant WHERE id = ?");
-                    $stmt_check->execute([$tenant_id]);
-                    $tenant_room = $stmt_check->fetchColumn();
-    
-                    // Nếu khách chưa ở phòng mới, cập nhật phòng cho khách
-                    if ($tenant_room != $room_id) {
-                        // Cập nhật phòng mới cho khách thuê
-                        $stmt_update_room = $pdo->prepare("UPDATE tenant SET room_id = ? WHERE id = ?");
-                        $stmt_update_room->execute([$room_id, $tenant_id]);
-                    }
-                }
-    
                 // Cập nhật hợp đồng trong cơ sở dữ liệu
                 $update = update('contract', [
                     'room_id' => $room_id,
@@ -115,48 +95,47 @@ if ($contract_id) {
                     'dieukhoan2' => $dieukhoan2,
                     'dieukhoan3' => $dieukhoan3,
                 ], "id = $contract_id");
-    
+
                 // Cập nhật các dịch vụ nếu có thay đổi
                 foreach ($services as $services_id) {
                     linkContractService($contract_id, $services_id);
                 }
-    
-                // Thêm khách thuê mới vào hợp đồng, nếu có
-                foreach ($tempCustomers as $customer) {
-                    $tenkhach = $customer['tenkhach'];
-                    $ngaysinh = $customer['ngaysinh'];
-                    $gioitinh = $customer['gioitinh'];
-                    $diachi = $customer['diachi'];
-                    $cmnd = $customer['cmnd'];
-    
-                    // Kiểm tra khách có tồn tại trong hợp đồng chưa
-                    $stmt_check = $pdo->prepare("SELECT tenant_id_1 FROM contract_tenant WHERE contract_id_1 = ? AND tenant_id_1 = ?");
-                    $stmt_check->execute([$contract_id, $customer['id']]);
-    
-                    if ($stmt_check->rowCount() == 0) {
-                        // Thêm khách thuê vào bảng tenant nếu chưa có
-                        $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
-    
-                        // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
-                        linkContractTenant($contract_id, $tenant_id);
-                    }
+            } else {
+                // Thêm hợp đồng mới nếu chưa có contract_id
+                $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
+
+                // Thêm các dịch vụ vào bảng contract_services
+                foreach ($services as $services_id) {
+                    linkContractService($contract_id, $services_id);
                 }
             }
-    
+
+            // Thêm các khách thuê vào cơ sở dữ liệu
+            foreach ($tempCustomers as $customer) {
+                $tenkhach = $customer['tenkhach'];
+                $ngaysinh = $customer['ngaysinh'];
+                $gioitinh = $customer['gioitinh'];
+                $diachi = $customer['diachi'];
+                $cmnd = $customer['cmnd'];
+
+                // Thêm khách thuê vào bảng tenant và lấy tenant_id
+                $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
+
+                // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
+                linkContractTenant($contract_id, $tenant_id);
+            }
+
             // Thông báo thành công
-            setFlashData('msg', 'Hợp đồng, khách thuê và dịch vụ đã được cập nhật thành công!');
+            setFlashData('msg', 'Hợp đồng, khách thuê và dịch vụ đã được thêm/cập nhật thành công!');
             setFlashData('msg_type', 'suc');
             redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
         } else {
             // Thông báo lỗi khi thiếu thông tin
-            setFlashData('msg', 'Thiếu thông tin cần thiết để cập nhật hợp đồng.');
+            setFlashData('msg', 'Thiếu thông tin cần thiết để thêm hoặc cập nhật hợp đồng.');
             setFlashData('msg_type', 'err');
             redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
         }
     }
-    
-    
-    
 }
 
 

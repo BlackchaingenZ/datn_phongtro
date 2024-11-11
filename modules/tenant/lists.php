@@ -210,7 +210,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <?php
                                     if (empty($item['sdt'])) {
-                                        echo "Chưa có dữ liệu";
+                                        echo "Trống";
                                     } else {
                                         echo "" . $item['sdt'];
                                     }
@@ -230,7 +230,7 @@ layout('navbar', 'admin', $data);
                                             echo "Không đúng định dạng ngày";
                                         }
                                     } else {
-                                        echo "Không có dữ liệu ngày";
+                                        echo "Trống";
                                     }
                                     ?>
                                 </td>
