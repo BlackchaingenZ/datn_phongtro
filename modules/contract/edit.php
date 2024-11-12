@@ -40,7 +40,7 @@ if ($contract_id) {
 
     // Lấy tất cả thông tin khách hàng liên kết với hợp đồng qua contract_tenant
     $tenants = getAll(
-        "SELECT t.tenkhach, t.cmnd, t.ngaysinh, t.gioitinh, t.diachi
+        "SELECT t.id,t.tenkhach, t.cmnd, t.ngaysinh, t.gioitinh, t.diachi
      FROM tenant t
      JOIN contract_tenant ct ON t.id = ct.tenant_id_1
      WHERE ct.contract_id_1 = :contract_id",
@@ -217,38 +217,56 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Danh sách khách đã thêm</label>
                     <div>
-                        <div id="tenantInfo" style="background-color:white ;color: dark; max-height: 120px; overflow-y: auto;">
-                            <?php
-                            // Kiểm tra và hiển thị thông tin tenant
-                            if (!empty($tenants)) {
-                                echo "<ul>";
-                                foreach ($tenants as $index => $tenant) {
-                                    // Kiểm tra sự tồn tại và giá trị của các trường
-                                    $tenkhach = !empty($tenant['tenkhach']) ? $tenant['tenkhach'] : 'Chưa có tên';
-                                    $cmnd = !empty($tenant['cmnd']) ? $tenant['cmnd'] : 'Chưa có CMND';
-                                    $ngaysinh = !empty($tenant['ngaysinh']) ? $tenant['ngaysinh'] : 'Chưa có ngày sinh';
-                                    $gioitinh = !empty($tenant['gioitinh']) ? $tenant['gioitinh'] : 'Chưa có giới tính';
-                                    $diachi = !empty($tenant['diachi']) ? $tenant['diachi'] : 'Chưa có địa chỉ';
+                        <div id="tenantInfo" style="background-color:white; color: dark; max-height: 120px; overflow-y: auto;">
+                            <ul id="tenantList">
+                                <?php if (!empty($tenants)) {
+                                    foreach ($tenants as $index => $tenant) {
+                                        $tenkhach = !empty($tenant['tenkhach']) ? $tenant['tenkhach'] : 'Chưa có tên';
+                                        $cmnd = !empty($tenant['cmnd']) ? $tenant['cmnd'] : 'Chưa có CMND';
+                                        $ngaysinh = !empty($tenant['ngaysinh']) ? (new DateTime($tenant['ngaysinh']))->format('d/m/Y') : 'Chưa có ngày sinh';
+                                        $gioitinh = !empty($tenant['gioitinh']) ? $tenant['gioitinh'] : 'Chưa có giới tính';
+                                        $diachi = !empty($tenant['diachi']) ? $tenant['diachi'] : 'Chưa có địa chỉ';
 
-                                    // Định dạng ngày sinh nếu có giá trị
-                                    if ($ngaysinh !== 'Chưa có ngày sinh') {
-                                        $date = new DateTime($ngaysinh);
-                                        $ngaysinh = $date->format('d/m/Y');
+                                        echo "<li id='tenant-{$tenant['id']}'>Khách " . ($index + 1) . ": {$tenkhach} - {$cmnd} - {$ngaysinh} - {$gioitinh} - {$diachi} 
+                        <button type='button' onclick='deleteTenant(event, {$tenant['id']}, {$contract_id})'>Xóa</button></li>";
                                     }
-
-                                    echo "<li>
-                    Khách " . ($index + 1) . ": {$tenkhach} - {$cmnd} - {$ngaysinh} - {$gioitinh} - {$diachi}
-                </li>";
-                                }
-                                echo "</ul>";
-                            } else {
-                                echo "<p>Chưa có tenant nào được thêm.</p>";
-                            }
-                            ?>
+                                } else {
+                                    echo "<p>Chưa có tenant nào được thêm.</p>";
+                                } ?>
+                            </ul>
                         </div>
                     </div>
-
                 </div>
+
+                <script>
+                    // Chức năng xóa khách hàng độc lập
+                    function deleteTenant(event, tenantId, contractId) {
+                        // Ngừng hành động mặc định của sự kiện, ngăn chặn các sự kiện JavaScript khác
+                        event.preventDefault();
+
+                        if (confirm("Bạn có chắc chắn muốn xoá khách này không?")) {
+                            // Gửi yêu cầu AJAX để xóa khách hàng
+                            fetch(`includes/xoakhach.php?id=${tenantId}&contract_id=${contractId}`, {
+                                    method: 'GET'
+                                })
+                                .then(response => response.json()) // Chuyển đổi phản hồi thành JSON
+                                .then(data => {
+                                    if (data.success) {
+                                        // Nếu xóa thành công, loại bỏ khách khỏi danh sách
+                                        document.getElementById(`tenant-${tenantId}`).remove();
+                                    } else {
+                                        alert("Lỗi khi xóa khách hàng: " + data.message);
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error("Lỗi:", error);
+                                    alert("Đã xảy ra lỗi khi kết nối với máy chủ.");
+                                });
+                        }
+                    }
+                </script>
+
+
                 <div class="form-group">
                     <button type="button" class="btn btn-secondary" onclick="openPopup()"> <i class="fa fa-plus"> </i>Thêm khách</button>
                 </div>
@@ -355,12 +373,12 @@ layout('navbar', 'admin', $data);
             <div class="col-4">
                 <div class="form-group">
                     <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan1']; ?>"></textarea>
+                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan1']; ?></textarea>
                     <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan2']; ?>"></textarea>
+                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan2']; ?></textarea>
                     <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
