@@ -22,12 +22,21 @@ if (isset($data['cmnd'])) {
     
     // Kiểm tra số CMND
     if ($cmnd) {
-        $stmt = $pdo->prepare('SELECT COUNT(*) FROM tenant WHERE cmnd = :cmnd');
+        // Truy vấn để kiểm tra nếu CMND đã tồn tại và lấy thông tin khách
+        $stmt = $pdo->prepare('SELECT tenkhach, gioitinh, diachi, ngaysinh FROM tenant WHERE cmnd = :cmnd');
         $stmt->execute(['cmnd' => $cmnd]);
-        $count = $stmt->fetchColumn();
+        $customer = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Trả về kết quả
-        echo json_encode(['exists' => $count > 0]);
+        if ($customer) {
+            // Trả về thông tin khách nếu tìm thấy
+            echo json_encode([
+                'exists' => true,
+                'customer' => $customer
+            ]);
+        } else {
+            // CMND không tồn tại trong cơ sở dữ liệu
+            echo json_encode(['exists' => false]);
+        }
     } else {
         echo json_encode(['error' => 'CMND không hợp lệ']);
     }
@@ -36,3 +45,4 @@ if (isset($data['cmnd'])) {
     echo json_encode(['error' => 'Không có dữ liệu CMND được gửi.']);
 }
 ?>
+

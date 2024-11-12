@@ -605,3 +605,42 @@ function getAll($query, $params = []) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC); // Trả về kết quả
 }
 
+function getTenantIdByCmnd($cmnd) {
+    // Kết nối cơ sở dữ liệu, giả sử bạn đang sử dụng PDO
+    global $pdo;
+
+    // Truy vấn để kiểm tra CMND trong bảng tenant
+    $stmt = $pdo->prepare("SELECT id FROM tenant WHERE cmnd = :cmnd LIMIT 1");
+    $stmt->bindParam(':cmnd', $cmnd, PDO::PARAM_STR);
+    $stmt->execute();
+
+    // Lấy kết quả truy vấn
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Kiểm tra kết quả và trả về tenant_id nếu tồn tại
+    return $result ? $result['id'] : null;
+}
+
+function getTenantRoomById($tenant_id) {
+    // Kết nối cơ sở dữ liệu, giả sử sử dụng PDO
+    global $pdo;
+
+    // Truy vấn lấy room_id của khách thuê dựa trên tenant_id
+    $stmt = $pdo->prepare("SELECT room_id FROM tenant WHERE id = :tenant_id");
+    $stmt->execute(['tenant_id' => $tenant_id]);
+
+    // Lấy kết quả
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Trả về room_id hoặc null nếu không tìm thấy
+    return $result ? $result['room_id'] : null;
+}
+
+function updateTenantRoom($tenant_id, $room_id) {
+    // Kết nối cơ sở dữ liệu, giả sử sử dụng PDO
+    global $pdo;
+
+    // Cập nhật room_id cho khách thuê dựa trên tenant_id
+    $stmt = $pdo->prepare("UPDATE tenant SET room_id = :room_id WHERE id = :tenant_id");
+    $stmt->execute(['room_id' => $room_id, 'tenant_id' => $tenant_id]);
+}

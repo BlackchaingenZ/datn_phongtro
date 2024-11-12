@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 12, 2024 lúc 10:56 AM
+-- Thời gian đã tạo: Th10 12, 2024 lúc 12:26 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -68,7 +68,10 @@ INSERT INTO `area_room` (`id`, `room_id`, `mota`, `area_id`) VALUES
 (23, 98, NULL, 5),
 (26, 102, NULL, 5),
 (27, 99, NULL, 6),
-(28, 101, NULL, 6);
+(28, 101, NULL, 6),
+(29, 103, NULL, 5),
+(30, 104, NULL, 6),
+(31, 105, NULL, 6);
 
 -- --------------------------------------------------------
 
@@ -102,16 +105,6 @@ CREATE TABLE `bill` (
   `trangthaihoadon` int DEFAULT '0',
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `bill`
---
-
-INSERT INTO `bill` (`id`, `mahoadon`, `room_id`, `tenant_id`, `chuky`, `songayle`, `tienphong`, `sodiencu`, `sodienmoi`, `img_sodienmoi`, `tiendien`, `sonuoccu`, `sonuocmoi`, `img_sonuocmoi`, `tiennuoc`, `songuoi`, `tienrac`, `tienmang`, `tongtien`, `sotiendatra`, `sotienconthieu`, `nocu`, `trangthaihoadon`, `create_at`) VALUES
-(102, 'BRcUc', 87, NULL, 1, 4, 2266670, 2, 4, '', 8000, 1, 2, '', 20000, 2, 20000, 56667, 2371330, 500000, 1871330, 0, 0, '2024-11-09'),
-(107, '62uwe', 87, NULL, 1, 4, 2266670, 2, 3, '', 4000, 1, 2, '', 20000, 2, 20000, 56667, 2367330, 500000, 1867330, 0, 0, '2024-11-10'),
-(108, 'XSE2t', 91, NULL, 1, 4, 1133330, 7, 11, '', 16000, 1, 3, '', 40000, 1, 10000, 56667, 1956000, 500000, 1456000, 700000, 0, '2024-11-10'),
-(109, '81GwB', 91, NULL, 4, 0, 4000000, 2, 4, '', 8000, 1, 2, '', 20000, 1, 40000, 200000, 4268000, NULL, 4268000, 0, 0, '2024-11-10');
 
 --
 -- Bẫy `bill`
@@ -401,7 +394,10 @@ INSERT INTO `cost_room` (`id`, `room_id`, `cost_id`, `thoigianapdung`) VALUES
 (32, 97, 39, '2024-10-29'),
 (34, 102, 38, '2024-10-30'),
 (35, 101, 39, '2024-10-30'),
-(36, 99, 39, '2024-10-30');
+(36, 99, 39, '2024-10-30'),
+(37, 103, 38, '2024-11-12'),
+(38, 104, 39, '2024-11-12'),
+(39, 105, 38, '2024-11-12');
 
 -- --------------------------------------------------------
 
@@ -491,7 +487,22 @@ INSERT INTO `equipment_room` (`id`, `room_id`, `equipment_id`, `thoigiancap`) VA
 (245, 101, 80, '2024-10-30'),
 (246, 101, 79, '2024-10-30'),
 (247, 101, 78, '2024-10-30'),
-(248, 101, 77, '2024-10-30');
+(248, 101, 77, '2024-10-30'),
+(252, 103, 81, '2024-11-12'),
+(253, 103, 80, '2024-11-12'),
+(254, 103, 79, '2024-11-12'),
+(255, 103, 78, '2024-11-12'),
+(256, 103, 77, '2024-11-12'),
+(257, 104, 81, '2024-11-12'),
+(258, 104, 80, '2024-11-12'),
+(259, 104, 79, '2024-11-12'),
+(260, 104, 78, '2024-11-12'),
+(261, 104, 77, '2024-11-12'),
+(262, 105, 81, '2024-11-12'),
+(263, 105, 80, '2024-11-12'),
+(264, 105, 79, '2024-11-12'),
+(265, 105, 78, '2024-11-12'),
+(266, 105, 77, '2024-11-12');
 
 -- --------------------------------------------------------
 
@@ -584,7 +595,8 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (423, 30, 'f594f52f9c2cc85dafe34ece79161db1378d0c0b', '2024-11-06 09:23:33'),
 (424, 30, 'cc5e4f9295cf5574b29e189fc72b408f02870547', '2024-11-07 22:56:50'),
 (425, 30, 'bea85b7d04065c835ba32c255cab0e9159e3db33', '2024-11-08 09:24:03'),
-(426, 30, '7ec655fbf46fdca07463d84923d7b982c8e89671', '2024-11-10 08:13:42');
+(426, 30, '7ec655fbf46fdca07463d84923d7b982c8e89671', '2024-11-10 08:13:42'),
+(427, 30, '846cfeaa811eb452197a20028f30324fa081da78', '2024-11-12 17:29:27');
 
 -- --------------------------------------------------------
 
@@ -636,7 +648,7 @@ CREATE TABLE `rental_history` (
   `id` int NOT NULL,
   `contract_id` int DEFAULT NULL,
   `room_id` int DEFAULT NULL,
-  `khachthue` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `khachthue` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tenant_id` int DEFAULT NULL,
   `soluongthanhvien` int DEFAULT NULL,
   `ngaylaphopdong` date DEFAULT NULL,
@@ -679,7 +691,10 @@ INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `giathue`, `tiencoc`,
 (98, '', 'Phòng A05', 20, NULL, 1000000, 1, 1, 1, '2024-11-10', '2025-01-10', 1),
 (99, '', 'Phòng B04', 20, NULL, 1000000, 1, 1, 1, '2024-11-10', '2025-05-10', 1),
 (101, '', 'Phòng B06', 20, NULL, 1000000, 0, 1, 1, '2024-11-08', '2024-11-24', 0),
-(102, '', 'Phòng A06', 20, NULL, 1000000, 2, 1, 1, '2024-11-10', '2025-01-10', 1);
+(102, '', 'Phòng A06', 20, NULL, 1000000, 2, 1, 1, '2024-11-10', '2025-01-10', 1),
+(103, '', 'Phòng A01', 20, NULL, 1000000, 0, 1, 1, NULL, NULL, 0),
+(104, '', 'Phòng B02', 20, NULL, 1000000, 0, 1, 1, NULL, NULL, 0),
+(105, '', 'Phòng B03', 20, NULL, 1000000, 0, 1, 1, NULL, NULL, 0);
 
 --
 -- Bẫy `room`
@@ -989,7 +1004,7 @@ ALTER TABLE `area`
 -- AUTO_INCREMENT cho bảng `area_room`
 --
 ALTER TABLE `area_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT cho bảng `bill`
@@ -1037,7 +1052,7 @@ ALTER TABLE `cost`
 -- AUTO_INCREMENT cho bảng `cost_room`
 --
 ALTER TABLE `cost_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT cho bảng `equipment`
@@ -1049,7 +1064,7 @@ ALTER TABLE `equipment`
 -- AUTO_INCREMENT cho bảng `equipment_room`
 --
 ALTER TABLE `equipment_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=249;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=267;
 
 --
 -- AUTO_INCREMENT cho bảng `groups`
@@ -1061,7 +1076,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=427;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=428;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -1085,7 +1100,7 @@ ALTER TABLE `rental_history`
 -- AUTO_INCREMENT cho bảng `room`
 --
 ALTER TABLE `room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT cho bảng `services`
