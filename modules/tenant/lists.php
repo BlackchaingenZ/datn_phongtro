@@ -276,7 +276,9 @@ layout('navbar', 'admin', $data);
                                         <p class="btn btn-primary btn-sm" style="color: #fff; font-size: 12px"><?php echo $item['tenphong'] ?></p>
                                     <?php } else {
                                     ?>
-                                        <i>Không</i>
+                                        <p class="btn btn-warning btn-sm" style="color: #fff; font-size: 12px">
+                                            Đang trống
+                                        </p>
                                     <?php
                                     } ?>
                                 </td>
