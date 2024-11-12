@@ -181,8 +181,8 @@ layout('navbar', 'admin', $data);
                         <th>Số điện thoại</th>
                         <th>Ngày sinh</th>
                         <th>Giới tính</th>
-                        <th wìdth="10%">Địa chỉ & Nghề nghiệp</th>
-                        <th>Số CMND/CCCD</th>
+                        <th width="10%">Địa chỉ & Nghề nghiệp</th>
+                        <th width="6%">Số CMND/CCCD</th>
                         <th>Ngày cấp</th>
                         <th>Mặt trước CCCD</th>
                         <th>Mặt sau CCCD</th>
