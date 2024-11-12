@@ -244,7 +244,7 @@ layout('navbar', 'admin', $data);
                         // Ngừng hành động mặc định của sự kiện, ngăn chặn các sự kiện JavaScript khác
                         event.preventDefault();
 
-                        if (confirm("Bạn có chắc chắn muốn xoá khách này không?")) {
+                        if (confirm("Điều này sẽ xoá kháchh hoàn toàn,bạn có chắc chắn muốn xoá khách này không?")) {
                             // Gửi yêu cầu AJAX để xóa khách hàng
                             fetch(`includes/xoakhach.php?id=${tenantId}&contract_id=${contractId}`, {
                                     method: 'GET'
@@ -383,7 +383,7 @@ layout('navbar', 'admin', $data);
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan3']; ?>"></textarea>
+                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan3']; ?></textarea>
                     <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
