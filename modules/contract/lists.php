@@ -129,7 +129,8 @@ function getTenantInfoByContractId($contractId)
             return $tenant['tenkhach'];
         }, $tenants);
 
-        return implode(', ', $tenantNames); // Nối tên khách thuê với dấu phẩy
+        // return implode(',', $tenantNames); // Nối tên khách thuê với dấu phẩy
+        return implode("\n", $tenantNames); // Nối tên khách thuê với ký tự xuống dòng
     }
 
     return 'Không có khách thuê'; // Trường hợp không có khách thuê
