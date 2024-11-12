@@ -131,8 +131,19 @@ if ($contract_id) {
                     $stmt_check->execute([$contract_id, $customer['id']]);
 
                     if ($stmt_check->rowCount() == 0) {
-                        // Thêm khách thuê vào bảng tenant nếu chưa có
-                        $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
+                        // Kiểm tra nếu khách thuê đã tồn tại dựa trên CMND
+                        $tenant_id = getTenantIdByCmnd($cmnd); // Hàm này sẽ trả về tenant_id nếu tồn tại, nếu không sẽ trả về null
+
+                        if ($tenant_id) {
+                            // Nếu khách thuê đã tồn tại, kiểm tra và cập nhật room_id nếu cần
+                            $existingTenantRoom = getTenantRoomById($tenant_id); // Hàm lấy room_id của khách thuê hiện tại
+                            if ($existingTenantRoom != $room_id) {
+                                updateTenantRoom($tenant_id, $room_id); // Hàm cập nhật room_id cho khách thuê
+                            }
+                        } else {
+                            // Nếu khách thuê chưa tồn tại, thêm vào bảng tenant và lấy tenant_id mới
+                            $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
+                        }
 
                         // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
                         linkContractTenant($contract_id, $tenant_id);
@@ -244,7 +255,7 @@ layout('navbar', 'admin', $data);
                         // Ngừng hành động mặc định của sự kiện, ngăn chặn các sự kiện JavaScript khác
                         event.preventDefault();
 
-                        if (confirm("Điều này sẽ xoá kháchh hoàn toàn,bạn có chắc chắn muốn xoá khách này không?")) {
+                        if (confirm("Điều này sẽ xoá khách hoàn toàn,bạn có chắc chắn muốn xoá khách này không?")) {
                             // Gửi yêu cầu AJAX để xóa khách hàng
                             fetch(`includes/xoakhach.php?id=${tenantId}&contract_id=${contractId}`, {
                                     method: 'GET'
@@ -276,17 +287,17 @@ layout('navbar', 'admin', $data);
                         <span class="close-btn" onclick="closePopup()">&times;</span>
 
                         <!-- Nội dung bên trong popup -->
+                        <div class="form-group">
+                            <label for="cmnd">Số CMND/CCCD <span style="color: red">*</span></label>
+                            <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="cmnd" class="form-control"
+                                value="<?php echo old('cmnd', $old); ?>" required>
+                            <?php echo form_error('cmnd', $errors, '<span class="error">', '</span>'); ?>
+                        </div>
 
                         <div class="form-group">
                             <label for="">Tên khách <span style="color: red">*</span></label>
                             <input type="text" placeholder="Tên khách thuê" name="tenkhach" id="" class="form-control" value="<?php echo old('tenkhach', $old); ?>">
                             <?php echo form_error('tenkhach', $errors, '<span class="error">', '</span>'); ?>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="">Số CMND/CCCD <span style="color: red">*</span></label>
-                            <input type="text" placeholder="Số CMND/CCCD" name="cmnd" id="" class="form-control" value="<?php echo old('cmnd', $old); ?>">
-                            <?php echo form_error('cmnd', $errors, '<span class="error">', '</span>'); ?>
                         </div>
 
                         <div class="form-group">
@@ -475,6 +486,66 @@ layout('navbar', 'admin', $data);
 <script>
     let tempCustomers = [];
 
+    document.getElementById('cmnd').addEventListener('blur', function() {
+        const cmnd = this.value.trim();
+        if (cmnd) {
+            const countcmnd = /^[0-9]{9}$|^[0-9]{12}$/;
+            if (!countcmnd.test(cmnd)) {
+                alert("CMND/CCCD phải có dạng là 9 hoặc 12 chữ số.");
+                return;
+            }
+
+            fetch('includes/check_cmnd.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        cmnd: cmnd
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        if (data.hasRoom) {
+                            alert("Khách này đang có phòng hoặc đang có hợp đồng rồi.");
+                            // Không điền các trường thông tin khách hàng vào form
+                        } else {
+                            // Điền các trường thông tin khách hàng vào form
+                            const {
+                                tenkhach,
+                                gioitinh,
+                                diachi,
+                                ngaysinh,
+                                id
+                            } = data.customer;
+                            document.querySelector('[name="tenkhach"]').value = tenkhach;
+                            document.querySelector('[name="gioitinh"]').value = gioitinh;
+                            document.querySelector('[name="diachi"]').value = diachi;
+                            document.querySelector('[name="ngaysinh"]').value = ngaysinh;
+                            document.querySelector('[name="customer_id"]').value = id;
+                            // alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu. Thông tin khách đã được tự động điền vào form.');
+                        }
+                    } else {
+                        // alert('CMND/CCCD không tồn tại trong cơ sở dữ liệu.');
+                        document.querySelector('[name="tenkhach"]').value = '';
+                        document.querySelector('[name="gioitinh"]').value = '';
+                        document.querySelector('[name="diachi"]').value = '';
+                        document.querySelector('[name="ngaysinh"]').value = '';
+                        document.querySelector('[name="customer_id"]').value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Lỗi:', error);
+                });
+        } else {
+            alert('Vui lòng nhập CMND/CCCD');
+        }
+    });
+
+
+
+    // Hàm thêm khách vào danh sách tạm
     function addTempCustomer() {
         const tenkhach = document.querySelector('[name="tenkhach"]').value;
         const ngaysinh = document.querySelector('[name="ngaysinh"]').value;
@@ -488,75 +559,52 @@ layout('navbar', 'admin', $data);
                 alert("Tên khách phải lớn hơn 5 ký tự.");
                 return;
             }
+
             // Kiểm tra định dạng CMND phải là 9 hoặc 12 chữ số
             const countcmnd = /^[0-9]{9}$|^[0-9]{12}$/;
             if (!countcmnd.test(cmnd)) {
                 alert("CMND/CCCD phải có dạng là 9 hoặc 12 chữ số.");
                 return;
             }
+
             // Kiểm tra xem CMND đã tồn tại trong danh sách tạm hay chưa
             const isDuplicate = tempCustomers.some(customer => customer.cmnd === cmnd);
-
             if (isDuplicate) {
                 alert("CMND/CCCD đã tồn tại trong danh sách khách vừa tạo.");
                 return;
             }
-            // Gửi yêu cầu kiểm tra CMND
-            fetch('includes/check_cmnd.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        cmnd: cmnd
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.exists) {
-                        alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu.');
-                    } else {
-                        // Thêm khách thuê vào danh sách tạm
-                        tempCustomers.push({
-                            tenkhach,
-                            ngaysinh,
-                            gioitinh,
-                            diachi,
-                            cmnd
-                        });
 
-                        // Hiển thị danh sách khách thuê tạm
-                        document.getElementById('tempCustomerInfo').innerHTML += `
-                <p>${tenkhach} - ${ngaysinh} - ${gioitinh} - ${diachi} - ${cmnd}</p>
-                `;
-
-                        // Reset form input
-                        document.querySelector('[name="tenkhach"]').value = '';
-                        document.querySelector('[name="ngaysinh"]').value = '';
-                        document.querySelector('[name="gioitinh"]').value = '';
-                        document.querySelector('[name="diachi"]').value = '';
-                        document.querySelector('[name="cmnd"]').value = '';
-                    }
-                    updateTempCustomerList();
-                })
-                .catch(error => {
-                    console.error('Lỗi:', error);
-                });
+            // Thêm khách vào danh sách tạm
+            tempCustomers.push({
+                tenkhach,
+                ngaysinh,
+                gioitinh,
+                diachi,
+                cmnd
+            });
+            // Reset form input
+            document.querySelector('[name="tenkhach"]').value = '';
+            document.querySelector('[name="ngaysinh"]').value = '';
+            document.querySelector('[name="gioitinh"]').value = '';
+            document.querySelector('[name="diachi"]').value = '';
+            document.querySelector('[name="cmnd"]').value = '';
+            // Cập nhật danh sách hiển thị
+            updateTempCustomerList();
         } else {
             alert('Vui lòng nhập đầy đủ thông tin khách thuê.');
         }
     }
 
-
+    // Cập nhật danh sách khách tạm
     function updateTempCustomerList() {
         const customerInfoList = tempCustomers.map((customer, index) => {
-            // chuyển định dạng ngày hiển thị
+            // Chuyển định dạng ngày hiển thị
             const date = new Date(customer.ngaysinh);
             const day = String(date.getDate()).padStart(2, '0'); // Lấy ngày và thêm 0 nếu cần
             const month = String(date.getMonth() + 1).padStart(2, '0'); // Lấy tháng (lưu ý: tháng bắt đầu từ 0)
             const year = date.getFullYear(); // Lấy năm
 
-            // Tạo định dạng tùy ý, ví dụ: tháng/ngày/năm
+            // Tạo định dạng ngày: tháng/ngày/năm
             const formattedDate = `${day}/${month}/${year}`;
 
             return `<div>
@@ -568,7 +616,7 @@ layout('navbar', 'admin', $data);
         document.getElementById('tempCustomerInfo').innerHTML = customerInfoList; // Cập nhật nội dung HTML
     }
 
-
+    // Xóa khách khỏi danh sách tạm
     function removeTempCustomer(index) {
         // Xoá khách hàng tại vị trí index trong mảng
         tempCustomers.splice(index, 1);
@@ -576,10 +624,12 @@ layout('navbar', 'admin', $data);
         updateTempCustomerList();
     }
 
+    // Mở popup
     function openPopup() {
         document.getElementById('popupForm').style.display = 'flex';
     }
 
+    // Đóng popup
     function closePopup() {
         document.getElementById('popupForm').style.display = 'none';
     }
