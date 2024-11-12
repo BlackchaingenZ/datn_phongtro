@@ -344,6 +344,25 @@ function generateInvoiceCode($length = 5)
     return $randomString;
 }
 
+// in ra mã đơn hàng tự động kiểu số
+
+function generateInvoiceNumber($length = 5)
+{
+    // Đảm bảo chiều dài là một số hợp lệ
+    if ($length <= 0) {
+        return 0;
+    }
+
+    // Tạo số ngẫu nhiên
+    $randomNumber = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomNumber .= random_int(0, 9); // Tạo số ngẫu nhiên từ 0 đến 9
+    }
+
+    return (int)$randomNumber; // Trả về số nguyên
+}
+
+
 // check trạng thái hợp đồng
 function getContractStatus($endDate)
 {
