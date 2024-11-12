@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 10, 2024 lúc 04:48 PM
+-- Thời gian đã tạo: Th10 12, 2024 lúc 10:57 AM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -224,11 +224,11 @@ CREATE TABLE `contract` (
   `tinhtrangcoc` int DEFAULT NULL,
   `trangthaihopdong` int DEFAULT NULL,
   `create_at` date DEFAULT NULL,
-  `ghichu` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ghichu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `sotiencoc` float DEFAULT NULL,
-  `dieukhoan1` varchar(550) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `dieukhoan2` varchar(550) COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `dieukhoan3` varchar(550) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `dieukhoan1` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dieukhoan2` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dieukhoan3` varchar(550) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -288,7 +288,7 @@ CREATE TABLE `contract_services` (
   `id` int NOT NULL,
   `contract_id` int DEFAULT NULL,
   `services_id` int DEFAULT NULL,
-  `ghichu` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `ghichu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -636,6 +636,7 @@ CREATE TABLE `rental_history` (
   `id` int NOT NULL,
   `contract_id` int DEFAULT NULL,
   `room_id` int DEFAULT NULL,
+  `khachthue` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tenant_id` int DEFAULT NULL,
   `soluongthanhvien` int DEFAULT NULL,
   `ngaylaphopdong` date DEFAULT NULL,

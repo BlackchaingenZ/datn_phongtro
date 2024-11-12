@@ -30,10 +30,13 @@ if (isset($_POST['terminate'])) {
     $contract = getContractById($contractId);
 
     if ($contract) {
-        // Thêm vào bảng lịch sử
-        addContractToHistory($contract);
+        // Lấy thông tin khách thuê của hợp đồng (nếu có nhiều khách thuê, cách nhau bằng dấu phẩy)
+        $tenantInfo = getTenantInfoByContractId($contractId); // Lấy danh sách khách thuê
 
-        // Kiểm tra có tenant nào liên kết với hợp đồng qua bảng contract_tenant
+        // Thêm hợp đồng vào bảng lịch sử và lưu thông tin khách thuê
+        addContractToHistory($contract, $tenantInfo);
+
+        // Kiểm tra có khách thuê nào liên kết với hợp đồng qua bảng contract_tenant
         $checkTenants = get('contract_tenant', "contract_id_1 = $contractId");
 
         if (!empty($checkTenants)) {
@@ -42,7 +45,22 @@ if (isset($_POST['terminate'])) {
             if (!$deleteTenants) {
                 setFlashData('msg', 'Không thể xóa liên kết tenant!');
                 setFlashData('msg_type', 'err');
-                redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
+                redirect('?module=contract');
+                exit;
+            }
+        }
+
+        // Kiểm tra và cập nhật khách thuê để xóa liên kết phòng
+        $roomId = $contract['room_id'];
+        $checkTenantRoomLink = get('tenant', "room_id = $roomId");
+
+        if (!empty($checkTenantRoomLink)) {
+            // Cập nhật `room_id` của khách thuê thành NULL
+            $updateTenantRoomLink = update('tenant', ['room_id' => NULL], "room_id = $roomId");
+            if (!$updateTenantRoomLink) {
+                setFlashData('msg', 'Không thể xóa liên kết phòng của khách thuê!');
+                setFlashData('msg_type', 'err');
+                redirect('?module=contract');
                 exit;
             }
         }
@@ -69,13 +87,7 @@ if (isset($_POST['terminate'])) {
 }
 
 
-function getContractById($id)
-{
-    // Lấy hợp đồng từ database
-    return firstRaw("SELECT * FROM contract WHERE id = $id");
-}
-
-function addContractToHistory($contract)
+function addContractToHistory($contract, $tenantInfo)
 {
     // Thêm hợp đồng vào bảng lịch sử
     $data = [
@@ -84,9 +96,18 @@ function addContractToHistory($contract)
         'ngaylaphopdong' => $contract['ngaylaphopdong'],
         'ngayvao' => $contract['ngayvao'],
         'ngayra' => $contract['ngayra'],
-        'ngaythanhly' => date('Y-m-d')
+        'ngaythanhly' => date('Y-m-d'),
+        'khachthue' => $tenantInfo // Lưu chuỗi khách thuê vào trường 'khachthue'
     ];
     insert('rental_history', $data);
+}
+
+
+
+function getContractById($id)
+{
+    // Lấy hợp đồng từ database
+    return firstRaw("SELECT * FROM contract WHERE id = $id");
 }
 
 function deleteContract($id)
@@ -94,6 +115,27 @@ function deleteContract($id)
     // Xóa hợp đồng khỏi database
     delete('contract', "id = $id");
 }
+function getTenantInfoByContractId($contractId)
+{
+    // Truy vấn tất cả khách thuê liên kết với hợp đồng
+    $query = "SELECT tenant.tenkhach FROM tenant
+              JOIN contract_tenant ON contract_tenant.tenant_id_1 = tenant.id
+              WHERE contract_tenant.contract_id_1 = $contractId";
+    $tenants = getAll($query); // Giả sử `getAll` là hàm trả về một mảng các bản ghi
+
+    // Nếu có khách thuê, trả về chuỗi tên khách thuê cách nhau bằng dấu phẩy
+    if ($tenants) {
+        $tenantNames = array_map(function ($tenant) {
+            return $tenant['tenkhach'];
+        }, $tenants);
+
+        return implode(', ', $tenantNames); // Nối tên khách thuê với dấu phẩy
+    }
+
+    return 'Không có khách thuê'; // Trường hợp không có khách thuê
+}
+
+
 
 // Lấy thông tin khách của hợp đồng
 function getTenantsByRoomId($roomId)
