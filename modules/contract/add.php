@@ -409,7 +409,6 @@ layout('navbar', 'admin', $data);
 <script>
     let tempCustomers = [];
 
-    // Kiểm tra CMND khi người dùng rời khỏi trường CMND (blur)
     document.getElementById('cmnd').addEventListener('blur', function() {
         const cmnd = this.value.trim();
         if (cmnd) {
@@ -431,19 +430,25 @@ layout('navbar', 'admin', $data);
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {
-                        const {
-                            tenkhach,
-                            gioitinh,
-                            diachi,
-                            ngaysinh,
-                            id
-                        } = data.customer;
-                        document.querySelector('[name="tenkhach"]').value = tenkhach;
-                        document.querySelector('[name="gioitinh"]').value = gioitinh;
-                        document.querySelector('[name="diachi"]').value = diachi;
-                        document.querySelector('[name="ngaysinh"]').value = ngaysinh;
-                        document.querySelector('[name="customer_id"]').value = id;
-                        // alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu. Thông tin khách đã được tự động điền vào form.');
+                        if (data.hasRoom) {
+                            alert("Khách này đang có phòng hoặc đang có hợp đồng rồi.");
+                            // Không điền các trường thông tin khách hàng vào form
+                        } else {
+                            // Điền các trường thông tin khách hàng vào form
+                            const {
+                                tenkhach,
+                                gioitinh,
+                                diachi,
+                                ngaysinh,
+                                id
+                            } = data.customer;
+                            document.querySelector('[name="tenkhach"]').value = tenkhach;
+                            document.querySelector('[name="gioitinh"]').value = gioitinh;
+                            document.querySelector('[name="diachi"]').value = diachi;
+                            document.querySelector('[name="ngaysinh"]').value = ngaysinh;
+                            document.querySelector('[name="customer_id"]').value = id;
+                            // alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu. Thông tin khách đã được tự động điền vào form.');
+                        }
                     } else {
                         // alert('CMND/CCCD không tồn tại trong cơ sở dữ liệu.');
                         document.querySelector('[name="tenkhach"]').value = '';
@@ -460,6 +465,7 @@ layout('navbar', 'admin', $data);
             alert('Vui lòng nhập CMND/CCCD');
         }
     });
+
 
 
     // Hàm thêm khách vào danh sách tạm

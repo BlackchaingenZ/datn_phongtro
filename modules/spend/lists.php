@@ -98,7 +98,6 @@ layout('navbar', 'admin', $data);
                         <input type="text" placeholder="Tên danh mục" name="tendanhmuc" id="" class="form-control" value="<?php echo old('tendanhmuc', $old); ?>">
                         <?php echo form_error('tendanhmuc', $errors, '<span class="error">', '</span>'); ?>
                     </div>
-
                 </div>
                 <div class="form-group">                    
                     <div class="btn-row">
