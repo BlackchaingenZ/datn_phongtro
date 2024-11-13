@@ -22,8 +22,9 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndEquipmentList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
-               GROUP_CONCAT( DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
+        SELECT r.id AS room_id, r.tenphong, 
+        GROUP_CONCAT(CONCAT(e.tenthietbi, ' (', er.soluongcap, ')') SEPARATOR ', ') AS tenthietbi,
+        GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
         FROM room r
         LEFT JOIN equipment_room er ON r.id = er.room_id
         LEFT JOIN equipment e ON er.equipment_id = e.id
@@ -32,6 +33,8 @@ function getRoomAndEquipmentList()
     ";
     return getRaw($sql);
 }
+
+
 
 $searchTerm = '';
 if (!empty($_POST['search_term'])) {
@@ -111,7 +114,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                     ?>
                             <tr>
                                 <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
-                                <td><?php echo $count; ?></td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
                                 <td><b><?php echo $item['tenthietbi']; ?></b></td>

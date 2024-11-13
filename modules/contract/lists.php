@@ -171,6 +171,7 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
         LEFT JOIN services ON contract_services.services_id = services.id 
         WHERE room.tenphong LIKE '%$searchContract%' OR tenant.tenkhach LIKE '%$searchContract%' OR tenant.cmnd LIKE '%$searchContract%'
         GROUP BY contract.id
+        ORDER BY contract.id DESC
     ");
 } else {
     // Nếu không có tìm kiếm, lấy tất cả hợp đồng
@@ -196,7 +197,7 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
         LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
         LEFT JOIN services ON contract_services.services_id = services.id 
         GROUP BY contract.id
-         ORDER BY contract.ngayvao DESC -- Sắp xếp theo ngày vào để hợp đồng mới nhất lên đầu
+         ORDER BY contract.id DESC -- Sắp xếp theo id để hợp đồng mới nhất lên đầu
     ");
 }
 

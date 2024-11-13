@@ -99,7 +99,7 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-$listAllTenant = getRaw("SELECT *, tenant.id, tenphong, tenant.ngayvao as ngayvao FROM tenant LEFT JOIN room ON tenant.room_id = room.id  $filter ORDER BY tenphong LIMIT $offset, $perPage");
+$listAllTenant = getRaw("SELECT *, tenant.id, tenphong, tenant.ngayvao as ngayvao FROM tenant LEFT JOIN room ON tenant.room_id = room.id  $filter ORDER BY tenant.id DESC LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;

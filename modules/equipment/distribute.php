@@ -24,60 +24,71 @@ if (isPost()) {
         $errors['room_id']['required'] = '** Bạn chưa chọn phòng trọ!';
     }
 
+    // Validate số lượng cấp
+    if (empty(trim($body['soluongcap']))) {
+        $errors['soluongcap']['required'] = '** Bạn chưa nhập số lượng cấp!';
+    } elseif (!is_numeric($body['soluongcap']) || $body['soluongcap'] <= 0) {
+        $errors['soluongcap']['invalid'] = '** Số lượng cấp phải là số dương!';
+    }
+
     // Validate thời gian cấp
     if (empty(trim($body['thoigiancap']))) {
         $errors['thoigiancap']['required'] = '** Bạn chưa nhập thời gian cấp!';
     }
 
     // Kiểm tra mảng error
-    if (isPost()) {
-        $body = getBody();
-        $errors = [];
+    if (empty($errors)) {
+        // Kiểm tra xem phòng đã có thiết bị này chưa
+        $checkExistsQuery = "
+            SELECT COUNT(*) AS count
+            FROM equipment_room
+            WHERE room_id = :room_id AND equipment_id = :equipment_id
+        ";
+        $stmt = $pdo->prepare($checkExistsQuery);
+        $stmt->execute([
+            ':room_id' => $body['room_id'],
+            ':equipment_id' => $body['equipment_id']
+        ]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Validate cơ sở vật chất
-        if (empty(trim($body['equipment_id']))) {
-            $errors['equipment_id']['required'] = '** Bạn chưa chọn cơ sở vật chất!';
-        }
-
-        // Validate phòng trọ
-        if (empty(trim($body['room_id']))) {
-            $errors['room_id']['required'] = '** Bạn chưa chọn phòng trọ!';
-        }
-
-        // Validate thời gian cấp
-        if (empty(trim($body['thoigiancap']))) {
-            $errors['thoigiancap']['required'] = '** Bạn chưa nhập thời gian cấp!';
-        }
-
-        // Kiểm tra mảng error
-        if (empty($errors)) {
-            // Kiểm tra xem phòng đã có thiết bị này chưa
-            $checkExistsQuery = "
-                SELECT COUNT(*) AS count
-                FROM equipment_room
-                WHERE room_id = :room_id AND equipment_id = :equipment_id
+        if ($result['count'] > 0) {
+            // Nếu thiết bị đã tồn tại trong phòng
+            setFlashData('msg', 'Không thể thêm vì phòng này đã có thiết bị này trước đó!');
+            setFlashData('msg_type', 'err');
+            redirect('?module=equipment&action=listdistribute');
+        } else {
+            // Kiểm tra số lượng tồn kho của thiết bị
+            $checkStockQuery = "
+                SELECT soluongtonkho
+                FROM equipment
+                WHERE id = :equipment_id
             ";
-            $stmt = $pdo->prepare($checkExistsQuery);
-            $stmt->execute([
-                ':room_id' => $body['room_id'],
-                ':equipment_id' => $body['equipment_id']
-            ]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $pdo->prepare($checkStockQuery);
+            $stmt->execute([':equipment_id' => $body['equipment_id']]);
+            $stock = $stmt->fetch(PDO::FETCH_ASSOC)['soluongtonkho'];
 
-            if ($result['count'] > 0) {
-                // Nếu thiết bị đã tồn tại trong phòng
-                setFlashData('msg', 'Không thể thêm vì phòng này đã có thiết bị này trước đó!');
-                setFlashData('msg_type', 'err');
-                redirect('?module=equipment&action=listdistribute'); // Chuyển hướng về trang phân bổ
-            } else {
-                // Không có lỗi nào, tiến hành thêm thiết bị
+            if ($stock >= $body['soluongcap']) {
+                // Trừ số lượng tồn kho trong bảng equipment
+                $updateStockQuery = "
+                    UPDATE equipment
+                    SET soluongtonkho = soluongtonkho - :soluongcap
+                    WHERE id = :equipment_id
+                ";
+                $stmt = $pdo->prepare($updateStockQuery);
+                $stmt->execute([
+                    ':soluongcap' => $body['soluongcap'],
+                    ':equipment_id' => $body['equipment_id']
+                ]);
+
+                // Thêm bản ghi vào bảng equipment_room
                 $dataInsert = [
                     'equipment_id' => $body['equipment_id'],
                     'room_id' => $body['room_id'],
-                    'thoigiancap' => $body['thoigiancap'], // Thêm thời gian cấp vào mảng chèn
+                    'soluongcap' => $body['soluongcap'],
+                    'thoigiancap' => $body['thoigiancap']
                 ];
+                $insertStatus = insert('equipment_room', $dataInsert);
 
-                $insertStatus = insert('equipment_room', $dataInsert); // Sử dụng bảng equipment_room để lưu thông tin phân bổ
                 if ($insertStatus) {
                     setFlashData('msg', 'Phân bổ cơ sở vật chất thành công');
                     setFlashData('msg_type', 'suc');
@@ -87,19 +98,14 @@ if (isPost()) {
                     setFlashData('msg_type', 'err');
                     redirect('?module=equipment&action=listdistribute');
                 }
+            } else {
+                // Nếu không đủ số lượng tồn kho
+                setFlashData('msg', 'Không đủ số lượng tồn kho để phân bổ.');
+                setFlashData('msg_type', 'err');
+                redirect('?module=equipment&action=listdistribute');
             }
         }
-
-        // Nếu có lỗi, xử lý thông báo lỗi
-        if (!empty($errors)) {
-            setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
-            setFlashData('msg_type', 'err');
-            setFlashData('errors', $errors);
-            setFlashData('old', $body);
-            redirect('?module=equipment&action=distribute');
-        }
     }
-
 
     // Nếu có lỗi, xử lý thông báo lỗi
     if (!empty($errors)) {
@@ -107,9 +113,11 @@ if (isPost()) {
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
         setFlashData('old', $body);
-        redirect('?module=equipment&action=listdistribute');
+        redirect('?module=equipment&action=distribute');
     }
 }
+
+
 
 
 
@@ -163,11 +171,11 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
     <div class="box-content">
         <form action="" method="post" class="row">
             <div class="col-5">
-                
+
                 <div class="form-group">
                     <label for="">Chọn thiết bị <span style="color: red">*</span></label>
-                    <select name="equipment_id" class="form-control" >
-                        <option value=""disabled selected>Chọn thiết bị</option>
+                    <select name="equipment_id" class="form-control">
+                        <option value="" disabled selected>Chọn thiết bị</option>
                         <?php
                         if (!empty($listAllEquipment)) {
                             foreach ($listAllEquipment as $item) {
@@ -184,7 +192,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                 <div class="form-group">
                     <label for="">Chọn phòng trọ <span style="color: red">*</span></label>
                     <select name="room_id" class="form-control">
-                        <option value=""disabled selected>Chọn phòng</option>
+                        <option value="" disabled selected>Chọn phòng</option>
                         <?php
                         if (!empty($listAllRoom)) {
                             foreach ($listAllRoom as $item) {
@@ -197,6 +205,18 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
+                <div class="form-group">
+                    <label for=""> Số lượng cấp <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Số lượng cấp" name="soluongcap" class="form-control" value="<?php echo old('soluongcap', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('soluongcap', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="">Thời gian cấp <span style="color: red">*</span></label>

@@ -28,6 +28,10 @@ if (isPost()) {
     if (empty(trim($body['giathietbi']))) {
         $errors['giathietbi']['required'] = '** Bạn chưa nhập giá thiết bị!';
     }
+    // Validate soluongtonkho
+    if (empty(trim($body['soluongnhap']))) {
+        $errors['soluongnhap']['required'] = '** Bạn chưa nhập số lượng nhập!';
+    }
 
     // Validate ngày nhập
     if (empty(trim($body['ngaynhap']))) {
@@ -38,9 +42,12 @@ if (isPost()) {
     if (empty($errors)) {
         // không có lỗi nào
         $dataInsert = [
+            'mathietbi' => generateInvoiceNumber(),
             'tenthietbi' => $body['tenthietbi'],
             'giathietbi' => $body['giathietbi'],
             'ngaynhap' => $body['ngaynhap'],
+            'soluongnhap' => $body['soluongnhap'],
+            'soluongtonkho' => $body['soluongnhap']  // Gán soluongtonkho bằng soluongnhap
         ];
 
         $insertStatus = insert('equipment', $dataInsert);
@@ -100,7 +107,17 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
                         input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
                     }
                 </script>
-
+                <div class="form-group">
+                    <label for=""> Số lượng nhập <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Số lượng nhập" name="soluongnhap" class="form-control" value="<?php echo old('soluongnhap', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('soluongnhap', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
                 <div class="form-group">
                     <label for="">Ngày nhập <span style="color: red">*</span></label>
                     <input type="date" name="ngaynhap" class="form-control" value="<?php echo old('ngaynhap', $old); ?>">
