@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 12, 2024 lúc 12:26 PM
+-- Thời gian đã tạo: Th10 13, 2024 lúc 09:56 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -201,6 +201,13 @@ CREATE TABLE `category_spend` (
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `category_spend`
+--
+
+INSERT INTO `category_spend` (`id`, `tendanhmuc`, `create_at`) VALUES
+(9, 'Tiền ủng hộ', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -229,13 +236,12 @@ CREATE TABLE `contract` (
 --
 
 INSERT INTO `contract` (`id`, `room_id`, `soluongthanhvien`, `ngaylaphopdong`, `ngayvao`, `ngayra`, `tinhtrangcoc`, `trangthaihopdong`, `create_at`, `ghichu`, `sotiencoc`, `dieukhoan1`, `dieukhoan2`, `dieukhoan3`) VALUES
-(401, 87, NULL, '2024-11-10', '2024-11-10', '2025-02-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
-(402, 97, NULL, '2024-11-10', '2024-11-10', '2025-01-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
 (403, 91, NULL, '2024-11-10', '2024-11-10', '2025-01-03', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
 (404, 98, NULL, '2024-11-10', '2024-11-10', '2025-01-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
 (405, 102, NULL, '2024-11-10', '2024-11-10', '2025-01-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
 (406, 86, NULL, '2024-11-10', '2024-11-10', '2025-01-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
-(407, 99, NULL, '2024-11-10', '2024-11-10', '2025-05-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất');
+(407, 99, NULL, '2024-11-10', '2024-11-10', '2025-05-10', 1, 1, '2024-11-10', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất'),
+(408, 103, NULL, '2024-11-13', '2024-11-13', '2025-01-13', 1, 1, '2024-11-13', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất');
 
 --
 -- Bẫy `contract`
@@ -289,14 +295,6 @@ CREATE TABLE `contract_services` (
 --
 
 INSERT INTO `contract_services` (`id`, `contract_id`, `services_id`, `ghichu`) VALUES
-(1029, 401, 5, NULL),
-(1030, 401, 8, NULL),
-(1031, 401, 10, NULL),
-(1032, 401, 1, NULL),
-(1033, 402, 5, NULL),
-(1034, 402, 8, NULL),
-(1035, 402, 10, NULL),
-(1036, 402, 1, NULL),
 (1037, 403, 5, NULL),
 (1038, 403, 8, NULL),
 (1039, 403, 10, NULL),
@@ -316,7 +314,11 @@ INSERT INTO `contract_services` (`id`, `contract_id`, `services_id`, `ghichu`) V
 (1053, 407, 5, NULL),
 (1054, 407, 8, NULL),
 (1055, 407, 10, NULL),
-(1056, 407, 1, NULL);
+(1056, 407, 1, NULL),
+(1057, 408, 5, NULL),
+(1058, 408, 8, NULL),
+(1059, 408, 10, NULL),
+(1060, 408, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -335,16 +337,15 @@ CREATE TABLE `contract_tenant` (
 --
 
 INSERT INTO `contract_tenant` (`id`, `contract_id_1`, `tenant_id_1`) VALUES
-(181, 401, 445),
-(182, 402, 446),
-(183, 402, 447),
 (184, 403, 448),
 (185, 403, 449),
 (186, 404, 450),
 (187, 405, 451),
 (188, 405, 452),
 (189, 406, 453),
-(190, 407, 454);
+(190, 407, 454),
+(191, 408, 445),
+(192, 408, 455);
 
 -- --------------------------------------------------------
 
@@ -389,7 +390,7 @@ INSERT INTO `cost_room` (`id`, `room_id`, `cost_id`, `thoigianapdung`) VALUES
 (18, 86, 39, '2024-10-25'),
 (24, 91, 38, '2024-10-28'),
 (27, 96, 39, '2024-10-28'),
-(29, 87, 39, '2024-10-29'),
+(29, 87, 38, '2024-11-13'),
 (30, 98, 38, '2024-10-29'),
 (32, 97, 39, '2024-10-29'),
 (34, 102, 38, '2024-10-30'),
@@ -407,10 +408,11 @@ INSERT INTO `cost_room` (`id`, `room_id`, `cost_id`, `thoigianapdung`) VALUES
 
 CREATE TABLE `equipment` (
   `id` int NOT NULL,
+  `mathietbi` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tenthietbi` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `giathietbi` float DEFAULT NULL,
   `ngaynhap` date DEFAULT NULL,
-  `soluongphanbo` int DEFAULT NULL,
+  `soluongnhap` int DEFAULT NULL,
   `soluongtonkho` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -418,12 +420,8 @@ CREATE TABLE `equipment` (
 -- Đang đổ dữ liệu cho bảng `equipment`
 --
 
-INSERT INTO `equipment` (`id`, `tenthietbi`, `giathietbi`, `ngaynhap`, `soluongphanbo`, `soluongtonkho`) VALUES
-(77, 'Điều hoà', 1000000, '2024-10-25', NULL, NULL),
-(78, 'Tủ lạnh', 1000000, '2024-10-25', NULL, NULL),
-(79, 'Televison', 1000000, '2024-10-25', NULL, NULL),
-(80, 'Máy giặt', 1000000, '2024-10-29', NULL, NULL),
-(81, 'Bàn ghế', 1000000, '2024-10-29', NULL, NULL);
+INSERT INTO `equipment` (`id`, `mathietbi`, `tenthietbi`, `giathietbi`, `ngaynhap`, `soluongnhap`, `soluongtonkho`) VALUES
+(95, '15247', 'Televison', 1000000, '2024-11-14', 50, 40);
 
 -- --------------------------------------------------------
 
@@ -435,6 +433,7 @@ CREATE TABLE `equipment_room` (
   `id` int NOT NULL,
   `room_id` int DEFAULT NULL,
   `equipment_id` int DEFAULT NULL,
+  `soluongcap` int DEFAULT NULL,
   `thoigiancap` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -442,67 +441,10 @@ CREATE TABLE `equipment_room` (
 -- Đang đổ dữ liệu cho bảng `equipment_room`
 --
 
-INSERT INTO `equipment_room` (`id`, `room_id`, `equipment_id`, `thoigiancap`) VALUES
-(177, 86, 81, '2024-10-29'),
-(178, 86, 80, '2024-10-29'),
-(179, 86, 79, '2024-10-29'),
-(180, 86, 78, '2024-10-29'),
-(181, 86, 77, '2024-10-29'),
-(182, 87, 81, '2024-10-29'),
-(183, 87, 80, '2024-10-29'),
-(184, 87, 79, '2024-10-29'),
-(185, 87, 78, '2024-10-29'),
-(186, 87, 77, '2024-10-29'),
-(197, 91, 81, '2024-10-29'),
-(198, 91, 80, '2024-10-29'),
-(199, 91, 79, '2024-10-29'),
-(200, 91, 78, '2024-10-29'),
-(201, 91, 77, '2024-10-29'),
-(202, 96, 81, '2024-10-29'),
-(203, 96, 80, '2024-10-29'),
-(204, 96, 79, '2024-10-29'),
-(205, 96, 78, '2024-10-29'),
-(206, 96, 77, '2024-10-29'),
-(211, 97, 81, '2024-10-29'),
-(212, 97, 80, '2024-10-29'),
-(213, 97, 79, '2024-10-29'),
-(214, 97, 78, '2024-10-29'),
-(215, 97, 77, '2024-10-29'),
-(216, 98, 81, '2024-10-29'),
-(217, 98, 80, '2024-10-29'),
-(218, 98, 79, '2024-10-29'),
-(219, 98, 78, '2024-10-29'),
-(220, 98, 77, '2024-10-29'),
-(233, 99, 81, '2024-10-30'),
-(234, 99, 80, '2024-10-30'),
-(235, 99, 79, '2024-10-30'),
-(236, 99, 78, '2024-10-30'),
-(237, 99, 77, '2024-10-30'),
-(238, 102, 81, '2024-10-30'),
-(239, 102, 80, '2024-10-30'),
-(240, 102, 79, '2024-10-30'),
-(241, 102, 78, '2024-10-30'),
-(242, 102, 77, '2024-10-30'),
-(244, 101, 81, '2024-10-30'),
-(245, 101, 80, '2024-10-30'),
-(246, 101, 79, '2024-10-30'),
-(247, 101, 78, '2024-10-30'),
-(248, 101, 77, '2024-10-30'),
-(252, 103, 81, '2024-11-12'),
-(253, 103, 80, '2024-11-12'),
-(254, 103, 79, '2024-11-12'),
-(255, 103, 78, '2024-11-12'),
-(256, 103, 77, '2024-11-12'),
-(257, 104, 81, '2024-11-12'),
-(258, 104, 80, '2024-11-12'),
-(259, 104, 79, '2024-11-12'),
-(260, 104, 78, '2024-11-12'),
-(261, 104, 77, '2024-11-12'),
-(262, 105, 81, '2024-11-12'),
-(263, 105, 80, '2024-11-12'),
-(264, 105, 79, '2024-11-12'),
-(265, 105, 78, '2024-11-12'),
-(266, 105, 77, '2024-11-12');
+INSERT INTO `equipment_room` (`id`, `room_id`, `equipment_id`, `soluongcap`, `thoigiancap`) VALUES
+(387, 86, 95, 5, '2024-11-14'),
+(388, 87, 95, 1, NULL),
+(389, 91, 95, 4, '2024-11-14');
 
 -- --------------------------------------------------------
 
@@ -596,7 +538,8 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (424, 30, 'cc5e4f9295cf5574b29e189fc72b408f02870547', '2024-11-07 22:56:50'),
 (425, 30, 'bea85b7d04065c835ba32c255cab0e9159e3db33', '2024-11-08 09:24:03'),
 (426, 30, '7ec655fbf46fdca07463d84923d7b982c8e89671', '2024-11-10 08:13:42'),
-(427, 30, '846cfeaa811eb452197a20028f30324fa081da78', '2024-11-12 17:29:27');
+(427, 30, '846cfeaa811eb452197a20028f30324fa081da78', '2024-11-12 17:29:27'),
+(428, 30, 'b839b3e4208086bf05116ecfa83cbc6d9576e377', '2024-11-13 07:07:15');
 
 -- --------------------------------------------------------
 
@@ -657,6 +600,16 @@ CREATE TABLE `rental_history` (
   `ngaythanhly` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `rental_history`
+--
+
+INSERT INTO `rental_history` (`id`, `contract_id`, `room_id`, `khachthue`, `tenant_id`, `soluongthanhvien`, `ngaylaphopdong`, `ngayvao`, `ngayra`, `ngaythanhly`) VALUES
+(20, 401, 87, 'Nguyễn Văn A', NULL, NULL, '2024-11-10', '2024-11-10', '2025-02-10', '2024-11-13'),
+(21, 402, 97, 'Trần Thị Bích Ngọc\nLê Văn Cường', NULL, NULL, '2024-11-10', '2024-11-10', '2025-01-10', '2024-11-13'),
+(22, 409, 104, 'Nguyễn Văn Hoàng\nNguyễn Văn Chi', NULL, NULL, '2024-11-13', '2024-11-13', '2025-01-13', '2024-11-13'),
+(23, 410, 87, 'Hoàng Ngọc Mạnh', NULL, NULL, '2024-11-13', '2024-11-06', '2025-01-13', '2024-11-13');
+
 -- --------------------------------------------------------
 
 --
@@ -684,16 +637,16 @@ CREATE TABLE `room` (
 
 INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `giathue`, `tiencoc`, `soluong`, `ngaylaphd`, `chuky`, `ngayvao`, `ngayra`, `trangthai`) VALUES
 (86, '', 'Phòng B01', 20, NULL, 300000, 1, 1, 1, '2024-11-10', '2025-01-10', 1),
-(87, '/datn/uploads/images/tro1%20(3).jpg', 'Phòng A02', 20, NULL, 1000000, 1, 1, 5, '2024-11-10', '2025-02-10', 1),
+(87, '/datn/uploads/images/tro1%20(3).jpg', 'Phòng A02', 20, NULL, 1000000, 0, 1, 5, '2024-11-06', '2025-01-13', 0),
 (91, '', 'Phòng A04', 20, NULL, 1000000, 2, 1, 1, '2024-11-10', '2025-01-03', 1),
 (96, '', 'Phòng B05', 20, NULL, 1000000, 0, 1, 1, '2024-11-10', '2025-01-10', 0),
-(97, '', 'Phòng A03', 20, NULL, 1000000, 2, 1, 1, '2024-11-10', '2025-01-10', 1),
+(97, '', 'Phòng A03', 20, NULL, 1000000, 0, 1, 1, '2024-11-10', '2025-01-10', 0),
 (98, '', 'Phòng A05', 20, NULL, 1000000, 1, 1, 1, '2024-11-10', '2025-01-10', 1),
 (99, '', 'Phòng B04', 20, NULL, 1000000, 1, 1, 1, '2024-11-10', '2025-05-10', 1),
 (101, '', 'Phòng B06', 20, NULL, 1000000, 0, 1, 1, '2024-11-08', '2024-11-24', 0),
 (102, '', 'Phòng A06', 20, NULL, 1000000, 2, 1, 1, '2024-11-10', '2025-01-10', 1),
-(103, '', 'Phòng A01', 20, NULL, 1000000, 0, 1, 1, NULL, NULL, 0),
-(104, '', 'Phòng B02', 20, NULL, 1000000, 0, 1, 1, NULL, NULL, 0),
+(103, '', 'Phòng A01', 20, NULL, 1000000, 2, 1, 1, '2024-11-13', '2025-01-13', 1),
+(104, '', 'Phòng B02', 20, NULL, 1000000, 0, 1, 1, '2024-11-13', '2025-01-13', 0),
 (105, '', 'Phòng B03', 20, NULL, 1000000, 0, 1, 1, NULL, NULL, 0);
 
 --
@@ -762,16 +715,20 @@ CREATE TABLE `tenant` (
 --
 
 INSERT INTO `tenant` (`id`, `tenkhach`, `sdt`, `ngaysinh`, `gioitinh`, `diachi`, `nghenghiep`, `cmnd`, `ngayvao`, `ngaycap`, `anhmattruoc`, `anhmatsau`, `zalo`, `room_id`) VALUES
-(445, 'Nguyễn Văn A', NULL, '2024-11-03', 'Nữ', '12 Nguyễn Huệ, Quận 1, TP.HCM', NULL, '123456789', NULL, NULL, NULL, NULL, NULL, 87),
-(446, 'Trần Thị Bích Ngọc', NULL, '2024-11-03', 'Nam', '45 Hùng Vương, Quận 5, TP.HCM', NULL, '234567890', NULL, NULL, NULL, NULL, NULL, 97),
-(447, 'Lê Văn Cường', NULL, '2024-11-03', 'Nữ', '78 Lý Thái Tổ, Quận 3, TP.HCM', NULL, '345678901', NULL, NULL, NULL, NULL, NULL, 97),
+(445, 'Nguyễn Văn A', NULL, '2024-11-03', 'Nữ', '12 Nguyễn Huệ, Quận 1, TP.HCM', NULL, '123456789', NULL, NULL, NULL, NULL, NULL, 103),
+(446, 'Trần Thị Bích Ngọc', NULL, '2024-11-03', 'Nam', '45 Hùng Vương, Quận 5, TP.HCM', NULL, '234567890', NULL, NULL, NULL, NULL, NULL, NULL),
+(447, 'Lê Văn Cường', NULL, '2024-11-03', 'Nữ', '78 Lý Thái Tổ, Quận 3, TP.HCM', NULL, '345678901', NULL, NULL, NULL, NULL, NULL, NULL),
 (448, 'Phạm Minh Châu', NULL, '2024-11-03', 'Nam', '90 Trần Phú, Quận 10, TP.HCM', NULL, '456789012', NULL, NULL, NULL, NULL, NULL, 91),
 (449, 'Hoàng Thị Thanh Hương', NULL, '2024-11-03', 'Nam', '101 Hai Bà Trưng, Quận 1, TP.HCM', NULL, '567890123', NULL, NULL, NULL, NULL, NULL, 91),
 (450, 'Đặng Văn Phúc', NULL, '2024-11-03', 'Nam', '34 Nguyễn Đình Chiểu, Quận 3, TP.HCM', NULL, '678901234', NULL, NULL, NULL, NULL, NULL, 98),
 (451, 'Phan Thị Lan Anh', NULL, '2024-11-03', 'Nam', '55 Cách Mạng Tháng 8, Quận 10, TP.HCM', NULL, '789012345', NULL, NULL, NULL, NULL, NULL, 102),
 (452, 'Bùi Văn Tâm', NULL, '2024-11-03', 'Nữ', '123 Võ Văn Tần, Quận 3, TP.HCM', NULL, '890123456', NULL, NULL, NULL, NULL, NULL, 102),
 (453, 'Nguyễn Thị Thu Thủy', NULL, '2024-10-10', 'Nữ', '23 Pasteur, Quận 1, TP.HCM', NULL, '901234567', NULL, NULL, NULL, NULL, NULL, 86),
-(454, 'Lý Văn Khánh', NULL, '2024-11-03', 'Nữ', '87 Phan Đình Phùng, Quận Phú Nhuận, TP.HCM', NULL, '012345678', NULL, NULL, NULL, NULL, NULL, 99);
+(454, 'Lý Văn Khánh', NULL, '2024-11-03', 'Nữ', '87 Phan Đình Phùng, Quận Phú Nhuận, TP.HCM', NULL, '012345678', NULL, NULL, NULL, NULL, NULL, 99),
+(455, 'Nguyễn Ngọc Minh', NULL, '2024-11-02', 'Nam', 'Ngô Quyền', NULL, '098787878777', NULL, NULL, NULL, NULL, NULL, 103),
+(456, 'Nguyễn Văn Hoàng', NULL, '2024-10-13', 'Nam', 'Ngô Quyền', NULL, '031202010033', NULL, NULL, NULL, NULL, NULL, NULL),
+(457, 'Nguyễn Văn Chi', NULL, '2024-10-31', 'Nam', 'Ngô Quyền', NULL, '031202010034', NULL, NULL, NULL, NULL, NULL, NULL),
+(458, 'Hoàng Ngọc Mạnh', NULL, '2024-11-07', 'Nam', 'hải phòng', NULL, '087678789', NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Bẫy `tenant`
@@ -1022,25 +979,25 @@ ALTER TABLE `category_collect`
 -- AUTO_INCREMENT cho bảng `category_spend`
 --
 ALTER TABLE `category_spend`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT cho bảng `contract`
 --
 ALTER TABLE `contract`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=408;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=411;
 
 --
 -- AUTO_INCREMENT cho bảng `contract_services`
 --
 ALTER TABLE `contract_services`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1057;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1069;
 
 --
 -- AUTO_INCREMENT cho bảng `contract_tenant`
 --
 ALTER TABLE `contract_tenant`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=191;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
 
 --
 -- AUTO_INCREMENT cho bảng `cost`
@@ -1058,13 +1015,13 @@ ALTER TABLE `cost_room`
 -- AUTO_INCREMENT cho bảng `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT cho bảng `equipment_room`
 --
 ALTER TABLE `equipment_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=267;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=390;
 
 --
 -- AUTO_INCREMENT cho bảng `groups`
@@ -1076,7 +1033,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=428;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=429;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -1094,7 +1051,7 @@ ALTER TABLE `receipt`
 -- AUTO_INCREMENT cho bảng `rental_history`
 --
 ALTER TABLE `rental_history`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT cho bảng `room`
@@ -1112,7 +1069,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT cho bảng `tenant`
 --
 ALTER TABLE `tenant`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=455;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=459;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
