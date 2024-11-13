@@ -39,10 +39,10 @@ if (isPost()) {
 
                     if ($existingAllocation) {
                         // Nếu có phân bổ, chỉ cần cập nhật lại số lượng (không cộng dồn)
-                        query("UPDATE equipment_room SET soluongcap = $quantity WHERE room_id = $roomId AND equipment_id = $equipmentId");
+                        query("UPDATE equipment_room SET soluongcap = $quantity, thoigiancap = '{$body['thoigiancap']}' WHERE room_id = $roomId AND equipment_id = $equipmentId");
                     } else {
                         // Nếu chưa có phân bổ, thêm mới phân bổ thiết bị cho phòng
-                        query("INSERT INTO equipment_room (room_id, equipment_id, soluongcap) VALUES ($roomId, $equipmentId, $quantity)");
+                        query("INSERT INTO equipment_room (room_id, equipment_id, soluongcap, thoigiancap) VALUES ($roomId, $equipmentId, $quantity, '{$body['thoigiancap']}')");
                     }
 
                     // Cập nhật lại số lượng tồn kho trong bảng equipment
@@ -72,6 +72,7 @@ if (isPost()) {
         redirect('?module=equipment&action=editdistribute');
     }
 }
+
 
 layout('navbar', 'admin', $data);
 ?>
