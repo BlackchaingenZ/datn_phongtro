@@ -375,7 +375,7 @@ layout('navbar', 'admin', $data);
                                     <?php
                                         }
                                     } else {
-                                        echo '<i>Chưa có ai</i>';
+                                        echo '<i>Trống</i>';
                                     } ?>
                                 </td>
                                 <!-- <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td> -->
@@ -399,7 +399,15 @@ layout('navbar', 'admin', $data);
                                     }
                                     ?>
                                 </td>
-                                <td><b><?php echo $item['tendichvu']; ?></b></td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (empty($item['tendichvu'])) {
+                                        echo "Trống";
+                                    } else {
+                                        echo "" . $item['tendichvu'];
+                                    }
+                                    ?>
+                                </td>
                                 <td style="text-align: center;">
                                     <!-- Thông tin -->
                                     <span class="tooltip-icon">

@@ -1141,13 +1141,15 @@ th {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     /* Tăng bóng đổ khi hover */
 }
-
 .checkbox-container {
-    display: flex;           /* Sử dụng flexbox để sắp xếp hàng ngang */
-    flex-wrap: wrap;        /* Cho phép các mục tự động xuống dòng nếu không đủ chỗ */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 15px; /* Chỉnh kích cỡ chữ theo nhu cầu */
 }
+
 .checkbox-item {
-    margin-right: 3px;     /* Khoảng cách giữa các checkbox */
+    margin-bottom: 2px;
 }
 
 

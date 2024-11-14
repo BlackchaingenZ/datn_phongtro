@@ -113,6 +113,11 @@ if ($contract_id) {
                     'dieukhoan3' => $dieukhoan3,
                 ], "id = $contract_id");
 
+                // Xóa tất cả các dịch vụ đã liên kết với hợp đồng hiện tại
+                $stmt_delete_services = $pdo->prepare("DELETE FROM contract_services WHERE contract_id = ?");
+                $stmt_delete_services->execute([$contract_id]);
+
+
                 // Cập nhật các dịch vụ nếu có thay đổi
                 foreach ($services as $services_id) {
                     linkContractService($contract_id, $services_id);
@@ -159,7 +164,7 @@ if ($contract_id) {
             // Thông báo lỗi khi thiếu thông tin
             setFlashData('msg', 'Thiếu thông tin cần thiết để cập nhật hợp đồng.');
             setFlashData('msg_type', 'err');
-            redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
+            redirect('?module=contract&action=edit'); // Chuyển hướng lại trang thêm hợp đồng
         }
     }
 }
@@ -180,7 +185,7 @@ layout('navbar', 'admin', $data);
     </div>
     <div class="box-content">
         <form id="contractForm" action="" method="post" class="row">
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label for="">Chọn khu vực <span style="color: red">*</span></label>
                     <select name="area_id" id="area-select" class="form-select">
@@ -342,7 +347,7 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label for="">Ngày lập hợp đồng</label>
                     <input type="date" name="ngaylaphopdong" class="form-control"
@@ -380,48 +385,58 @@ layout('navbar', 'admin', $data);
                 </div>
 
             </div>
-
-            <div class="col-4">
+            <div class="col-3">
                 <div class="form-group">
                     <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan1']; ?></textarea>
+                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 152px;"><?php echo $contract['dieukhoan1']; ?></textarea>
                     <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan2']; ?></textarea>
+                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 152px;"><?php echo $contract['dieukhoan2']; ?></textarea>
                     <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 96px;"><?php echo $contract['dieukhoan3']; ?></textarea>
+                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 152px;"><?php echo $contract['dieukhoan3']; ?></textarea>
                     <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+
+            </div>
+            <div class="col-3">
                 <div class="form-group">
-                    <label for="">Chọn dịch vụ <span style="color: red">*</span></label>
+                    <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
                     <div class="checkbox-container">
                         <?php foreach ($allServices as $service) { ?>
                             <div class="checkbox-item">
-                                <input type="checkbox" name="services[]" id="service-<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>" value="<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>" <?php echo in_array($service['id'], $selectedServiceIds) ? 'checked' : ''; ?>>
+                                <!-- Chỉ cần một input checkbox và kiểm tra xem dịch vụ đã được chọn chưa -->
+                                <input type="checkbox" name="services[]"
+                                    id="service-<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    value="<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>"
+                                    <?php echo in_array($service['id'], $selectedServiceIds) ? 'checked' : ''; ?>>
                                 <label for="service-<?php echo htmlspecialchars($service['id'], ENT_QUOTES, 'UTF-8'); ?>">
                                     <?php echo htmlspecialchars($service['tendichvu'], ENT_QUOTES, 'UTF-8'); ?>
+                                    - Giá: <?php echo number_format($service['giadichvu']); ?> VND/<?php echo htmlspecialchars($service['donvitinh'], ENT_QUOTES, 'UTF-8'); ?>
                                 </label>
                             </div>
                         <?php } ?>
                     </div>
                     <?php if (isset($errors['services'])) { ?>
-                        <span class="error" style="color: red;"><?php echo htmlspecialchars($errors['services'], ENT_QUOTES, 'UTF-8'); ?></span>
+                        <span class="error" style="color: red;">
+                            <?php echo $errors['services']; ?>
+                        </span>
                     <?php } ?>
                 </div>
+
                 <!-- Input ẩn để lưu danh sách khách thuê tạm -->
 
                 <form id="contractForm" method="post" action="">
                     <input type="hidden" name="tempCustomersData" id="tempCustomersData">
-                    <a style="margin-right: 20px" href="<?php echo getLinkAdmin('contract') ?>" class="btn btn-secondary">
+                    <a style="margin-right: 5px" href="<?php echo getLinkAdmin('contract') ?>" class="btn btn-secondary">
                         <i class="fa fa-arrow-circle-left"></i> Quay lại
                     </a>
                     <button type="submit" class="btn btn-secondary" onclick="submitFormWithTempCustomers()">
-                        <i class="fa fa-plus"></i> Cập nhật hợp đồng
+                        <i class="fa fa-plus"></i> Cập nhật
                     </button>
             </div>
     </diV>

@@ -35,7 +35,9 @@ $roomDetail = firstRaw("SELECT room.*, cost.giathue
 // Rental price
 $price = $roomDetail['giathue'];
 $contractDetail = firstRaw("SELECT sotiencoc, ngayvao, ngayra, dieukhoan1, dieukhoan2, dieukhoan3,
-    GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
+    GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu,
+    GROUP_CONCAT(DISTINCT services.giadichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS giadichvu,
+    GROUP_CONCAT(DISTINCT services.donvitinh ORDER BY services.tendichvu ASC SEPARATOR ', ') AS donvitinh
     FROM contract 
     LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
     LEFT JOIN services ON contract_services.services_id = services.id 
@@ -147,7 +149,30 @@ $html .= '
     <ul style="list-style-type: circle;">
         <li>Giao phòng trọ, trang thiết bị trong phòng trọ cho bên B đúng ngày ký hợp đồng.</li>
         <li>Hướng dẫn bên B chấp hành đúng các quy định của địa phương, hoàn tất mọi thủ tục giấy tờ đăng ký tạm trú cho bên B.</li>
-        <li>Cung cấp các dịch vụ theo yêu cầu bao gồm: <strong>' . $contractDetail['tendichvu'] . '</strong>.</li>
+ <li>
+        <span>Cung cấp các dịch vụ theo yêu cầu bao gồm:
+                <strong>';
+
+// Tách các giá trị tendichvu, giadichvu, donvitinh thành mảng
+$tendichvuList = explode(',', $contractDetail['tendichvu']);
+$giadichvuList = explode(',', $contractDetail['giadichvu']);
+$donvitinhList = explode(',', $contractDetail['donvitinh']);
+
+// Duyệt và hiển thị theo định dạng "Tên dịch vụ - Giá: X VND/đơn vị"
+$servicesDisplay = [];
+for ($i = 0; $i < count($tendichvuList); $i++) {
+    // Kiểm tra nếu giá trị giadichvu hợp lệ và là số
+    if (isset($giadichvuList[$i]) && is_numeric($giadichvuList[$i]) && isset($donvitinhList[$i])) {
+        $servicesDisplay[] = $tendichvuList[$i] . ' - Giá: ' . number_format((float)$giadichvuList[$i], 0, ',', '.') . ' VND/' . $donvitinhList[$i];
+    }
+}
+
+// Kiểm tra và hiển thị các dịch vụ hoặc thông báo trống nếu không có
+$html .= empty($servicesDisplay) ? 'Trống' : implode(', ', $servicesDisplay);
+
+$html .= '</strong>
+            </span>
+        </li>
     </ul>
     
     <p><strong>Trách nhiệm của bên B:</strong></p>
