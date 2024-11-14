@@ -81,7 +81,13 @@ $listAllroom = getRaw("
     SELECT room.*, 
            cost.giathue, 
            area.tenkhuvuc,
-           GROUP_CONCAT(DISTINCT equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
+           GROUP_CONCAT(
+               CASE 
+                   WHEN equipment_room.soluongcap > 0 
+                   THEN CONCAT(equipment.tenthietbi, ' (', equipment_room.soluongcap, ')')
+                   ELSE NULL
+               END 
+               SEPARATOR ', ') AS tenthietbi
     FROM room 
     LEFT JOIN cost_room ON room.id = cost_room.room_id 
     LEFT JOIN cost ON cost_room.cost_id = cost.id
@@ -273,10 +279,16 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <!-- Thông tin -->
                                     <span class="tooltip-icon">
-                                    <i class="fa-solid fa-eye"></i>
-                                        <span class="tooltiptext"><?php echo $item['tenthietbi']; ?></span>
+                                        <i class="fa-solid fa-eye"></i>
+                                        <span class="tooltiptext">
+                                            <?php
+                                            // Kiểm tra nếu 'tenthietbi' trống hoặc NULL thì hiển thị 'Trống'
+                                            echo !empty($item['tenthietbi']) ? $item['tenthietbi'] : 'Trống';
+                                            ?>
+                                        </span>
                                     </span>
                                 </td>
+
 
                                 <td class="" style="text-align: center;">
                                     <a href="<?php echo getLinkAdmin('room', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
