@@ -23,16 +23,22 @@ function getRoomAndEquipmentList()
 {
     $sql = "
         SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(CONCAT(e.tenthietbi, ' (', er.soluongcap, ')') SEPARATOR ', ') AS tenthietbi,
+        GROUP_CONCAT(
+            CASE 
+                WHEN er.soluongcap > 0 THEN CONCAT(e.tenthietbi, ' (', er.soluongcap, ')')
+                ELSE NULL 
+            END SEPARATOR ', ') AS tenthietbi,
         GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
         FROM room r
         LEFT JOIN equipment_room er ON r.id = er.room_id
         LEFT JOIN equipment e ON er.equipment_id = e.id
         GROUP BY r.id
-        ORDER BY r.id ASC
+        HAVING tenthietbi IS NOT NULL  -- Chỉ hiển thị phòng có thiết bị có số lượng > 0
+        ORDER BY r.id DESC -- sắp xếp phòng mới nhất xếp trước
     ";
     return getRaw($sql);
 }
+
 
 
 
@@ -45,8 +51,12 @@ if (!empty($_POST['search_term'])) {
 $sqlSearchRooms = "
     SELECT r.id AS room_id, 
            r.tenphong, 
-           GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
-           GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
+                GROUP_CONCAT(
+            CASE 
+                WHEN er.soluongcap > 0 THEN CONCAT(e.tenthietbi, ' (', er.soluongcap, ')')
+                ELSE NULL 
+            END SEPARATOR ', ') AS tenthietbi,
+        GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
     FROM room r
     JOIN equipment_room er ON r.id = er.room_id
     JOIN equipment e ON er.equipment_id = e.id
@@ -96,9 +106,9 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                     <tr>
                         <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
-                        <th>Mã phòng</th>
+                        <th>ID phòng</th>
                         <th>Tên Phòng</th>
-                        <th>Tên Thiết Bị</th>
+                        <th>Tên Thiết Bị (số lượng)</th>
                         <th>Ngày cấp</th>
                         <th>Thao tác</th>
                     </tr>
@@ -117,8 +127,25 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
-                                <td><b><?php echo $item['tenthietbi']; ?></b></td>
-                                <td><?php echo $item['thoigiancap']; ?></td>
+                                <td>
+                                    <?php
+                                    if (empty($item['tenthietbi'])) {
+                                        echo "Trống";
+                                    } else {
+                                        echo "" . $item['tenthietbi'];
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if (!empty($item['thoigiancap'])) {
+                                        echo getDateFormat($item['thoigiancap'], 'd-m-Y');
+                                    } else {
+                                        echo 'Trống'; // Hoặc một giá trị mặc định khác
+                                    }
+                                    ?>
+                                </td>
+
                                 <td class="" style="width: 100px; height: 50px;">
                                     <a href="<?php echo getLinkAdmin('equipment', 'editdistribute', ['id' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
                                     <a href="<?php echo getLinkAdmin('equipment', 'deletedistribute', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
@@ -140,8 +167,8 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 </div>
 
 <?php layout('footer', 'admin'); ?>
-<!-- 
-<script>
+
+<!-- <script>
     function toggle(checkbox) {
         let isChecked = checkbox.checked;
         let checkboxes = document.querySelectorAll('input[name="records[]"]');
