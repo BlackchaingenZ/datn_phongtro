@@ -159,7 +159,7 @@ if (!empty($searchContract)) {
             contract.ngayra AS thoihanhopdong, 
             contract.ghichu,
             tinhtrangcoc, 
-GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1,  
+GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1,  
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
         FROM contract 
         INNER JOIN room ON contract.room_id = room.id
@@ -186,7 +186,7 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
             contract.ngayra AS thoihanhopdong, 
             contract.ghichu,
             tinhtrangcoc, 
-GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach ASC SEPARATOR '\n') AS tenant_id_1, 
+GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1, 
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
         FROM contract 
         INNER JOIN room ON contract.room_id = room.id
@@ -325,9 +325,9 @@ layout('navbar', 'admin', $data);
                         <th style="width: 7%;text-align: center;">Tình trạng</th>
                         <th style="text-align: center;">Dịch vụ</th>
                         <th style="text-align: center;">Ghi chú</th>
-                        <th style="text-align: center;">Điều khoản 1</th>
+                        <!-- <th style="text-align: center;">Điều khoản 1</th>
                         <th style="text-align: center;">Điều khoản 2</th>
-                        <th style="text-align: center;">Điều khoản 3</th>
+                        <th style="text-align: center;">Điều khoản 3</th> -->
                         <th style="width: 3%; text-align: center;">Thao tác</th>
                     </tr>
                 </thead>
@@ -407,27 +407,27 @@ layout('navbar', 'admin', $data);
                                         <span class="tooltiptext"><?php echo $item['ghichu']; ?></span>
                                     </span>
                                 </td>
-                                <td style=" text-align: center;">
-                                    <!-- Thông tin -->
+                                <!-- <td style=" text-align: center;">
+                                  
                                     <span class="tooltip-icon">
                                         <i class="fa-solid fa-eye"></i>
                                         <span class="tooltiptext"><?php echo $item['dieukhoan1']; ?></span>
                                     </span>
                                 </td>
                                 <td style="text-align: center;">
-                                    <!-- Thông tin -->
+                                    
                                     <span class="tooltip-icon">
                                         <i class="fa-solid fa-eye"></i>
                                         <span class="tooltiptext"><?php echo $item['dieukhoan2']; ?></span>
                                     </span>
                                 </td>
                                 <td style="text-align: center;">
-                                    <!-- Thông tin -->
+                                    
                                     <span class="tooltip-icon">
                                         <i class="fa-solid fa-eye"></i>
                                         <span class="tooltiptext"><?php echo $item['dieukhoan3']; ?></span>
                                     </span>
-                                </td>
+                                </td> -->
                                 <td class="" style="text-align: center;">
                                     <div class="action">
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>

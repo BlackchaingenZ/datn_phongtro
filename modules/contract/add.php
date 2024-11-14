@@ -89,12 +89,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
         // Thêm hợp đồng
         $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
-
+    
         // Thêm từng dịch vụ vào bảng contract_services
         foreach ($services as $services_id) {
             linkContractService($contract_id, $services_id);
         }
-
+    
         // Thêm từng khách thuê từ danh sách tạm vào cơ sở dữ liệu
         foreach ($tempCustomers as $customer) {
             $tenkhach = $customer['tenkhach'];
@@ -102,25 +102,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $gioitinh = $customer['gioitinh'];
             $diachi = $customer['diachi'];
             $cmnd = $customer['cmnd'];
-
+    
             // Kiểm tra nếu khách thuê đã tồn tại dựa trên CMND
             $tenant_id = getTenantIdByCmnd($cmnd); // Hàm này sẽ trả về tenant_id nếu tồn tại, nếu không sẽ trả về null
-
+    
             if ($tenant_id) {
-                // Nếu khách thuê đã tồn tại, kiểm tra và cập nhật room_id nếu cần
+                // Nếu khách thuê đã tồn tại, chỉ cập nhật phòng mới mà không thay đổi phòng cũ
+                // Kiểm tra và cập nhật room_id (không thay đổi phòng cũ nếu khách đã có phòng)
                 $existingTenantRoom = getTenantRoomById($tenant_id); // Hàm lấy room_id của khách thuê hiện tại
                 if ($existingTenantRoom != $room_id) {
-                    updateTenantRoom($tenant_id, $room_id); // Hàm cập nhật room_id cho khách thuê
+                    updateTenantRoom($tenant_id, $room_id); // Cập nhật room_id cho khách thuê mà không xóa phòng cũ
                 }
             } else {
                 // Nếu khách thuê chưa tồn tại, thêm vào bảng tenant và lấy tenant_id mới
                 $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
             }
-
+    
             // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
             linkContractTenant($contract_id, $tenant_id);
         }
-
+    
         // Thông báo thành công
         setFlashData('msg', 'Hợp đồng, khách thuê và dịch vụ đã được thêm thành công!');
         setFlashData('msg_type', 'suc');
@@ -131,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         setFlashData('msg_type', 'err');
         redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
     }
+    
 }
 
 ?>
@@ -430,27 +432,21 @@ layout('navbar', 'admin', $data);
                 .then(response => response.json())
                 .then(data => {
                     if (data.exists) {
-                        if (data.hasRoom) {
-                            alert("Khách này đang có phòng hoặc đang có hợp đồng rồi.");
-                            // Không điền các trường thông tin khách hàng vào form
-                        } else {
-                            // Điền các trường thông tin khách hàng vào form
-                            const {
-                                tenkhach,
-                                gioitinh,
-                                diachi,
-                                ngaysinh,
-                                id
-                            } = data.customer;
-                            document.querySelector('[name="tenkhach"]').value = tenkhach;
-                            document.querySelector('[name="gioitinh"]').value = gioitinh;
-                            document.querySelector('[name="diachi"]').value = diachi;
-                            document.querySelector('[name="ngaysinh"]').value = ngaysinh;
-                            document.querySelector('[name="customer_id"]').value = id;
-                            // alert('CMND/CCCD đã tồn tại trong cơ sở dữ liệu. Thông tin khách đã được tự động điền vào form.');
-                        }
+                        // Điền các trường thông tin khách hàng vào form
+                        const {
+                            tenkhach,
+                            gioitinh,
+                            diachi,
+                            ngaysinh,
+                            id
+                        } = data.customer;
+                        document.querySelector('[name="tenkhach"]').value = tenkhach;
+                        document.querySelector('[name="gioitinh"]').value = gioitinh;
+                        document.querySelector('[name="diachi"]').value = diachi;
+                        document.querySelector('[name="ngaysinh"]').value = ngaysinh;
+                        document.querySelector('[name="customer_id"]').value = id;
                     } else {
-                        // alert('CMND/CCCD không tồn tại trong cơ sở dữ liệu.');
+                        // Nếu CMND/CCCD không tồn tại trong cơ sở dữ liệu, làm sạch form
                         document.querySelector('[name="tenkhach"]').value = '';
                         document.querySelector('[name="gioitinh"]').value = '';
                         document.querySelector('[name="diachi"]').value = '';
@@ -465,6 +461,7 @@ layout('navbar', 'admin', $data);
             alert('Vui lòng nhập CMND/CCCD');
         }
     });
+
 
 
 

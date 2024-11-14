@@ -23,19 +23,15 @@ if (isset($data['cmnd'])) {
     // Kiểm tra số CMND
     if ($cmnd) {
         // Truy vấn để kiểm tra nếu CMND đã tồn tại và lấy thông tin khách
-        $stmt = $pdo->prepare('SELECT id, tenkhach, gioitinh, diachi, ngaysinh, room_id FROM tenant WHERE cmnd = :cmnd');
+        $stmt = $pdo->prepare('SELECT id, tenkhach, gioitinh, diachi, ngaysinh FROM tenant WHERE cmnd = :cmnd');
         $stmt->execute(['cmnd' => $cmnd]);
         $customer = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($customer) {
-            // Kiểm tra xem khách đã có phòng chưa (dựa vào trường room_id)
-            $hasRoom = $customer['room_id'] ? true : false;  // Nếu room_id không rỗng, khách đã có phòng
-
-            // Trả về thông tin khách và trạng thái phòng (đã có phòng hoặc chưa)
+            // Trả về thông tin khách mà không kiểm tra phòng
             echo json_encode([
                 'exists' => true,
-                'customer' => $customer,
-                'hasRoom' => $hasRoom // true nếu khách đã có phòng
+                'customer' => $customer
             ]);
         } else {
             // CMND không tồn tại trong cơ sở dữ liệu
