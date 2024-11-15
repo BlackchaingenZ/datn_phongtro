@@ -4,7 +4,7 @@ if (!defined('_INCODE'))
     die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Quản lý Khu vực'
+    'pageTitle' => 'Quản lý phiếu thu'
 ];
 
 layout('header', 'admin', $data);

@@ -16,7 +16,7 @@ if ($grouId != 7) {
 }
 
 $data = [
-    'pageTitle' => 'Danh sách khách thuê'
+    'pageTitle' => 'Quản lý khách thuê'
 ];
 
 layout('header', 'admin', $data);

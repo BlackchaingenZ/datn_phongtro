@@ -4,7 +4,7 @@ if(!defined('_INCODE'))
 die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Danh sách người dùng hệ thống'
+    'pageTitle' => 'Người dùng hệ thống'
 ];
 
 layout('header', 'admin', $data);

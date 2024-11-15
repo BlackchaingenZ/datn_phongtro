@@ -242,8 +242,6 @@ $contractDetail = firstRaw("
                         </span>
                     </li>
 
-
-
                 </ul>
                 <p><strong>Trách nhiệm bên B:</strong></p>
                 <p><strong>Điều 1:</strong> .</p>

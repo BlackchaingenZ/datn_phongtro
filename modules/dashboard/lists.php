@@ -28,6 +28,7 @@ if ($userDetail['group_id'] == 7) {
 <?php
 if ($userDetail['group_id'] == 7) {
     layout('navbar', 'admin', $data);
+    
 }
 ?>
 <?php
