@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Phân bổ thiết bị'
+    'pageTitle' => 'Danh sách phòng-thiết bị'
 ];
 
 layout('header', 'admin', $data);
@@ -33,7 +33,7 @@ function getRoomAndEquipmentList()
         LEFT JOIN equipment_room er ON r.id = er.room_id
         LEFT JOIN equipment e ON er.equipment_id = e.id
         GROUP BY r.id
-        HAVING tenthietbi IS NOT NULL  -- Chỉ hiển thị phòng có thiết bị có số lượng > 0
+        -- HAVING tenthietbi IS NOT NULL  -- Chỉ hiển thị phòng có thiết bị có số lượng > 0
         ORDER BY r.id DESC -- sắp xếp phòng mới nhất xếp trước
     ";
     return getRaw($sql);
@@ -58,8 +58,8 @@ $sqlSearchRooms = "
             END SEPARATOR ', ') AS tenthietbi,
         GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
     FROM room r
-    JOIN equipment_room er ON r.id = er.room_id
-    JOIN equipment e ON er.equipment_id = e.id
+    LEFT JOIN equipment_room er ON r.id = er.room_id
+    LEFT JOIN equipment e ON er.equipment_id = e.id
     WHERE r.tenphong LIKE '%$searchTerm%' OR e.tenthietbi LIKE '%$searchTerm%'
     GROUP BY r.id, r.tenphong
     ORDER BY r.tenphong ASC

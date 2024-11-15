@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Thêm danh mục bảng giá'
+    'pageTitle' => 'Thêm bảng giá'
 ];
 
 layout('header', 'admin', $data);
@@ -71,7 +71,7 @@ $errors = getFlashData('errors');
 $old = getFlashData('old');
 
 // Tạo URL quay về trang danh sách bảng giá
-$linkreturnlist = getLinkAdmin('cost', 'list');
+$linkreturnlist = getLinkAdmin('cost', 'lists');
 
 ?>
 

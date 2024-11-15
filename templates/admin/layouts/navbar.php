@@ -117,34 +117,21 @@
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Người dùng hệ thống</p>
           </div>
-          <!-- Item 11 -->
-          <a href="<?php echo getLinkAdmin('sum'); ?>" class="link__menu ">
-            <div class="menu__item">
-              <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/report.png" class="menu__item-image" alt="">
-              <p class="menu__item-title">Báo cáo tổng hợp</p>
-            </div>
-          </a>
+        </a>
+        <!-- Item 11 -->
+        <a href="<?php echo getLinkAdmin('sum'); ?>" class="link__menu ">
+          <div class="menu__item">
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/report.png" class="menu__item-image" alt="">
+            <p class="menu__item-title">Báo cáo tổng hợp</p>
+          </div>
+        </a>
 
       </div>
     </div>
+    <!-- Content Header (Page header) -->
+    <div class="container-box text-center">
+      <h1 class="m-0 text-dark"><?php echo $data['pageTitle']; ?></h1>
+    </div>
   </section>
   <!-- Content Wrapper. Contains page content -->
-
-  <!-- Content Header (Page header) -->
-  <div class="content-header1">
-    <div class="container-fluid">
-      <div class="row mb-2" >
-      <div class="col-12 text-center">
-          <h1 class="m-0 text-dark"><?php echo $data['pageTitle']; ?></h1>
-        </div><!-- /.col -->
-        <!-- <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
-            <li class="breadcrumb-item"><a href="<?php echo _WEB_HOST_ROOT; ?>/?module=">Trang chủ</a></li>
-            <li class="breadcrumb-item active"><?php echo $data['pageTitle']; ?></li>
-          </ol>
-        </div> -->
-      </div><!-- /.row -->
-    </div><!-- /.container-fluid -->
-  </div>
-  <!-- /.content-header -->
 </div>

@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Chỉnh sửa phân bổ thiết bị'
+    'pageTitle' => 'Phân bổ thiết bị'
 ];
 
 layout('header', 'admin', $data);
