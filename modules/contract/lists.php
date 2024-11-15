@@ -300,7 +300,6 @@ layout('navbar', 'admin', $data);
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
             <a href="<?php echo getLinkAdmin('contract'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <a href="<?php echo getLinkAdmin('contract', 'renatal_history') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa-regular fa-file"></i> Lịch sử thanh lý</a>
             <a href="<?php echo getLinkAdmin('contract', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
             <table class="table table-bordered mt-4">
@@ -313,7 +312,7 @@ layout('navbar', 'admin', $data);
                         <th style="text-align: center;" width="1%">STT</th>
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
                         <th style="width: 7%; text-align: center;">Người làm hợp đồng</th>
-                        <th style="width: 8%;text-align: center;">Đang ở</th>
+                        <th style="width: 8%;text-align: center;">Người ở</th>
                         <!-- <th style="width: 2%; text-align: center;">Tổng người</th> -->
                         <th style="text-align: center;">Giá thuê</th>
                         <th style="width: 5%; text-align: center;">Giá tiền cọc</th>

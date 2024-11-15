@@ -76,11 +76,12 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-//lấy thông tin giá thuê từ bảng cost và tên thiết bị từ bảng equipment( distint lấy thông tin mới ,ko trùng)
 $listAllroom = getRaw("
     SELECT room.*, 
            cost.giathue, 
            area.tenkhuvuc,
+           contract.ngayvao, 
+           contract.ngayra,
            GROUP_CONCAT(
                CASE 
                    WHEN equipment_room.soluongcap > 0 
@@ -95,11 +96,13 @@ $listAllroom = getRaw("
     LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
     LEFT JOIN area_room ON room.id = area_room.room_id
     LEFT JOIN area ON area_room.area_id = area.id
+    LEFT JOIN contract ON room.id = contract.room_id  -- Lấy thông tin hợp đồng từ bảng contract
     $filter 
     GROUP BY room.id
     ORDER BY tenphong ASC 
     LIMIT $offset, $perPage
 ");
+
 
 
 

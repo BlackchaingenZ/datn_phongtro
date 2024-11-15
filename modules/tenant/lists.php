@@ -99,7 +99,7 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-$listAllTenant = getRaw("SELECT *, tenant.id, tenphong, tenant.ngayvao as ngayvao FROM tenant LEFT JOIN room ON tenant.room_id = room.id  $filter ORDER BY tenant.id DESC LIMIT $offset, $perPage");
+$listAllTenant = getRaw("SELECT *, tenant.id, tenphong  FROM tenant LEFT JOIN room ON tenant.room_id = room.id  $filter ORDER BY tenant.id DESC LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;
@@ -186,8 +186,7 @@ layout('navbar', 'admin', $data);
                         <th>Ngày cấp</th>
                         <th>Mặt trước CCCD</th>
                         <th>Mặt sau CCCD</th>
-                        <th>Phòng đang ở</th>
-                        <th>Ngày vào ở</th>
+                        <th>Phòng ở</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -282,26 +281,7 @@ layout('navbar', 'admin', $data);
                                     <?php
                                     } ?>
                                 </td>
-                                <td style="text-align: center;">
-                                    <?php
-                                    if (!empty($item['ngayvao'])) {
-                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
-                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngayvao']);
-
-                                        // Kiểm tra nếu chuyển đổi thành công
-                                        if ($date && $date->format('Y-m-d') === $item['ngayvao']) {
-                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
-                                        } else {
-                                            echo "Không đúng định dạng ngày";
-                                        }
-                                    } else {
-                                        echo "Trống";
-                                    }
-                                    ?>
-                                </td>
-
                                 <td class="" style="text-align: center;">
-                                    <a target="_blank" href="<?php echo $item['zalo'] ?>"><img style="width: 30px; height: 30px" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/zalo.jpg" alt=""></a>
                                     <a href="<?php echo getLinkAdmin('tenant', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('tenant', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
