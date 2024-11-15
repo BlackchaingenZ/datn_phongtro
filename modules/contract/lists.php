@@ -157,6 +157,7 @@ if (!empty($searchContract)) {
             contract.ngayvao AS ngayvaoo, 
             contract.ngayra AS thoihanhopdong, 
             contract.ghichu,
+            contract.trangthaihopdong,
             tinhtrangcoc, 
 GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1,  
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
@@ -183,6 +184,7 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
             contract.ngayvao AS ngayvaoo, 
             contract.ngayra AS thoihanhopdong, 
             contract.ghichu,
+            contract.trangthaihopdong,
             tinhtrangcoc, 
 GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1, 
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
@@ -308,13 +310,13 @@ layout('navbar', 'admin', $data);
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
                         </th>
                         <!-- <th></th> -->
-                        <th style="text-align: center;" width="2%">STT</th>
+                        <th style="text-align: center;" width="1%">STT</th>
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
-                        <th style="width: 9%; text-align: center;">Người làm hợp đồng</th>
+                        <th style="width: 7%; text-align: center;">Người làm hợp đồng</th>
                         <th style="width: 8%;text-align: center;">Đang ở</th>
                         <!-- <th style="width: 2%; text-align: center;">Tổng người</th> -->
                         <th style="text-align: center;">Giá thuê</th>
-                        <th style="width: 6%; text-align: center;">Giá tiền cọc</th>
+                        <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
                         <th style="width: 6%; text-align: center;">Trạng thái cọc</th>
                         <th style="width: 4%; text-align: center;">Chu kỳ thu </th>
                         <th style="text-align: center;">Ngày lập</th>
@@ -323,6 +325,7 @@ layout('navbar', 'admin', $data);
                         <th style="width: 7%;text-align: center;">Tình trạng</th>
                         <th style="text-align: center;">Dịch vụ</th>
                         <th style="text-align: center;">Ghi chú</th>
+                        <th style="text-align: center;">Thanh lý</th>
                         <!-- <th style="text-align: center;">Điều khoản 1</th>
                         <th style="text-align: center;">Điều khoản 2</th>
                         <th style="text-align: center;">Điều khoản 3</th> -->
@@ -413,6 +416,7 @@ layout('navbar', 'admin', $data);
                                         <span class="tooltiptext"><?php echo $item['ghichu']; ?></span>
                                     </span>
                                 </td>
+                                <td style="text-align: center;"><?php echo $item['trangthaihopdong'] == 0 ? '<span class="btn-trangthaihopdong-war">Đã thanh lý</span>' : '<span class="btn-trangthaihopdong-second">Chưa thanh lý</span>' ?></td>
                                 <!-- <td style=" text-align: center;">
                                   
                                     <span class="tooltip-icon">
@@ -443,12 +447,12 @@ layout('navbar', 'admin', $data);
                                             <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('contract', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i></a>
                                             <a href="<?php echo getLinkAdmin('contract', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
                                             <a href="<?php echo getLinkAdmin('contract', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
-                                            <form method="POST" action="">
+                                            <!-- <form method="POST" action="">
                                                 <button type="submit" name="terminate" class="btn btn-warning btn-sm" onclick="return confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này không?')" title="Thanh lý hợp đồng"><i class="fa fa-times"></i></button>
                                                 <input type="hidden" name="contract_id" value="<?php echo $item['id']; ?>">
-                                            </form>
+                                            </form> -->
+                                            <a href="<?php echo getLinkAdmin('contract', 'liquidation', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-times"></i></a>
                                         </div>
-                                    </div>
                                 </td>
 
                             <?php endforeach;
