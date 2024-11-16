@@ -312,7 +312,7 @@ layout('navbar', 'admin', $data);
                         <th style="text-align: center;" width="1%">STT</th>
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
                         <th style="width: 7%; text-align: center;">Người làm hợp đồng</th>
-                        <th style="width: 8%;text-align: center;">Người ở</th>
+                        <!-- <th style="width: 8%;text-align: center;">Người ở</th> -->
                         <!-- <th style="width: 2%; text-align: center;">Tổng người</th> -->
                         <th style="text-align: center;">Giá thuê</th>
                         <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
@@ -367,7 +367,7 @@ layout('navbar', 'admin', $data);
                                     ?>
 
                                 </td>
-                                <td style="text-align: center;">
+                                <!-- <td style="text-align: center;">
                                     <?php if (!empty($tenants)) {
                                         foreach ($tenants as $tenant) {
                                     ?>
@@ -377,7 +377,7 @@ layout('navbar', 'admin', $data);
                                     } else {
                                         echo '<i>Trống</i>';
                                     } ?>
-                                </td>
+                                </td> -->
                                 <!-- <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td> -->
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['sotiencoc'], 0, ',', '.') ?> đ</b></td>

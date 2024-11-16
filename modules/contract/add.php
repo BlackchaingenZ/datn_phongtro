@@ -12,13 +12,15 @@ layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
 // include 'includes/add_contracts.php';
-// kiểm tra nếu phòng nào có hợp đồng rồi thì không hiện
+// kiểm tra nếu phòng nào có người rồi thì không hiện
 $allRoom = getRaw("
     SELECT room.id, room.tenphong, room.soluong 
     FROM room 
-    WHERE room.id NOT IN (SELECT room_id FROM contract)
+    WHERE room.soluong = 0
     ORDER BY room.tenphong
 ");
+
+
 
 $allServices = getRaw("SELECT id, tendichvu, giadichvu, donvitinh FROM services ORDER BY tendichvu ASC");
 
@@ -27,8 +29,6 @@ $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 // Phân loại phòng theo khu vực
 $roomsByArea = [];
 foreach ($allRoom as $room) {
-    // Lấy số lượng người hiện tại trong phòng từ bảng tenant
-    $soluong = getRaw("SELECT COUNT(*) AS soluong FROM tenant WHERE room_id = " . $room['id'])[0]['soluong'];
 
     $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
     foreach ($areaIds as $area) {
@@ -36,7 +36,6 @@ foreach ($allRoom as $room) {
         $roomsByArea[$area['area_id']][] = [
             'id' => $room['id'],
             'tenphong' => $room['tenphong'],
-            'soluong' => $soluong
         ];
     }
 }
@@ -395,7 +394,7 @@ layout('navbar', 'admin', $data);
                 const option = document.createElement('option');
                 option.value = room.id;
                 option.textContent =
-                    `${room.tenphong} đang ở (${room.soluong} người)`; // Hiển thị tên phòng và số người
+                    `${room.tenphong}`; // Hiển thị tên phòng 
                 roomSelect.appendChild(option);
             });
         }

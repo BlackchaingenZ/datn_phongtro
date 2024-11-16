@@ -94,7 +94,7 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-$listAllBill = getRaw("SELECT *, bill.id, bill.chuky, room.tenphong, tenant.zalo FROM bill 
+$listAllBill = getRaw("SELECT *, bill.id, bill.chuky, room.tenphong FROM bill 
 INNER JOIN room ON bill.room_id = room.id LEFT JOIN tenant ON bill.tenant_id = tenant.id $filter  ORDER BY bill.create_at DESC  LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
@@ -256,7 +256,6 @@ layout('navbar', 'admin', $data);
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
                                         <div class="box-action">
                                             <!-- Add your actions here -->
-                                            <a target="_blank" href="<?php echo $item['zalo'] ?>"><img style="width: 30px; height: 30px" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/zalo.jpg" class="small"></a>
                                             <a title="Xem hoá đơn" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
                                             <a title="In hoá đơn" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
                                             <?php
