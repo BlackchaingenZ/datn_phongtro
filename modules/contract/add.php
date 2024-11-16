@@ -19,9 +19,6 @@ $allRoom = getRaw("
     WHERE room.soluong = 0
     ORDER BY room.tenphong
 ");
-
-
-
 $allServices = getRaw("SELECT id, tendichvu, giadichvu, donvitinh FROM services ORDER BY tendichvu ASC");
 
 $allRoomId = getRaw("SELECT room_id FROM contract");
@@ -61,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? null;
     $create_at = date("Y-m-d H:i:s") ?? null;
     $ghichu = $_POST['ghichu'] ?? Null;
+    $trangthaihopdong = $_POST['trangthaihopdong'] ?? 1;
     if (empty(trim($ghichu))) {
         $ghichu = 'Bỏ trống';
     }
@@ -112,10 +110,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $existingTenantRoom = getTenantRoomById($tenant_id); // Hàm lấy room_id của khách thuê hiện tại
                 if ($existingTenantRoom != $room_id) {
                     updateTenantRoom($tenant_id, $room_id); // Cập nhật room_id cho khách thuê mà không xóa phòng cũ
+                    $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
+                    foreach ($services as $services_id) {
+                        linkContractService($contract_id, $services_id);
+                    }
                 }
             } else {
                 // Nếu khách thuê chưa tồn tại, thêm vào bảng tenant và lấy tenant_id mới
                 $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
+                // $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
+                // foreach ($services as $services_id) {
+                //     linkContractService($contract_id, $services_id);
+                // }
             }
 
             // Liên kết hợp đồng với khách thuê trong bảng contract_tenant

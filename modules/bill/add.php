@@ -28,8 +28,10 @@ $allRoom = getRaw("
     INNER JOIN contract ON contract.room_id = room.id
     INNER JOIN cost_room ON cost_room.room_id = room.id
     INNER JOIN cost ON cost.id = cost_room.cost_id
+    WHERE contract.trangthaihopdong = 1
     ORDER BY tenphong
 ");
+
 $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $roomsByArea = [];
 

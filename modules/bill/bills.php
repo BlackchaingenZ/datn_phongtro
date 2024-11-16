@@ -243,7 +243,7 @@ layout('navbar', 'admin', $data);
                                     <?php
                                     if ($item['trangthaihoadon'] == 1) {
                                         echo '<span class="btn-kyhopdong-suc">Đã thu</span>';
-                                    } elseif ($item['trangthaihoadon'] == 0) {
+                                    } elseif ($item['trangthaihoadon'] == 2) {
                                         echo '<span class="btn-kyhopdong-warning">Chưa thu</span>';
                                     } else {
                                         echo '<span class="btn-kyhopdong-err">Đang nợ</span>';
@@ -258,13 +258,8 @@ layout('navbar', 'admin', $data);
                                             <!-- Add your actions here -->
                                             <a title="Xem hoá đơn" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
                                             <a title="In hoá đơn" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
-                                            <?php
-                                            if ($item['trangthaihoadon'] != 1) {
-                                            ?>
                                                 <a href="<?php echo getLinkAdmin('bill', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm small"><i class="fa fa-edit"></i> </a>
-                                            <?php
-                                            }
-                                            ?>
+
                                             <a href="<?php echo getLinkAdmin('bill', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm small" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                         </div>
                                     </div>

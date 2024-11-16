@@ -24,86 +24,6 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-// Xử lý hành động thanh lý hợp đồng
-if (isset($_POST['terminate'])) {
-    $contractId = $_POST['contract_id'];
-    $contract = getContractById($contractId);
-
-    if ($contract) {
-        // Lấy thông tin khách thuê của hợp đồng (nếu có nhiều khách thuê, cách nhau bằng dấu phẩy)
-        $tenantInfo = getTenantInfoByContractId($contractId); // Lấy danh sách khách thuê
-
-        // Thêm hợp đồng vào bảng lịch sử và lưu thông tin khách thuê
-        addContractToHistory($contract, $tenantInfo);
-
-        // Kiểm tra có khách thuê nào liên kết với hợp đồng qua bảng contract_tenant
-        $checkTenants = get('contract_tenant', "contract_id_1 = $contractId");
-
-        if (!empty($checkTenants)) {
-            // Xóa liên kết tenant trước khi xóa hợp đồng
-            $deleteTenants = delete('contract_tenant', "contract_id_1 = $contractId");
-            if (!$deleteTenants) {
-                setFlashData('msg', 'Không thể xóa liên kết tenant!');
-                setFlashData('msg_type', 'err');
-                redirect('?module=contract');
-                exit;
-            }
-        }
-
-        // Kiểm tra và cập nhật khách thuê để xóa liên kết phòng
-        $roomId = $contract['room_id'];
-        $checkTenantRoomLink = get('tenant', "room_id = $roomId");
-
-        if (!empty($checkTenantRoomLink)) {
-            // Cập nhật `room_id` của khách thuê thành NULL
-            $updateTenantRoomLink = update('tenant', ['room_id' => NULL], "room_id = $roomId");
-            if (!$updateTenantRoomLink) {
-                setFlashData('msg', 'Không thể xóa liên kết phòng của khách thuê!');
-                setFlashData('msg_type', 'err');
-                redirect('?module=contract');
-                exit;
-            }
-        }
-
-        // Xóa dịch vụ liên kết với hợp đồng
-        $deleteServices = delete('contract_services', "contract_id = $contractId");
-
-        if ($deleteServices) {
-            // Xóa khỏi bảng hợp đồng
-            deleteContract($contractId);
-
-            setFlashData('msg', 'Thanh lý hợp đồng thuê trọ thành công');
-            setFlashData('msg_type', 'suc');
-        } else {
-            setFlashData('msg', 'Không thể xóa dịch vụ liên kết với hợp đồng!');
-            setFlashData('msg_type', 'err');
-        }
-    } else {
-        setFlashData('msg', 'Không tìm thấy hợp đồng');
-        setFlashData('msg_type', 'err');
-    }
-
-    redirect('?module=contract');
-}
-
-
-function addContractToHistory($contract, $tenantInfo)
-{
-    // Thêm hợp đồng vào bảng lịch sử
-    $data = [
-        'contract_id' => $contract['id'],
-        'room_id' => $contract['room_id'],
-        'ngaylaphopdong' => $contract['ngaylaphopdong'],
-        'ngayvao' => $contract['ngayvao'],
-        'ngayra' => $contract['ngayra'],
-        'ngaythanhly' => date('Y-m-d'),
-        'khachthue' => $tenantInfo // Lưu chuỗi khách thuê vào trường 'khachthue'
-    ];
-    insert('rental_history', $data);
-}
-
-
-
 function getContractById($id)
 {
     // Lấy hợp đồng từ database
@@ -300,7 +220,6 @@ layout('navbar', 'admin', $data);
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
             <a href="<?php echo getLinkAdmin('contract'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <a href="<?php echo getLinkAdmin('contract', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
             <table class="table table-bordered mt-4">
                 <thead>
@@ -446,10 +365,6 @@ layout('navbar', 'admin', $data);
                                             <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('contract', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i></a>
                                             <a href="<?php echo getLinkAdmin('contract', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
                                             <a href="<?php echo getLinkAdmin('contract', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
-                                            <!-- <form method="POST" action="">
-                                                <button type="submit" name="terminate" class="btn btn-warning btn-sm" onclick="return confirm('Bạn có chắc chắn muốn thanh lý hợp đồng này không?')" title="Thanh lý hợp đồng"><i class="fa fa-times"></i></button>
-                                                <input type="hidden" name="contract_id" value="<?php echo $item['id']; ?>">
-                                            </form> -->
                                             <a href="<?php echo getLinkAdmin('contract', 'liquidation', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-times"></i></a>
                                         </div>
                                 </td>
