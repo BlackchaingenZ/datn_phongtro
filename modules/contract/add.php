@@ -276,8 +276,7 @@ layout('navbar', 'admin', $data);
                         <label for="">Tình trạng cọc<span style="color: red">*</label>
                         <select name="tinhtrangcoc" class="form-select">
                             <option value="" disabled selected>Chọn trạng thái</option>
-                            <option value="0">Chưa thu tiền</option>
-                            <option value="1">Đã thu tiền</option>
+                            <option value="1"selected>Đã cọc</option>
                         </select>
                     </div>
                     <div class="form-group">

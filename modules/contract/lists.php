@@ -122,7 +122,7 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
 }
 
 
-if (isset($_POST['deleteMultip'])) {
+if (isset($_POST['deleteMultip'])) { 
     $numberCheckbox = $_POST['records'];
 
     if (empty($numberCheckbox)) {
@@ -139,6 +139,21 @@ if (isset($_POST['deleteMultip'])) {
             $deleteTenants = delete('contract_tenant', "contract_id_1 IN($extract_id)");
             if (!$deleteTenants) {
                 setFlashData('msg', 'Không thể xóa liên kết tenant!');
+                setFlashData('msg_type', 'err');
+                redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
+                exit;
+            }
+        }
+
+        // Kiểm tra xem hợp đồng có liên kết với receipt không
+        $checkReceipts = get('receipt', "contract_id IN($extract_id)");
+
+        if (!empty($checkReceipts)) {
+            // Xóa bản ghi liên kết với receipt
+            $deleteReceipts = delete('receipt', "contract_id IN($extract_id)");
+
+            if (!$deleteReceipts) {
+                setFlashData('msg', 'Không thể xóa liên kết với receipt!');
                 setFlashData('msg_type', 'err');
                 redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
                 exit;
@@ -171,6 +186,7 @@ if (isset($_POST['deleteMultip'])) {
     }
     redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
 }
+
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -300,7 +316,7 @@ layout('navbar', 'admin', $data);
                                 <!-- <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td> -->
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['sotiencoc'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center;"><?php echo $item['tinhtrangcoc'] == 0 ? '<span class="btn-kyhopdong-err">Chưa thu tiền</span>' : '<span class="btn-kyhopdong-suc">Đã thu tiền</span>' ?></td>
+                                <td style="text-align: center;"><?php echo $item['tinhtrangcoc'] == 0 ? '<span class="btn-kyhopdong-err">Chưa cọc</span>' : '<span class="btn-kyhopdong-suc">Đã cọc</span>' ?></td>
                                 <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
                                 <td style="text-align: center;"><?php echo $item['ngaylaphopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngaylaphopdong'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center;"><?php echo $item['ngayvaoo'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvaoo'], 'd-m-Y'); ?></td>

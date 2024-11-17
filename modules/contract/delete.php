@@ -22,6 +22,20 @@ if (!empty($body['id'])) {
         }
     }
 
+    // Kiểm tra xem hợp đồng có liên kết với receipt không
+    $checkReceiptLink = getRows("SELECT id FROM receipt WHERE contract_id = $contractId");
+
+    if (!empty($checkReceiptLink)) {
+        // Xóa bản ghi liên kết với receipt
+        $deleteReceipts = delete('receipt', "contract_id = $contractId");
+
+        if (!$deleteReceipts) {
+            setFlashData('msg', 'Không thể xóa liên kết với receipt!');
+            setFlashData('msg_type', 'err');
+            return; // Dừng lại nếu không xóa được
+        }
+    }
+
     // Xóa dịch vụ liên kết với hợp đồng
     $deleteServices = delete('contract_services', "contract_id = $contractId");
 
@@ -49,5 +63,6 @@ if (!empty($body['id'])) {
         setFlashData('msg_type', 'err');
     }
 }
+
 
 redirect('?module=contract');

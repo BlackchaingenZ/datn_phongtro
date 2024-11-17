@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 17, 2024 lúc 01:22 PM
+-- Thời gian đã tạo: Th10 17, 2024 lúc 09:15 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -110,7 +110,8 @@ CREATE TABLE `bill` (
 --
 
 INSERT INTO `bill` (`id`, `mahoadon`, `room_id`, `tenant_id`, `chuky`, `songayle`, `tienphong`, `sodiencu`, `sodienmoi`, `img_sodienmoi`, `tiendien`, `sonuoccu`, `sonuocmoi`, `img_sonuocmoi`, `tiennuoc`, `songuoi`, `tienrac`, `tienmang`, `tongtien`, `sotiendatra`, `sotienconthieu`, `nocu`, `trangthaihoadon`, `create_at`) VALUES
-(122, 'ngqYq', 103, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 1, 10000, 50000, 2084000, 2084000, 0, NULL, 1, '2024-11-17');
+(123, 'Ku4wJ', 103, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 3, '', 40000, 1, 10000, 50000, 2104000, 2104000, 0, NULL, 1, '2024-11-18'),
+(124, '0YMIt', 87, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 1, 10000, 50000, 2084000, 2084000, 0, NULL, 1, '2024-11-18');
 
 --
 -- Bẫy `bill`
@@ -194,7 +195,7 @@ CREATE TABLE `category_collect` (
 
 INSERT INTO `category_collect` (`id`, `tendanhmuc`, `create_at`) VALUES
 (1, 'Hoá đơn thu tiền nhà', NULL),
-(10, 'Tiền an ninh', NULL);
+(2, 'Tiền cọc phòng trọ', NULL);
 
 -- --------------------------------------------------------
 
@@ -240,15 +241,34 @@ CREATE TABLE `contract` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Đang đổ dữ liệu cho bảng `contract`
---
-
-INSERT INTO `contract` (`id`, `room_id`, `soluongthanhvien`, `ngaylaphopdong`, `ngayvao`, `ngayra`, `tinhtrangcoc`, `trangthaihopdong`, `lydothanhly`, `create_at`, `ghichu`, `sotiencoc`, `dieukhoan1`, `dieukhoan2`, `dieukhoan3`) VALUES
-(442, 103, NULL, '2024-11-17', '2024-11-17', '2024-12-01', 1, 1, NULL, '2024-11-17', 'Bỏ trống', 1000000, 'Sử dụng phòng đúng mục đích đã thoả thuận, Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.', 'Trả đủ tiền thuê phòng đúng kỳ hạn đã thỏa thuận, Chỉ sử dụng phòng trọ vào mục đích ở, không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị; không tụ tập nhậu nhẹt, cờ bạc và các hành vi vi phạm pháp luật khác.', 'Tôn trọng quy tắc sinh hoạt công cộng, Không được tự ý cải tạo kiếm trúc phòng hoặc trang trí ảnh hưởng tới tường, cột, nền... Nếu có nhu cầu trên phải trao đổi với bên A để được thống nhất');
-
---
 -- Bẫy `contract`
 --
+DELIMITER $$
+CREATE TRIGGER `after_contract_insert_status` AFTER INSERT ON `contract` FOR EACH ROW BEGIN
+    -- Tạo phiếu thu mới khi tinhtrangcoc = 1 (đã thu)
+    IF NEW.tinhtrangcoc = 1 THEN
+        -- Lấy số tiền cọc từ bảng contract để tạo phiếu thu
+        INSERT INTO receipt (
+            contract_id,
+            room_id, 
+            sotien, 
+            ghichu, 
+            ngaythu, 
+            phuongthuc, 
+            danhmucthu_id
+        ) VALUES (
+            NEW.id,                        -- Lưu hoadon_id
+            NEW.room_id,                   -- room_id từ bảng contract
+            (SELECT sotiencoc FROM contract WHERE id = NEW.id),  -- Số tiền cọc từ bảng contract
+            'Thu tiền cọc phòng - Đã thu', -- Ghi chú
+            NOW(),    
+            1,                             -- Phương thức thanh toán (ví dụ: 1)
+            2                              -- Danh mục thu (ví dụ: 2 cho tiền cọc)
+        );
+    END IF;
+END
+$$
+DELIMITER ;
 DELIMITER $$
 CREATE TRIGGER `contract_status` BEFORE INSERT ON `contract` FOR EACH ROW BEGIN
     IF NEW.ngayvao <= CURDATE() AND (NEW.ngayra IS NULL OR NEW.ngayra >= CURDATE()) THEN
@@ -292,16 +312,6 @@ CREATE TABLE `contract_services` (
   `services_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Đang đổ dữ liệu cho bảng `contract_services`
---
-
-INSERT INTO `contract_services` (`id`, `contract_id`, `services_id`) VALUES
-(1395, 442, 5),
-(1396, 442, 8),
-(1397, 442, 10),
-(1398, 442, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -313,13 +323,6 @@ CREATE TABLE `contract_tenant` (
   `contract_id_1` int DEFAULT NULL,
   `tenant_id_1` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `contract_tenant`
---
-
-INSERT INTO `contract_tenant` (`id`, `contract_id_1`, `tenant_id_1`) VALUES
-(227, 442, 485);
 
 -- --------------------------------------------------------
 
@@ -568,7 +571,8 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (433, 30, 'a8b15a33f34e8803a6dfee386a44f314bee904f4', '2024-11-16 13:01:07'),
 (434, 30, '98be7096d242bddf3ad48ce7e4101a4024b4704b', '2024-11-16 20:59:28'),
 (435, 30, 'db492b2ff3b1a05dc23a72f8b35eca70745ca5fc', '2024-11-17 08:55:11'),
-(436, 30, 'eb128ac693188496221f41f2d681ef9af2c45462', '2024-11-17 18:53:41');
+(436, 30, 'eb128ac693188496221f41f2d681ef9af2c45462', '2024-11-17 18:53:41'),
+(437, 30, '751cb07102499f6725568fd03906f9b8f9fc458e', '2024-11-17 22:29:17');
 
 -- --------------------------------------------------------
 
@@ -600,16 +604,9 @@ CREATE TABLE `receipt` (
   `ngaythu` date DEFAULT NULL,
   `phuongthuc` int DEFAULT NULL,
   `danhmucthu_id` int DEFAULT NULL,
-  `bill_id` int DEFAULT NULL
+  `bill_id` int DEFAULT NULL,
+  `contract_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `receipt`
---
-
-INSERT INTO `receipt` (`id`, `room_id`, `sotien`, `ghichu`, `ngaythu`, `phuongthuc`, `danhmucthu_id`, `bill_id`) VALUES
-(61, 98, 1500000, 'ss', '2024-11-10', 0, 10, NULL),
-(70, 103, 2084000, 'Thu tiền nhà hàng tháng - Đã thanh toán', '2024-11-17', 1, 1, 122);
 
 -- --------------------------------------------------------
 
@@ -637,17 +634,17 @@ CREATE TABLE `room` (
 
 INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `tiencoc`, `soluong`, `ngaylaphd`, `chuky`, `ngayvao`, `ngayra`, `trangthai`) VALUES
 (86, '', 'Phòng B01', 20, 300000, 0, 1, 1, '2024-11-16', '2025-01-16', 0),
-(87, '/datn/uploads/images/tro1%20(3).jpg', 'Phòng A02', 20, 1000000, 0, 1, 5, '2024-11-17', '2024-12-08', 0),
-(91, '', 'Phòng A04', 20, 1000000, 0, 1, 1, '2024-11-16', '2024-12-16', 0),
+(87, '/datn/uploads/images/tro1%20(3).jpg', 'Phòng A02', 20, 1000000, 0, 1, 5, '2024-11-18', '2025-01-18', 0),
+(91, '', 'Phòng A04', 20, 1000000, 0, 1, 1, '2024-11-18', '2024-11-18', 0),
 (96, '', 'Phòng B05', 20, 1000000, 0, 1, 1, '2024-11-08', '2024-11-08', 0),
-(97, '', 'Phòng A03', 20, 1000000, 0, 1, 1, '2024-12-08', '2025-02-18', 0),
+(97, '', 'Phòng A03', 20, 1000000, 0, 1, 1, '2024-10-29', '2024-11-13', 0),
 (98, '', 'Phòng A05', 20, 1000000, 0, 1, 1, '2024-11-17', '2024-12-08', 0),
 (99, '', 'Phòng B04', 20, 1000000, 0, 1, 1, '2024-11-10', '2025-05-11', 0),
 (101, '', 'Phòng B06', 20, 1000000, 0, 1, 1, '2024-11-14', '2024-11-14', 0),
-(102, '', 'Phòng A06', 20, 1000000, 0, 1, 1, '2024-11-10', '2025-01-10', 0),
-(103, '', 'Phòng A01', 20, 1000000, 1, 1, 1, '2024-11-17', '2024-12-01', 1),
-(104, '', 'Phòng B02', 20, 1000000, 0, 1, 1, '2024-11-15', '2025-01-16', 0),
-(105, '', 'Phòng B03', 20, 1000000, 0, 1, 1, '2024-11-14', '2024-11-14', 0);
+(102, '', 'Phòng A06', 20, 1000000, 0, 1, 1, '2024-11-18', '2025-01-18', 0),
+(103, '', 'Phòng A01', 20, 1000000, 0, 1, 1, '2024-11-18', '2024-12-06', 0),
+(104, '', 'Phòng B02', 20, 1000000, 0, 1, 1, '2024-11-18', '2024-12-18', 0),
+(105, '', 'Phòng B03', 20, 1000000, 0, 1, 1, '2024-12-01', '2025-01-18', 0);
 
 --
 -- Bẫy `room`
@@ -707,13 +704,6 @@ CREATE TABLE `tenant` (
   `anhmatsau` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `room_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Đang đổ dữ liệu cho bảng `tenant`
---
-
-INSERT INTO `tenant` (`id`, `tenkhach`, `sdt`, `ngaysinh`, `gioitinh`, `diachi`, `nghenghiep`, `cmnd`, `ngaycap`, `anhmattruoc`, `anhmatsau`, `room_id`) VALUES
-(485, 'Nguyễn Văn C', NULL, '2024-11-10', 'Nam', 'Ngô Quyền', NULL, '048776767644', NULL, NULL, NULL, 103);
 
 --
 -- Bẫy `tenant`
@@ -894,7 +884,8 @@ ALTER TABLE `receipt`
   ADD PRIMARY KEY (`id`),
   ADD KEY `danhmucthu_id` (`danhmucthu_id`),
   ADD KEY `room_id` (`room_id`),
-  ADD KEY `receipt_ibfk_3` (`bill_id`);
+  ADD KEY `receipt_ibfk_3` (`bill_id`),
+  ADD KEY `receipt_ibfk_4` (`contract_id`);
 
 --
 -- Chỉ mục cho bảng `room`
@@ -943,7 +934,7 @@ ALTER TABLE `area_room`
 -- AUTO_INCREMENT cho bảng `bill`
 --
 ALTER TABLE `bill`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=125;
 
 --
 -- AUTO_INCREMENT cho bảng `category_collect`
@@ -961,19 +952,19 @@ ALTER TABLE `category_spend`
 -- AUTO_INCREMENT cho bảng `contract`
 --
 ALTER TABLE `contract`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=443;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=455;
 
 --
 -- AUTO_INCREMENT cho bảng `contract_services`
 --
 ALTER TABLE `contract_services`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1399;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1447;
 
 --
 -- AUTO_INCREMENT cho bảng `contract_tenant`
 --
 ALTER TABLE `contract_tenant`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=228;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=239;
 
 --
 -- AUTO_INCREMENT cho bảng `cost`
@@ -1009,19 +1000,19 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=437;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=438;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT cho bảng `receipt`
 --
 ALTER TABLE `receipt`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT cho bảng `room`
@@ -1039,7 +1030,7 @@ ALTER TABLE `services`
 -- AUTO_INCREMENT cho bảng `tenant`
 --
 ALTER TABLE `tenant`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=486;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=497;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
@@ -1117,7 +1108,8 @@ ALTER TABLE `payment`
 ALTER TABLE `receipt`
   ADD CONSTRAINT `receipt_ibfk_1` FOREIGN KEY (`danhmucthu_id`) REFERENCES `category_collect` (`id`),
   ADD CONSTRAINT `receipt_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`),
-  ADD CONSTRAINT `receipt_ibfk_3` FOREIGN KEY (`bill_id`) REFERENCES `bill` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+  ADD CONSTRAINT `receipt_ibfk_3` FOREIGN KEY (`bill_id`) REFERENCES `bill` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `receipt_ibfk_4` FOREIGN KEY (`contract_id`) REFERENCES `contract` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Các ràng buộc cho bảng `tenant`
