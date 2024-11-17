@@ -212,7 +212,16 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;"><?php echo $item['tenphong']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
-                                <td style="text-align: center;"><?php echo $item['songayle']; ?></td>
+                                
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (empty($item['songayle'])) {
+                                        echo "0";
+                                    } else {
+                                        echo "" . $item['songayle'];
+                                    }
+                                    ?>
+                                </td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienphong'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['sodiencu']; ?></td>
                                 <td style="text-align: center;">
@@ -259,7 +268,6 @@ layout('navbar', 'admin', $data);
                                             <a title="Xem hoá đơn" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
                                             <a title="In hoá đơn" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
                                                 <a href="<?php echo getLinkAdmin('bill', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm small"><i class="fa fa-edit"></i> </a>
-
                                             <a href="<?php echo getLinkAdmin('bill', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm small" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                         </div>
                                     </div>

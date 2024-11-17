@@ -39,8 +39,15 @@ foreach ($allRoom as $room) {
     $songayle = isset($_POST['songayle']) ? $_POST['songayle'] : 0;
     // Lấy giá trị chu kỳ từ input của người dùng
     $chuky = isset($_POST['chuky']) ? $_POST['chuky'] : 0;
-    // Lấy số lượng người hiện tại trong phòng từ bảng tenant
-    $soluong = getRaw("SELECT COUNT(*) AS soluong FROM tenant WHERE room_id = " . $room['id'])[0]['soluong'];
+    // Lấy số lượng người hiện tại trong phòng từ bảng tenant co phòng nhưng trangthaihopdong=1(chưa thanh lý)
+    $soluong = getRaw("
+    SELECT COUNT(*) AS soluong
+    FROM tenant t
+    JOIN contract_tenant ct ON t.id = ct.tenant_id_1
+    JOIN contract c ON ct.contract_id_1 = c.id
+    WHERE t.room_id = " . $room['id'] . " AND c.trangthaihopdong = 1
+")[0]['soluong'];
+
 
     // Truy vấn để lấy giá thuê từ bảng cost_room và cost
     $costData = getRaw(
@@ -99,6 +106,7 @@ if (isPost()) {
             'tongtien' => $body['tongtien'],
             'sotienconthieu' => $body['tongtien'],
             'create_at' => date('Y-m-d H:i:s'),
+            'trangthaihoadon' => $body['trangthaihoadon'],
         ];
 
         $insertStatus = insert('bill', $dataInsert);
@@ -284,6 +292,13 @@ layout('navbar', 'admin', $data);
                             <label for="nocu">Cộng thêm</label>
                             <input type="text" class="form-control" id="nocu" name="nocu">
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Tình trạng thu tiền<span style="color: red">*</label>
+                        <select name="trangthaihoadon" class="form-select">
+                            <option value="" disabled selected>Chọn trạng thái</option>
+                            <option value="2" selected>Chưa thu</option>
+                        </select>
                     </div>
                 </div>
 
