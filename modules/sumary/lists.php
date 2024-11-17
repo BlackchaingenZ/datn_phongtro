@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Thu/Chi - Tổng kết'
+    'pageTitle' => 'Báo cáo thu chi'
 ];
 
 layout('header', 'admin', $data);
@@ -150,12 +150,6 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </form>
-
-            <a href="<?php echo getLinkAdmin('collect'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý danh mục thu</a>
-            <a href="<?php echo getLinkAdmin('spend'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý danh mục chi</a>
-            <a href="<?php echo getLinkAdmin('receipt'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý phiếu thu</a>
-            <a href="<?php echo getLinkAdmin('payment'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý phiếu chi</a>
-
             <h3 class="sumary-title">Thống kê doanh thu theo từng tháng</h3>
             <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p>
             

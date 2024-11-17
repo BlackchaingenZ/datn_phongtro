@@ -57,7 +57,7 @@ if (isPost()) {
         if ($updateStatus) {
             setFlashData('msg', 'Cập nhật thông tin phiếu thu thành công');
             setFlashData('msg_type', 'suc');
-            redirect('?module=receipt');
+            redirect('?module=receipt&action=receipts');
         } else {
             setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');
@@ -109,29 +109,18 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Chọn khu vực <span style="color: red">*</span></label>
-                    <select name="area_id" id="area-select" class="form-select">
-                        <option value="" disabled selected>Chọn khu vực</option>
+                    <label for="">Chọn phòng lập phiếu thu <span style="color: red">*</span></label>
+                    <select name="room_id" id="" class="form-select">
+                        <option value="">Chọn phòng</option>
                         <?php
-                        if (!empty($allArea)) {
-                            foreach ($allArea as $item) {
+                        if (!empty($allRoom)) {
+                            foreach ($allRoom as $item) {
                         ?>
-                                <option value="<?php echo $item['id'] ?>"
-                                    <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>>
-                                    <?php echo $item['tenkhuvuc'] ?></option>
+                                <option value="<?php echo $item['id'] ?>" <?php echo (old('room_id', $old) == $item['id']) ? 'selected' : false; ?>><?php echo $item['tenphong'] ?></option>
                         <?php
                             }
                         }
                         ?>
-                    </select>
-                    <?php echo form_error('area_id', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Chọn phòng lập hợp đồng <span style="color: red">*</span></label>
-                    <select name="room_id" id="room-select" class="form-select">
-                        <option value="" disabled selected>Chọn phòng</option>
-                        <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
@@ -169,8 +158,8 @@ layout('navbar', 'admin', $data);
             </div>
             <div class="from-group">
                 <div class="btn-row">
-                    <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Cập nhật phiếu thu</button>
-                    <a style="margin-left: 20px " href="<?php echo getLinkAdmin('receipt', 'receipts') ?>" class="btn btn-success"><i class="fa fa-forward"></i></a>
+                <a style="margin-right: 20px " href="<?php echo getLinkAdmin('receipt','receipts') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay về</a>
+                    <button type="submit" class="btn btn-secondary"><i class="fa fa-plus"></i> Cập nhật phiếu thu</button>
                 </div>
             </div>
         </form>

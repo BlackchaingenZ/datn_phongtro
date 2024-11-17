@@ -20,8 +20,6 @@ $allRoom = getRaw("
 ");
 $roomsByArea = [];
 foreach ($allRoom as $room) {
-    // Lấy số lượng người hiện tại trong phòng từ bảng tenant
-    $soluong = getRaw("SELECT COUNT(*) AS soluong FROM tenant WHERE room_id = " . $room['id'])[0]['soluong'];
 
     $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
     foreach ($areaIds as $area) {
@@ -29,7 +27,6 @@ foreach ($allRoom as $room) {
         $roomsByArea[$area['area_id']][] = [
             'id' => $room['id'],
             'tenphong' => $room['tenphong'],
-            'soluong' => $soluong
         ];
     }
 }
@@ -70,7 +67,7 @@ if (isPost()) {
         if ($insertStatus) {
             setFlashData('msg', 'Thêm thông tin phiếu thu mới thành công');
             setFlashData('msg_type', 'suc');
-            redirect('?module=receipt');
+            redirect('?module=receipt&action=receipts');
         } else {
             setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');
@@ -104,23 +101,6 @@ layout('navbar', 'admin', $data);
             <div class="col-5">
 
                 <div class="form-group">
-                    <label for="">Danh mục thu <span style="color: red">*</span></label>
-                    <select name="danhmucthu_id" id="" class="form-select">
-                        <option value="">Chọn danh mục</option>
-                        <?php
-                        if (!empty($allCollect)) {
-                            foreach ($allCollect as $item) {
-                        ?>
-                                <option value="<?php echo $item['id'] ?>" <?php echo (!empty($roomId) && $roomId == $item['id']) ? 'selected' : '' ?>><?php echo $item['tendanhmuc'] ?></option>
-                        <?php
-                            }
-                        }
-                        ?>
-                    </select>
-                    <?php echo form_error('danhmucthu_id', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
                     <label for="">Chọn khu vực <span style="color: red">*</span></label>
                     <select name="area_id" id="area-select" class="form-select">
                         <option value="" disabled selected>Chọn khu vực</option>
@@ -140,12 +120,29 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="form-group">
-                    <label for="">Chọn phòng lập hợp đồng <span style="color: red">*</span></label>
+                    <label for="">Chọn phòng lập phiếu thu <span style="color: red">*</span></label>
                     <select name="room_id" id="room-select" class="form-select">
                         <option value="" disabled selected>Chọn phòng</option>
                         <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="">Danh mục thu <span style="color: red">*</span></label>
+                    <select name="danhmucthu_id" id="" class="form-select">
+                        <option value="">Chọn danh mục</option>
+                        <?php
+                        if (!empty($allCollect)) {
+                            foreach ($allCollect as $item) {
+                        ?>
+                                <option value="<?php echo $item['id'] ?>" <?php echo (!empty($roomId) && $roomId == $item['id']) ? 'selected' : '' ?>><?php echo $item['tendanhmuc'] ?></option>
+                        <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php echo form_error('danhmucthu_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
                 <div class="form-group">
@@ -179,11 +176,13 @@ layout('navbar', 'admin', $data);
                 </div>
 
             </div>
-            <div class="from-group">
-                <div class="btn-row">
-                    <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Thêm phiếu thu</button>
-                    <a style="margin-left: 20px " href="<?php echo getLinkAdmin('receipt') ?>" class="btn btn-success"><i class="fa fa-forward"></i></a>
-                </div>
+            <div class="btn-row">
+                <a href="<?php echo getLinkAdmin('receipt', 'receipts'); ?>" class="btn btn-secondary">
+                    <i class="fa fa-arrow-circle-left"></i> Quay lại
+                </a>
+                <button type="submit" class="btn btn-secondary">
+                    <i class="fa fa-edit"></i> Thêm phiếu thu
+                </button>
             </div>
         </form>
 
@@ -202,7 +201,7 @@ layout('navbar', 'admin', $data);
             roomsByArea[areaId].forEach(room => {
                 const option = document.createElement('option');
                 option.value = room.id;
-                option.textContent = `${room.tenphong} đang ở (${room.soluong} người)`; // Hiển thị tên phòng và số người
+                option.textContent = `${room.tenphong}`; // Hiển thị tên phòng 
                 roomSelect.appendChild(option);
             });
         }

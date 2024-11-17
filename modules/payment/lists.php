@@ -117,10 +117,10 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <th></th>
-                        <th wìdth="5%">STT</th>
+                        <th>STT</th>
                         <th>Khoản</th>
                         <th>Loại</th>
+                        <th>Tên Phòng</th>
                         <th>Số tiền</th>
                         <th>Ghi chú</th>
                         <th>Ngày phát sinh</th>
@@ -138,20 +138,16 @@ layout('navbar', 'admin', $data);
                     ?>
 
                             <tr>
-                                <td>
-                                    <div class="image__bill">
-                                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill.png" class="image__bill-img" alt="">
-                                    </div>
-                                </td>
-                                <td><?php echo $count; ?></td>
-                                <td style="color: green"><b><?php echo $item['tendanhmuc']; ?></b></td>
-                                <td><span style="background: #d93025; color: #fff; padding: 2px 4px; border-radius: 5px; font-size: 12px">Khoản chi</span></td>
-                                <td><b><?php echo number_format($item['sotien'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo $item['ghichu'] ?></td>
-                                <td><?php echo getDateFormat($item['ngaychi'], 'd-m-Y'); ?></td>
+                                <td style="text-align: center"><?php echo $count; ?></td>
+                                <td style="color: green; text-align: center"><b><?php echo $item['tendanhmuc']; ?></b></td>
+                                <td style="text-align: center"><span style="background: #d93025; color: #fff; padding: 2px 4px; border-radius: 5px; font-size: 12px">Khoản chi</span></td>
+                                <td style="text-align: center"><?php echo $item['tenphong'] ?></td>
+                                <td style="text-align: center"><b><?php echo number_format($item['sotien'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center"><?php echo $item['ghichu'] ?></td>
+                                <td style="text-align: center"><?php echo getDateFormat($item['ngaychi'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center"><?php echo $item['phuongthuc'] == 0 ? '<span class="btn-kyhopdong-second">Tiền mặt</span>' : '<span class="btn-kyhopdong-second">Chuyển khoản</span>' ?></td>
-                                <td class="">
-                                    <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('payment', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i> </a>
+                                <td class="" style="text-align: center">
+                                    <!-- <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('payment', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i> </a> -->
                                     <a href="<?php echo getLinkAdmin('payment', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('payment', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>

@@ -61,7 +61,7 @@ if ($userDetail['group_id'] == 7) {
                         <?php $ratio1 = ($totalRoomThue / $totalRoom) * 100; ?>
                         <?php $ratio1 = number_format($ratio1, 2) ?>
                         <p class="total-count"><?php echo $totalRoomThue ?> <span style="font-size: 16px">(<?php echo $ratio1 ?>%)</span></p>
-                        <!--<a href=""><div class="dashboard-link"></div></a>-->
+                        <!-- <a href=""><div class="dashboard-link"></div></a> -->
 
                     </div>
 
@@ -145,8 +145,10 @@ if ($userDetail['group_id'] == 7) {
                             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
                         </div>
                         <?php
-                        $listAllcontract = getRaw("SELECT *, contract.id, tenphong, tenkhach, giathue, tiencoc, contract.ngayvao as ngayvaoo, contract.ngayra as thoihanhopdong, zalo FROM contract 
+                        $listAllcontract = getRaw("SELECT *, contract.id, tenphong, tenkhach,  cost.giathue, tiencoc, contract.ngayvao as ngayvaoo, contract.ngayra as thoihanhopdong FROM contract 
                                     INNER JOIN room ON contract.room_id = room.id
+                                    INNER JOIN cost_room ON room.id = cost_room.room_id
+                                     INNER JOIN cost ON cost_room.cost_id = cost.id
                                     INNER JOIN contract_tenant ON contract.id = contract_tenant.contract_id_1
                                     INNER JOIN tenant ON contract_tenant.tenant_id_1 = tenant.id");
 
