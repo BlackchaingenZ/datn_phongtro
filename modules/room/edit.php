@@ -59,8 +59,6 @@ if (isPost()) {
             'tiencoc' => $body['tiencoc'],
             'ngaylaphd' => $body['ngaylaphd'],
             'chuky' => $body['chuky'],
-            'ngayvao' => $body['ngayvao'],
-            'ngayra' => $body['ngayra'],
         ];
 
         $condition = "id=$id";
@@ -123,20 +121,8 @@ layout('navbar', 'admin', $data);
 
                 <div class="form-group">
                     <label for="">Diện tích</label>
-                    <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>"oninput="validateNumber(this)">
+                    <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-                <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
-                    function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
-                    }
-                </script>
-
-                <div class="form-group">
-                    <label for="">Giá tiền cọc <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>" oninput="validateNumber(this)">
-                    <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
                     // Hàm kiểm tra chỉ cho phép nhập số
@@ -148,6 +134,17 @@ layout('navbar', 'admin', $data);
             </div>
 
             <div class="col-5">
+                <div class="form-group">
+                    <label for="">Giá tiền cọc <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
                 <div class="form-group">
                     <label for="">Ngày lập hóa đơn</label>
                     <select name="ngaylaphd" id="" class="form-select">
@@ -175,19 +172,6 @@ layout('navbar', 'admin', $data);
                         ?>
                     </select>
                 </div>
-
-                <div class="form-group">
-                    <label for="">Ngày vào ở</label>
-                    <input type="date" name="ngayvao" id="" class="form-control" value="<?php echo old('ngayvao', $old); ?>">
-                    <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Thời hạn hợp đồng <span style="color: red">*</span></label>
-                    <input type="date" name="ngayra" id="" class="form-control" value="<?php echo old('ngayra', $old); ?>">
-                    <?php echo form_error('ngayra', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
             </div>
             <div class="from-group">
                 <div class="btn-row">

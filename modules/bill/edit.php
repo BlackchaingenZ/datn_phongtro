@@ -84,9 +84,11 @@ if (isPost()) {
             'trangthaihoadon' => $body['trangthaihoadon'],
         ];
 
+
+        $id = (int)$_GET['id'];  // Đảm bảo id là số nguyên
         $condition = "id=$id";
         $updateStatus = update('bill', $dataUpdate, $condition);
-
+        
         if ($updateStatus) {
             setFlashData('msg', 'Cập nhật thông tin hóa đơn thành công');
             setFlashData('msg_type', 'suc');
@@ -277,7 +279,6 @@ layout('navbar', 'admin', $data);
                         </select>
                     </div>
                 </div>
-
             </div>
 
             <div class="from-group">

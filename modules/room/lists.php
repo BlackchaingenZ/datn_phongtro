@@ -272,8 +272,40 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?> người</td>
                                 <td style="text-align: center;">Ngày <?php echo $item['ngaylaphd'] ?></td>
                                 <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
-                                <td style="text-align: center;"><?php echo $item['ngayvao'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvao'], 'd-m-Y'); ?></td>
-                                <td style="text-align: center;"><?php echo $item['ngayra']  == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayra'], 'd-m-Y'); ?></td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngayvao'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngayvao']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngayvao']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Trống";
+                                    }
+                                    ?>
+                                </td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngayra'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngayra']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngayra']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Trống";
+                                    }
+                                    ?>
+                                </td>
                                 <td style="text-align: center;">
                                     <?php
                                     echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>' : '<span class="btn-status-err">Đang trống</span>';

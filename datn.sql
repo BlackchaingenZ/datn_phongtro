@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 17, 2024 lúc 04:06 AM
+-- Thời gian đã tạo: Th10 17, 2024 lúc 01:21 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -110,15 +110,15 @@ CREATE TABLE `bill` (
 --
 
 INSERT INTO `bill` (`id`, `mahoadon`, `room_id`, `tenant_id`, `chuky`, `songayle`, `tienphong`, `sodiencu`, `sodienmoi`, `img_sodienmoi`, `tiendien`, `sonuoccu`, `sonuocmoi`, `img_sonuocmoi`, `tiennuoc`, `songuoi`, `tienrac`, `tienmang`, `tongtien`, `sotiendatra`, `sotienconthieu`, `nocu`, `trangthaihoadon`, `create_at`) VALUES
-(119, 'r0aX1', 103, NULL, 1, NULL, 2000000, 2, 3, '', 4000, 1, 2, '', 20000, 2, 20000, 50000, 2094000, 800000, 1294000, NULL, 3, '2024-11-17');
+(122, 'ngqYq', 103, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 1, 10000, 50000, 2084000, 2084000, 0, NULL, 1, '2024-11-17');
 
 --
 -- Bẫy `bill`
 --
 DELIMITER $$
 CREATE TRIGGER `after_hoadon_update_status` AFTER UPDATE ON `bill` FOR EACH ROW BEGIN
-    IF OLD.trangthaihoadon = 0 AND NEW.trangthaihoadon = 1 THEN
-        -- Tạo một phiếu thu mới khi trạng thái hóa đơn chuyển từ 0 (chưa thu) sang 1 (đã thu)
+    IF OLD.trangthaihoadon = 2 AND NEW.trangthaihoadon = 1 THEN
+        -- Tạo một phiếu thu mới khi trạng thái hóa đơn chuyển từ 2 (chưa thu) sang 1 (đã thu)
         INSERT INTO receipt (
             bill_id,
             room_id, 
@@ -136,8 +136,8 @@ CREATE TRIGGER `after_hoadon_update_status` AFTER UPDATE ON `bill` FOR EACH ROW 
             1,                             -- Phương thức thanh toán (ví dụ: 1)
             1                              -- Danh mục thu (ví dụ: 1)
         );
-    ELSEIF OLD.trangthaihoadon = 0 AND NEW.trangthaihoadon = 2 THEN
-        -- Tạo một phiếu thu mới với số tiền đã trả khi trạng thái hóa đơn chuyển từ 0 (chưa thu) sang 2 (đang nợ)
+    ELSEIF OLD.trangthaihoadon = 2 AND NEW.trangthaihoadon = 3 THEN
+        -- Tạo một phiếu thu mới với số tiền đã trả khi trạng thái hóa đơn chuyển từ 2 (chưa thu) sang 3 (đang nợ)
         INSERT INTO receipt (
             bill_id,
             room_id, 
@@ -155,8 +155,8 @@ CREATE TRIGGER `after_hoadon_update_status` AFTER UPDATE ON `bill` FOR EACH ROW 
             1,                             -- Phương thức thanh toán (ví dụ: 1)
             1                              -- Danh mục thu (ví dụ: 1)
         );
-    ELSEIF OLD.trangthaihoadon = 2 AND NEW.trangthaihoadon = 1 THEN
-        -- Cập nhật lại số tiền đã trả khi trạng thái hóa đơn chuyển từ 2 (đang nợ) sang 1 (đã thu)
+    ELSEIF OLD.trangthaihoadon = 3 AND NEW.trangthaihoadon = 1 THEN
+        -- Cập nhật lại số tiền đã trả khi trạng thái hóa đơn chuyển từ 3 (đang nợ) sang 1 (đã thu)
         UPDATE receipt
         SET
             sotien = NEW.sotiendatra,
@@ -193,6 +193,7 @@ CREATE TABLE `category_collect` (
 --
 
 INSERT INTO `category_collect` (`id`, `tendanhmuc`, `create_at`) VALUES
+(1, 'Hoá đơn thu tiền nhà', NULL),
 (10, 'Tiền an ninh', NULL);
 
 -- --------------------------------------------------------
@@ -229,7 +230,7 @@ CREATE TABLE `contract` (
   `ngayra` date DEFAULT NULL,
   `tinhtrangcoc` int DEFAULT NULL,
   `trangthaihopdong` int DEFAULT NULL,
-  `lydothanhly` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `lydothanhly` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `create_at` date DEFAULT NULL,
   `ghichu` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `sotiencoc` float DEFAULT NULL,
@@ -566,7 +567,8 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (432, 30, '8438794c8252d183182fabe033ed5269edc91aa3', '2024-11-15 13:58:20'),
 (433, 30, 'a8b15a33f34e8803a6dfee386a44f314bee904f4', '2024-11-16 13:01:07'),
 (434, 30, '98be7096d242bddf3ad48ce7e4101a4024b4704b', '2024-11-16 20:59:28'),
-(435, 30, 'db492b2ff3b1a05dc23a72f8b35eca70745ca5fc', '2024-11-17 08:55:11');
+(435, 30, 'db492b2ff3b1a05dc23a72f8b35eca70745ca5fc', '2024-11-17 08:55:11'),
+(436, 30, 'eb128ac693188496221f41f2d681ef9af2c45462', '2024-11-17 18:53:41');
 
 -- --------------------------------------------------------
 
@@ -597,15 +599,17 @@ CREATE TABLE `receipt` (
   `ghichu` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
   `ngaythu` date DEFAULT NULL,
   `phuongthuc` int DEFAULT NULL,
-  `danhmucthu_id` int DEFAULT NULL
+  `danhmucthu_id` int DEFAULT NULL,
+  `bill_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `receipt`
 --
 
-INSERT INTO `receipt` (`id`, `room_id`, `sotien`, `ghichu`, `ngaythu`, `phuongthuc`, `danhmucthu_id`) VALUES
-(61, 98, 1500000, 'ss', '2024-11-10', 0, 10);
+INSERT INTO `receipt` (`id`, `room_id`, `sotien`, `ghichu`, `ngaythu`, `phuongthuc`, `danhmucthu_id`, `bill_id`) VALUES
+(61, 98, 1500000, 'ss', '2024-11-10', 0, 10, NULL),
+(70, 103, 2084000, 'Thu tiền nhà hàng tháng - Đã thanh toán', '2024-11-17', 1, 1, 122);
 
 -- --------------------------------------------------------
 
@@ -889,7 +893,8 @@ ALTER TABLE `payment`
 ALTER TABLE `receipt`
   ADD PRIMARY KEY (`id`),
   ADD KEY `danhmucthu_id` (`danhmucthu_id`),
-  ADD KEY `room_id` (`room_id`);
+  ADD KEY `room_id` (`room_id`),
+  ADD KEY `receipt_ibfk_3` (`bill_id`);
 
 --
 -- Chỉ mục cho bảng `room`
@@ -938,7 +943,7 @@ ALTER TABLE `area_room`
 -- AUTO_INCREMENT cho bảng `bill`
 --
 ALTER TABLE `bill`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=123;
 
 --
 -- AUTO_INCREMENT cho bảng `category_collect`
@@ -1004,7 +1009,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=436;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=437;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -1016,7 +1021,7 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT cho bảng `receipt`
 --
 ALTER TABLE `receipt`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT cho bảng `room`
@@ -1111,7 +1116,8 @@ ALTER TABLE `payment`
 --
 ALTER TABLE `receipt`
   ADD CONSTRAINT `receipt_ibfk_1` FOREIGN KEY (`danhmucthu_id`) REFERENCES `category_collect` (`id`),
-  ADD CONSTRAINT `receipt_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`);
+  ADD CONSTRAINT `receipt_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `room` (`id`),
+  ADD CONSTRAINT `receipt_ibfk_3` FOREIGN KEY (`bill_id`) REFERENCES `bill` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Các ràng buộc cho bảng `tenant`

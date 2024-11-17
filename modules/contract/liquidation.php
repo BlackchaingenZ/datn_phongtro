@@ -95,6 +95,7 @@ if ($contract_id) {
                     // Cập nhật số người trong phòng về 0
                     $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
                     $stmt_update_room->execute([$room_id]);
+                    
                 }
 
                 // Cập nhật thông tin hợp đồng trong cơ sở dữ liệu
