@@ -65,9 +65,10 @@ function getTenantsByRoomId($roomId)
 }
 
 $searchContract = isset($_POST['search_contract']) ? $_POST['search_contract'] : '';
-
+$tinhtrangcoc = isset($_POST['tinhtrangcoc']) ? $_POST['tinhtrangcoc'] : ''; // Lấy giá trị tìm kiếm theo tình trạng cọc
+$trangthaihopdong = isset($_POST['trangthaihopdong']) ? $_POST['trangthaihopdong'] : '';
 // Xử lý truy vấn SQL với điều kiện tìm kiếm
-if (!empty($searchContract)) {
+if (!empty($searchContract) || !empty($tinhtrangcoc) || !empty($trangthaihopdong)) {
     $listAllcontract = getRaw("
         SELECT *, 
             contract.id, 
@@ -79,7 +80,7 @@ if (!empty($searchContract)) {
             contract.ghichu,
             contract.trangthaihopdong,
             tinhtrangcoc, 
-GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1,  
+            GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1,  
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
         FROM contract 
         INNER JOIN room ON contract.room_id = room.id
@@ -89,7 +90,11 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
         INNER JOIN cost ON cost_room.cost_id = cost.id
         LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
         LEFT JOIN services ON contract_services.services_id = services.id 
-        WHERE room.tenphong LIKE '%$searchContract%' OR tenant.tenkhach LIKE '%$searchContract%' OR tenant.cmnd LIKE '%$searchContract%'
+        WHERE (room.tenphong LIKE '%$searchContract%' 
+            OR tenant.tenkhach LIKE '%$searchContract%' 
+            OR tenant.cmnd LIKE '%$searchContract%')
+            " . ($tinhtrangcoc !== '' ? " AND tinhtrangcoc = '$tinhtrangcoc'" : "") . "
+            " . ($trangthaihopdong !== '' ? " AND contract.trangthaihopdong = '$trangthaihopdong'" : "") . "
         GROUP BY contract.id
         ORDER BY contract.id DESC
     ");
@@ -122,7 +127,7 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
 }
 
 
-if (isset($_POST['deleteMultip'])) { 
+if (isset($_POST['deleteMultip'])) {
     $numberCheckbox = $_POST['records'];
 
     if (empty($numberCheckbox)) {
@@ -219,9 +224,24 @@ layout('navbar', 'admin', $data);
         <?php } ?>
         <form action="" method="POST" class="mt-3">
             <div class="row">
-                <div class="col-4"></div> <!-- Cột trống bên trái để canh giữa -->
+                <div class="col-2">
 
-                <div class="col-4"> <!-- Cột chứa ô tìm kiếm -->
+                </div>
+                <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo trạng thái hợp đồng -->
+                    <select name="trangthaihopdong" class="form-control" style="height: 50px;">
+                        <option value="">Chọn trạng thái thanh lý</option>
+                        <option value="2" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '2') ? 'selected' : ''; ?>>Chưa thanh lý</option>
+                        <option value="1" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '1') ? 'selected' : ''; ?>>Đã thanh lý</option>
+                    </select>
+                </div>
+                <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo tình trạng cọc -->
+                    <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
+                        <option value="">Chọn trình trạng cọc</option>
+                        <option value="2" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '2') ? 'selected' : ''; ?>>Chưa thu</option>
+                        <option value="1" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '1') ? 'selected' : ''; ?>>Đã thu</option>
+                    </select>
+                </div>
+                <div class="col-4"> <!-- Cột chứa ô tìm kiếm tên phòng, tên khách hoặc cmnd -->
                     <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
                 </div>
 
@@ -231,6 +251,7 @@ layout('navbar', 'admin', $data);
                     </button>
                 </div>
             </div>
+
             <p></p>
 
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
@@ -350,7 +371,7 @@ layout('navbar', 'admin', $data);
                                         <span class="tooltiptext"><?php echo $item['ghichu']; ?></span>
                                     </span>
                                 </td>
-                                <td style="text-align: center;"><?php echo $item['trangthaihopdong'] == 0 ? '<span class="btn-trangthaihopdong-war">Đã thanh lý</span>' : '<span class="btn-trangthaihopdong-second">Chưa thanh lý</span>' ?></td>
+                                <td style="text-align: center;"><?php echo $item['trangthaihopdong'] == 1 ? '<span class="btn-trangthaihopdong-war">Đã thanh lý</span>' : '<span class="btn-trangthaihopdong-second">Chưa thanh lý</span>' ?></td>
                                 <!-- <td style=" text-align: center;">
                                   
                                     <span class="tooltip-icon">
