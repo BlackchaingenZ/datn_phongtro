@@ -83,6 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Giải mã danh sách khách thuê tạm từ JSON
     $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
     $tempCustomers = json_decode($tempCustomersData, true);
+    // Kiểm tra nếu chưa nhận được khách thuê tạm thời
+    if (empty($tempCustomers)) {
+        setFlashData('msg', 'Thiếu thông tin cần thiết để thêm hợp đồng.');
+        setFlashData('msg_type', 'err');
+        redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
+        exit; // Ngừng xử lý
+    }
 
     if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
         // Thêm hợp đồng
@@ -118,10 +125,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 // Nếu khách thuê chưa tồn tại, thêm vào bảng tenant và lấy tenant_id mới
                 $tenant_id = addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd);
-                // $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
-                // foreach ($services as $services_id) {
-                //     linkContractService($contract_id, $services_id);
-                // }
             }
 
             // Liên kết hợp đồng với khách thuê trong bảng contract_tenant
@@ -276,7 +279,8 @@ layout('navbar', 'admin', $data);
                         <label for="">Tình trạng cọc<span style="color: red">*</label>
                         <select name="tinhtrangcoc" class="form-select">
                             <option value="" disabled selected>Chọn trạng thái</option>
-                            <option value="1"selected>Đã cọc</option>
+                            <option value="2">Chưa thu</option>
+                            <option value="1">Đã thu</option>
                         </select>
                     </div>
                     <div class="form-group">

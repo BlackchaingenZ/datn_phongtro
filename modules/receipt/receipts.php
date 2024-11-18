@@ -49,7 +49,7 @@ if (!empty(getBody()['page'])) {
 $offset = ($page - 1) * $perPage;
 
 $listAllReceipt = getRaw("SELECT *, tenphong, tendanhmuc, receipt.id FROM receipt INNER JOIN room ON room.id = receipt.room_id 
-INNER JOIN category_collect ON category_collect.id = receipt.danhmucthu_id $filter LIMIT $offset, $perPage");
+INNER JOIN category_collect ON category_collect.id = receipt.danhmucthu_id $filter ORDER BY receipt.id DESC  LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;

@@ -316,7 +316,7 @@ layout('navbar', 'admin', $data);
                                 <!-- <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluongthanhvien'] ?> người</td> -->
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['sotiencoc'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center;"><?php echo $item['tinhtrangcoc'] == 0 ? '<span class="btn-kyhopdong-err">Chưa cọc</span>' : '<span class="btn-kyhopdong-suc">Đã cọc</span>' ?></td>
+                                <td style="text-align: center;"><?php echo $item['tinhtrangcoc'] == 2 ? '<span class="btn-kyhopdong-err">Chưa thu</span>' : '<span class="btn-kyhopdong-suc">Đã thu</span>' ?></td>
                                 <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
                                 <td style="text-align: center;"><?php echo $item['ngaylaphopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngaylaphopdong'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center;"><?php echo $item['ngayvaoo'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvaoo'], 'd-m-Y'); ?></td>
