@@ -131,6 +131,9 @@ layout('navbar', 'admin', $data);
         <!-- Tìm kiếm , Lọc dưz liệu -->
         <form action="" method="get">
             <div class="row">
+                <div class="col-2">
+
+                </div>
                 <div class="col-3">
                     <div class="form-group">
                         <select name="room_id" id="" class="form-select">
@@ -164,10 +167,8 @@ layout('navbar', 'admin', $data);
             <div>
 
             </div>
-            <!-- <a href="<?php echo getLinkAdmin('tenant', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a> -->
             <a href="<?php echo getLinkAdmin('tenant', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <!-- <a href="<?php echo getLinkAdmin('tenant', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a> -->
             <a href="<?php echo getLinkAdmin('tenant', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
             <table class="table table-bordered mt-3" id="dataTable">

@@ -66,9 +66,10 @@ function getTenantsByRoomId($roomId)
 
 $searchContract = isset($_POST['search_contract']) ? $_POST['search_contract'] : '';
 $tinhtrangcoc = isset($_POST['tinhtrangcoc']) ? $_POST['tinhtrangcoc'] : ''; // Lấy giá trị tìm kiếm theo tình trạng cọc
-$trangthaihopdong = isset($_POST['trangthaihopdong']) ? $_POST['trangthaihopdong'] : '';
+
 // Xử lý truy vấn SQL với điều kiện tìm kiếm
-if (!empty($searchContract) || !empty($tinhtrangcoc) || !empty($trangthaihopdong)) {
+if (!empty($searchContract) || !empty($tinhtrangcoc)) {
+
     $listAllcontract = getRaw("
         SELECT *, 
             contract.id, 
@@ -94,10 +95,9 @@ if (!empty($searchContract) || !empty($tinhtrangcoc) || !empty($trangthaihopdong
             OR tenant.tenkhach LIKE '%$searchContract%' 
             OR tenant.cmnd LIKE '%$searchContract%')
             " . ($tinhtrangcoc !== '' ? " AND tinhtrangcoc = '$tinhtrangcoc'" : "") . "
-            " . ($trangthaihopdong !== '' ? " AND contract.trangthaihopdong = '$trangthaihopdong'" : "") . "
-        GROUP BY contract.id
         ORDER BY contract.id DESC
     ");
+
 } else {
     // Nếu không có tìm kiếm, lấy tất cả hợp đồng
     $listAllcontract = getRaw("
@@ -224,16 +224,10 @@ layout('navbar', 'admin', $data);
         <?php } ?>
         <form action="" method="POST" class="mt-3">
             <div class="row">
-                <div class="col-2">
+                <div class="col-3">
 
                 </div>
-                <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo trạng thái hợp đồng -->
-                    <select name="trangthaihopdong" class="form-control" style="height: 50px;">
-                        <option value="">Chọn trạng thái thanh lý</option>
-                        <option value="2" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '2') ? 'selected' : ''; ?>>Chưa thanh lý</option>
-                        <option value="1" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '1') ? 'selected' : ''; ?>>Đã thanh lý</option>
-                    </select>
-                </div>
+                
                 <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo tình trạng cọc -->
                     <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
                         <option value="">Chọn trình trạng cọc</option>
@@ -251,7 +245,6 @@ layout('navbar', 'admin', $data);
                     </button>
                 </div>
             </div>
-
             <p></p>
 
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
@@ -371,7 +364,7 @@ layout('navbar', 'admin', $data);
                                         <span class="tooltiptext"><?php echo $item['ghichu']; ?></span>
                                     </span>
                                 </td>
-                                <td style="text-align: center;"><?php echo $item['trangthaihopdong'] == 1 ? '<span class="btn-trangthaihopdong-war">Đã thanh lý</span>' : '<span class="btn-trangthaihopdong-second">Chưa thanh lý</span>' ?></td>
+                                <td style="text-align: center;"><?php echo $item['trangthaihopdong'] == 0 ? '<span class="btn-trangthaihopdong-war">Đã thanh lý</span>' : '<span class="btn-trangthaihopdong-second">Chưa thanh lý</span>' ?></td>
                                 <!-- <td style=" text-align: center;">
                                   
                                     <span class="tooltip-icon">
@@ -416,6 +409,7 @@ layout('navbar', 'admin', $data);
                         <?php endif; ?>
                 </tbody>
             </table>
+        </form>
     </div>
 </div>
 
