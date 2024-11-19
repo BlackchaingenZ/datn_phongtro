@@ -45,7 +45,7 @@
            <a href="#" class="nav-link <?php echo activeMenuSidebar('bill') ? 'active' : false; ?>">
              <i class="nav-icon fas fa-solid fa-graduation-cap"></i>
              <p>
-               <?php $num = getRows("SELECT id FROM bill WHERE room_id = $roomId AND trangthaihoadon = 0") ?>
+               <?php $num = getRows("SELECT id FROM bill WHERE room_id = $roomId AND trangthaihoadon = 2") ?>
                Quản lý hóa đơn
                <i class="right fas fa-angle-left"></i>
                <span class="badge badge-danger"><?php echo $num ?></span>
