@@ -224,7 +224,7 @@ layout('navbar', 'admin', $data);
                                 <td><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
                                 <td style="text-align: center"><?php echo $item['status'] == 0 ? '<span class="btn-kyhopdong-err">Chưa kích hoạt</span>' : '<span class="btn-kyhopdong-suc">Đã kích hoạt</span>' ?></td>
 
-                                <td class="">
+                                <td class="" style="text-align: center">
                                     <a href="<?php echo getLinkAdmin('users', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('users', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
