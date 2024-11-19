@@ -278,15 +278,16 @@ layout('navbar', 'admin', $data);
                             <input type="text" class="form-control" id="tienrac" name="tienrac">
                         </div>
                     </div>
-                </div>
-
-                <div class="col-3">
                     <div class="water">
                         <div class="form-group">
                             <label for="tienmang">Tiền Wifi (50.000đ/1tháng)</label>
                             <input type="text" class="form-control" id="tienmang" name="tienmang">
                         </div>
                     </div>
+                </div>
+
+                <div class="col-3">
+
                     <div class="water">
                         <div class="form-group">
                             <label for="nocu">Cộng thêm</label>

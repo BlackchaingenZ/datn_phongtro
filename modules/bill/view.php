@@ -7,14 +7,22 @@ $billDetail  = firstRaw("SELECT * FROM bill WHERE id=$id");
 $date = firstRaw("SELECT MONTH(create_at) AS month, YEAR(create_at) AS year FROM bill WHERE id=$id");
 $roomId = $billDetail['room_id'];
 
-
 $roomtDetail = firstRaw("
-    SELECT r.*, c.giathue 
-    FROM room r
-    JOIN cost_room cr ON r.id = cr.room_id
-    JOIN cost c ON cr.cost_id = c.id
-    WHERE r.id = $roomId
+    SELECT room.*, cost.giathue, 
+           GROUP_CONCAT(tenant.tenkhach SEPARATOR ', ') AS tenkhach
+    FROM room
+    JOIN cost_room ON room.id = cost_room.room_id
+    JOIN cost ON cost_room.cost_id = cost.id
+    LEFT JOIN tenant ON room.id = tenant.room_id
+    LEFT JOIN contract_tenant ON tenant.id = contract_tenant.tenant_id_1
+    LEFT JOIN contract ON contract_tenant.contract_id_1 = contract.id
+    WHERE room.id = $roomId
+      AND contract.trangthaihopdong = 1
+    GROUP BY room.id
 ");
+
+
+
 
 
 ?>
@@ -31,11 +39,12 @@ $roomtDetail = firstRaw("
 <body style="display: flex; justify-content: center; margin-top: 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7fafc;">
     <div class="bill-content" style="width: 60%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
         <img style="width: 150px; " src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logo-final.png" alt="">
-        <h2 style="font-size: 28px; margin: 10px 0;">Hóa đơn tiền thuê phòng</h2>
+        <h2 style="font-size: 28px; margin: 10px 0;">Hóa đơn tiền thuê phòng trọ Thảo Nguyên</h2>
         <h3 style="margin-top: 10px;">Tháng <?php echo $date['month'] ?>/<?php echo $date['year'] ?></h3>
         <p style="font-size: 14px;">Địa chỉ: 56 - Nam Pháp, Ngô Quyền, Hải Phòng</p>
         <p>Mã hóa đơn: <b style="color: red; font-size: 18px"><?php echo $billDetail['mahoadon'] ?></b></p>
         <div class="rowTwo" style="display: flex; justify-content: space-around; margin-top: 0px;">
+            <p style="font-size: 14px;">Tên khách: <b><?php echo $roomtDetail['tenkhach'] ?></b></p>
             <p style="font-size: 14px;">Đơn vị: <b><?php echo $roomtDetail['tenphong'] ?></b></p>
             <p style="font-size: 14px;">Lý do thu tiền: <b>Thu tiền hàng tháng</b></p>
         </div>
@@ -99,7 +108,7 @@ $roomtDetail = firstRaw("
                         <img style="width: 200px; height: 200px;" src="/datn/templates/admin/assets/img/QR.jpg" alt="">
                         <div>
                             <p style="color: red"><i><b>Lưu ý:</b></i></p>
-                            <p>Nội dung thanh toán: <b><i>Mã hóa đơn + Tên phòng + Tháng</i></b></p>
+                            <p>Nội dung chuyển khoản: <b><i>"THANH TOAN + MÃ HOÁ ĐƠN"</i></b></p>
                         </div>
                     </div>
                 </td>

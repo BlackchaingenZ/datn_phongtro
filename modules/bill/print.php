@@ -8,23 +8,32 @@ $billDetail = firstRaw("SELECT * FROM bill WHERE id=$id");
 $date = firstRaw("SELECT MONTH(create_at) AS month, YEAR(create_at) AS year FROM bill WHERE id=$id");
 $roomId = $billDetail['room_id'];
 
-$roomDetail = firstRaw(" 
-    SELECT r.*, c.giathue 
-    FROM room r
-    JOIN cost_room cr ON r.id = cr.room_id
-    JOIN cost c ON cr.cost_id = c.id
-    WHERE r.id = $roomId
+$roomDetail = firstRaw("
+    SELECT room.*, cost.giathue, 
+           GROUP_CONCAT(tenant.tenkhach SEPARATOR ', ') AS tenkhach
+    FROM room
+    JOIN cost_room ON room.id = cost_room.room_id
+    JOIN cost ON cost_room.cost_id = cost.id
+    LEFT JOIN tenant ON room.id = tenant.room_id
+    LEFT JOIN contract_tenant ON tenant.id = contract_tenant.tenant_id_1
+    LEFT JOIN contract ON contract_tenant.contract_id_1 = contract.id
+    WHERE room.id = $roomId
+      AND contract.trangthaihopdong = 1
+    GROUP BY room.id
 ");
 
 // Tạo một lớp con kế thừa từ TCPDF
-class PDF extends TCPDF {
+class PDF extends TCPDF
+{
     // Override phương thức Header nếu cần
-    public function Header() {
+    public function Header()
+    {
         // Thêm code Header ở đây nếu cần
     }
-    
+
     // Override phương thức Footer nếu cần
-    public function Footer() {
+    public function Footer()
+    {
         // Thêm code Footer ở đây nếu cần
     }
 }
@@ -53,6 +62,7 @@ $html = '
         <h3 style="margin-top: 10px; font-size: 12px;">Tháng ' . $date['month'] . '/' . $date['year'] . '</h3>
         <p style="font-size: 12px;">Địa chỉ: 56 - Nam Pháp 1, Ngô Quyền, Hải Phòng</p>
         <p style="font-size: 12px;">Mã hóa đơn: <b style="color: red; font-size: 16px">' . $billDetail['mahoadon'] . '</b></p>
+        <p style="font-size: 12px; text-align: start">Tên khách: <b>' . $roomDetail['tenkhach'] . '</b></p>
         <p style="font-size: 12px; text-align: start">Đơn vị: <b>' . $roomDetail['tenphong'] . '</b></p>
 
         <table border="1" cellspacing="0" width="100%" cellpadding="10" style="text-align: start;">
@@ -100,7 +110,7 @@ $html = '
                 <td colspan="2">
                     <div>
                         <img style="width: 80px; height: 80px;" src="https://jeju.com.vn/wp-content/uploads/2020/05/vnpay-qr-23-06-2020-2.jpg" alt="">
-                        <p style="font-size: 10px;"><i><b>Nội dung thanh toán: </b></i><strong style="color: red">Mã hóa đơn</strong></p>                           
+                        <p style="font-size: 10px;"><i><b>Nội dung thanh toán: </b></i><strong style="color: red">THANH TOAN + MÃ HOÁ ĐƠN</strong></p>                           
                     </div>
                 </td>
             </tr>
@@ -116,4 +126,3 @@ $tenphong = $roomDetail['tenphong'];
 $month = $date['month'];
 // Đóng và xuất PDF ra trình duyệt để tải xuống
 $pdf->Output('Tháng' . $month . ' - ' . $tenphong . '.pdf', 'I');
-?>

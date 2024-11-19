@@ -170,6 +170,7 @@ layout('navbar', 'admin', $data);
                 <thead>
                     <tr>
                         <th width="3%" rowspan="2"> STT</th>
+                        <th rowspan="2">Mã hoá đơn</th>
                         <th rowspan="2">Tên phòng</th>
                         <th colspan="3">Tiền phòng</th>
                         <th colspan="3">Tiền điện</th>
@@ -208,8 +209,9 @@ layout('navbar', 'admin', $data);
                             $count++;
 
                     ?>
-                            <tr>
+                            <tr >
                                 <td style="text-align: center;"><?php echo $count; ?></td>
+                                <td style="text-align: center; color: red"><?php echo $item['mahoadon']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['tenphong']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
                                 
@@ -246,7 +248,7 @@ layout('navbar', 'admin', $data);
                                     <b style="color: #15a05c"><?php echo number_format($item['sotiendatra'], 0, ',', '.') ?> đ</b>
                                 </td>
                                 <td style="text-align: center; color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo getDateFormat($item['ngayvao'], 'm-d-Y') ?></td>
+                                <td><?php echo getDateFormat($item['ngayvao'], 'd-m-Y') ?></td>
                                 <td style="text-align: center;">
 
                                     <?php
