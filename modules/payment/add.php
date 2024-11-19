@@ -15,7 +15,7 @@ $allPayment = getRaw("SELECT * FROM category_spend");
 $allRoom = getRaw("
     SELECT room.id, room.tenphong, room.soluong 
     FROM room 
-    WHERE room.id IN (SELECT room_id FROM contract)
+    WHERE room.id IN (SELECT room_id FROM contract WHERE trangthaihopdong = 1)
     ORDER BY room.tenphong
 ");
 $roomsByArea = [];
@@ -127,7 +127,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Danh mục chi <span style="color: red">*</span></label>
                     <select name="danhmucchi_id" id="" class="form-select">
-                        <option value="">Chọn danh mục</option>
+                        <option value="" disabled selected>Chọn danh mục</option>
                         <?php
                         if (!empty($allPayment)) {
                             foreach ($allPayment as $item) {
@@ -165,7 +165,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Phương thức thanh toán</label>
                     <select name="phuongthuc" class="form-select">
-                        <option value="">Chọn phương thức</option>
+                        <option value="" disabled selected>Chọn phương thức</option>
                         <option value="0">Tiền mặt</option>
                         <option value="1">Chuyển khoản</option>
                     </select>

@@ -152,7 +152,8 @@ layout('navbar', 'admin', $data);
             </form>
             <h3 class="sumary-title">Thống kê doanh thu theo từng tháng</h3>
             <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p>
-            
+            <p style="color:red"><i>Lợi nhuận = ( tổng khoản thu - tổng khoản chi -  tổng tiền cọc ) </i></p>
+
             <div class="report-receipt-spend">
                 <div class="report-receipt">
                     <p>Tổng khoản thu </p>

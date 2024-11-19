@@ -95,7 +95,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Danh mục thu <span style="color: red">*</span></label>
                     <select name="danhmucthu_id" id="" class="form-select">
-                        <option value="">Chọn danh mục</option>
+                        <option value="" disabled selected>Chọn danh mục</option>
                         <?php
                         if (!empty($allCollect)) {
                             foreach ($allCollect as $item) {
@@ -111,7 +111,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Chọn phòng lập phiếu thu <span style="color: red">*</span></label>
                     <select name="room_id" id="" class="form-select">
-                        <option value="">Chọn phòng</option>
+                        <option value="" disabled selected>Chọn phòng</option>
                         <?php
                         if (!empty($allRoom)) {
                             foreach ($allRoom as $item) {
@@ -149,7 +149,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Phương thức thanh toán</label>
                     <select name="phuongthuc" class="form-select">
-                        <option value="">Chọn phương thức</option>
+                        <option value="" disabled selected>Chọn phương thức</option>
                         <option value="0" <?php if ($receiptDetail['phuongthuc'] == 0) echo 'selected' ?>>Tiền mặt</option>
                         <option value="1" <?php if ($receiptDetail['phuongthuc'] == 1) echo 'selected' ?>>Chuyển khoản</option>
                     </select>
