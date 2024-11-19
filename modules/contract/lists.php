@@ -66,10 +66,38 @@ function getTenantsByRoomId($roomId)
 
 $searchContract = isset($_POST['search_contract']) ? $_POST['search_contract'] : '';
 $tinhtrangcoc = isset($_POST['tinhtrangcoc']) ? $_POST['tinhtrangcoc'] : ''; // Lấy giá trị tìm kiếm theo tình trạng cọc
+$trangthaihopdong = isset($_POST['trangthaihopdong']) ? $_POST['trangthaihopdong'] : null; // Đặt giá trị mặc định là null
+
 
 // Xử lý truy vấn SQL với điều kiện tìm kiếm
-if (!empty($searchContract) || !empty($tinhtrangcoc)) {
+if (!empty($searchContract) || !empty($tinhtrangcoc) || $trangthaihopdong != null) {
+    $queryCondition = [];
 
+    // Thêm điều kiện tìm kiếm theo hợp đồng
+    if (!empty($searchContract)) {
+        $queryCondition[] = "(room.tenphong LIKE '%$searchContract%' OR tenant.tenkhach LIKE '%$searchContract%' OR tenant.cmnd LIKE '%$searchContract%')";
+    }
+
+    // Thêm điều kiện trạng thái cọc
+    if (!empty($tinhtrangcoc)) {
+        if ($tinhtrangcoc == '1') {
+            $queryCondition[] = "contract.tinhtrangcoc = '1'";
+        } elseif ($tinhtrangcoc == '2') {
+            $queryCondition[] = "contract.tinhtrangcoc = '2'";
+        }
+    }
+    if ($trangthaihopdong != null) {
+        if ($trangthaihopdong == '1') {
+            $queryCondition[] = "contract.trangthaihopdong = '1'";
+        } elseif ($trangthaihopdong == '0') {
+            $queryCondition[] = "contract.trangthaihopdong = '0'";
+        }
+    }
+
+    // Chỉ thêm WHERE nếu có điều kiện
+    $whereClause = !empty($queryCondition) ? "WHERE " . implode(' AND ', $queryCondition) : "";
+
+    // Câu truy vấn SQL với các điều kiện
     $listAllcontract = getRaw("
         SELECT *, 
             contract.id, 
@@ -90,14 +118,11 @@ if (!empty($searchContract) || !empty($tinhtrangcoc)) {
         INNER JOIN cost_room ON room.id = cost_room.room_id 
         INNER JOIN cost ON cost_room.cost_id = cost.id
         LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
-        LEFT JOIN services ON contract_services.services_id = services.id 
-        WHERE (room.tenphong LIKE '%$searchContract%' 
-            OR tenant.tenkhach LIKE '%$searchContract%' 
-            OR tenant.cmnd LIKE '%$searchContract%')
-            " . ($tinhtrangcoc !== '' ? " AND tinhtrangcoc = '$tinhtrangcoc'" : "") . "
+        LEFT JOIN services ON contract_services.services_id = services.id
+        $whereClause
+        GROUP BY contract.id
         ORDER BY contract.id DESC
     ");
-
 } else {
     // Nếu không có tìm kiếm, lấy tất cả hợp đồng
     $listAllcontract = getRaw("
@@ -224,10 +249,17 @@ layout('navbar', 'admin', $data);
         <?php } ?>
         <form action="" method="POST" class="mt-3">
             <div class="row">
-                <div class="col-3">
+                <div class="col-2">
 
                 </div>
-                
+                <div class="col-2">
+                    <select name="trangthaihopdong" class="form-control" style="height: 50px;">
+                        <option value="">Chọn tình trạng hợp đồng</option>
+                        <option value="1" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '1') ? 'selected' : ''; ?>>Chưa thanh lý</option>
+                        <option value="0" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '0') ? 'selected' : ''; ?>>Đã thanh lý</option>
+                    </select>
+
+                </div>
                 <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo tình trạng cọc -->
                     <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
                         <option value="">Chọn trình trạng cọc</option>
