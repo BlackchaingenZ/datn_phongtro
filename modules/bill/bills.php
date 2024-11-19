@@ -128,7 +128,8 @@ layout('navbar', 'admin', $data);
         <!-- Tìm kiếm , Lọc dưz liệu -->
         <form action="" method="get">
             <div class="row">
-                <div class="col-3">
+                <div class="col-2"></div>
+                <div class="col-2">
                     <div class="form-group">
                         <select name="status" id="" class="form-select">
                             <option value="">Chọn trạng thái</option>
@@ -139,11 +140,11 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
 
-                <div class="col-4">
+                <div class="col-3">
                     <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập mã hóa đơn cần tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
                 </div>
 
-                <div class="col-3">
+                <div class="col-2">
                     <input style="height: 50px" type="month" class="form-control" name="datebill" id="" value="<?php echo (!empty($datebill)) ? $datebill : $currentMonthYear; ?>">
                 </div>
 

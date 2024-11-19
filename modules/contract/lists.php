@@ -249,23 +249,29 @@ layout('navbar', 'admin', $data);
         <?php } ?>
         <form action="" method="POST" class="mt-3">
             <div class="row">
-                <div class="col-2">
+                <div class = "col-2">
 
                 </div>
                 <div class="col-2">
-                    <select name="trangthaihopdong" class="form-control" style="height: 50px;">
-                        <option value="">Chọn tình trạng hợp đồng</option>
-                        <option value="1" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '1') ? 'selected' : ''; ?>>Chưa thanh lý</option>
-                        <option value="0" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '0') ? 'selected' : ''; ?>>Đã thanh lý</option>
-                    </select>
-
+                    <div class="dropdown">
+                        <select name="trangthaihopdong" class="form-control" style="height: 50px; padding-right: 30px;">
+                            <option value="">Chọn tình trạng thanh lý</option>
+                            <option value="1" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '1') ? 'selected' : ''; ?>>Chưa thanh lý</option>
+                            <option value="0" <?php echo (isset($_POST['trangthaihopdong']) && $_POST['trangthaihopdong'] == '0') ? 'selected' : ''; ?>>Đã thanh lý</option>
+                        </select>
+                        <span class="fa fa-chevron-down" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></span>
+                    </div>
                 </div>
+
                 <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo tình trạng cọc -->
-                    <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
-                        <option value="">Chọn trình trạng cọc</option>
-                        <option value="2" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '2') ? 'selected' : ''; ?>>Chưa thu</option>
-                        <option value="1" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '1') ? 'selected' : ''; ?>>Đã thu</option>
-                    </select>
+                    <div class="dropdown">
+                        <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
+                            <option value="">Chọn trạng thái cọc</option>
+                            <option value="2" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '2') ? 'selected' : ''; ?>>Chưa thu</option>
+                            <option value="1" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '1') ? 'selected' : ''; ?>>Đã thu</option>
+                        </select>
+                        <span class="fa fa-chevron-down" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></span>
+                    </div>
                 </div>
                 <div class="col-4"> <!-- Cột chứa ô tìm kiếm tên phòng, tên khách hoặc cmnd -->
                     <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
