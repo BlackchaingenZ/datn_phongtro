@@ -143,7 +143,23 @@ if ($userDetail['group_id'] == 7) {
 
                         // Tạo danh sách chi tiết từng loại thiết bị
                         $details = [];
+                        foreach ($equipmentTypes as $equipment) {
+                            $details[] = $equipment['tenthietbi'] . ' (' . $equipment['total'] . ')';
+                        }
+
+                        // Truy vấn số lượng tồn kho từng loại thiết bị
+                        $equipmentTypes1 = getRaw("SELECT tenthietbi, SUM(soluongtonkho) as total1 FROM equipment GROUP BY tenthietbi ORDER BY tenthietbi ASC");
+
+                        // Đếm tổng số loại thiết bị tồn kho
+                        $totalTypes1 = count($equipmentTypes1);
+
+                        // Tạo danh sách chi tiết từng loại thiết bị tồn kho
+                        $details1 = [];
+                        foreach ($equipmentTypes1 as $equipment) {
+                            $details1[] = $equipment['tenthietbi'] . ' (' . $equipment['total1'] . ')';
+                        }
                         ?>
+
                         <!-- Button to trigger the popup -->
                         <button id="showEquipmentPopupBtn">Xem chi tiết</button>
                     </div>
@@ -153,14 +169,18 @@ if ($userDetail['group_id'] == 7) {
                         <div class="popup-content">
                             <span class="close-btn" id="closeEquipmentPopupBtn">&times;</span>
                             <div class="equipment-details">
-                                <p class="details" style="text-align:center">
-                                    <?php echo implode(', ', $details); ?>
-                                </p>
-                                <!-- <h2>Chi tiết các loại thiết bị</h2> -->
-                                <p class="total-count"><?php echo $totalTypes; ?> loại</p>
+
+                                <p class="total-count">Tổng <?php echo $totalTypes; ?> loại + Số lượng nhập </p>
                                 <ul>
                                     <?php foreach ($equipmentTypes as $equipment): ?>
                                         <li><b><?php echo $equipment['tenthietbi']; ?></b>: <?php echo $equipment['total']; ?> cái</li>
+                                    <?php endforeach; ?>
+                                </ul>
+
+                                <p class="total-count">Tổng <?php echo $totalTypes1; ?> loại +  số lượng tồn</p>
+                                <ul>
+                                    <?php foreach ($equipmentTypes1 as $equipment): ?>
+                                        <li><b><?php echo $equipment['tenthietbi']; ?></b>: <?php echo $equipment['total1']; ?> cái</li>
                                     <?php endforeach; ?>
                                 </ul>
                             </div>
@@ -231,6 +251,7 @@ if ($userDetail['group_id'] == 7) {
                             <div class="popup-content">
                                 <span class="close-btn" id="closePopupBtn">&times;</span>
                                 <div class="room-details">
+                                    <h3> Danh sách phòng và thiết bị đang có</h3>
                                     <?php foreach ($roomDetails as $roomName => $equipmentList): ?>
                                         <p class="room-name"><b><?php echo $roomName; ?></b>: <?php echo implode(', ', $equipmentList); ?></p>
                                     <?php endforeach; ?>
