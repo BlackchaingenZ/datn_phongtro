@@ -48,6 +48,10 @@ if (isPost()) {
         $errors['tiencoc']['required'] = '** Bạn chưa nhập giá tiền cọc!';
     }
 
+    if (empty(trim($body['soluongtoida']))) {
+        $errors['soluongtoida']['required'] = '** Bạn chưa nhập số lượng người tối đa';
+    }
+
 
     // Kiểm tra mảng error
     if (empty($errors)) {
@@ -59,6 +63,7 @@ if (isPost()) {
             'tiencoc' => $body['tiencoc'],
             'ngaylaphd' => $body['ngaylaphd'],
             'chuky' => $body['chuky'],
+            'soluongtoida' => $body['soluongtoida'],
         ];
 
         $condition = "id=$id";
@@ -123,6 +128,18 @@ layout('navbar', 'admin', $data);
                     <label for="">Diện tích</label>
                     <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
+
+                <div class="form-group">
+                    <label for="">Số lượng người tối đa</label>
+                    <input type="text" placeholder="Số lượng người tối đa" name="soluongtoida" id="" class="form-control" value="<?php echo old('soluongtoida', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('soluongtoida', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
                     // Hàm kiểm tra chỉ cho phép nhập số

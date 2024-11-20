@@ -34,6 +34,10 @@ if (isPost()) {
         $errors['tiencoc']['required'] = '** Bạn chưa nhập giá tiền cọc!';
     }
 
+    if (empty(trim($body['soluongtoida']))) {
+        $errors['soluongtoida']['required'] = '** Bạn chưa nhập số lượng người tối đa';
+    }
+
 
     // Kiểm tra mảng error
     if (empty($errors)) {
@@ -47,6 +51,7 @@ if (isPost()) {
             'chuky' => $body['chuky'],
             'ngayvao' => $body['ngayvao'],
             'ngayra' => $body['ngayra'],
+            'soluongtoida' => $body['soluongtoida'],
         ];
 
         $insertStatus = insert('room', $dataInsert);
@@ -115,6 +120,18 @@ layout('navbar', 'admin', $data);
                         input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
                     }
                 </script>
+
+                <div class="form-group">
+                    <label for="">Số lượng người tối đa <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Số lượng tối đa" name="soluongtoida" id="" class="form-control" value="<?php echo old('soluongtoida', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('soluongtoida', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
             </div>
 
             <div class="col-5">
@@ -134,7 +151,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Ngày lập hóa đơn</label>
                     <select name="ngaylaphd" id="" class="form-select">
-                        <!-- <option value="">Chọn ngày</option> -->
+                        <option value="" disabled selected>Chọn ngày</option>
                         <?php
                         for ($i = 1; $i <= 31; $i++) { ?>
                             <option value="<?php echo $i; ?>">Ngày <?php echo $i; ?></option>
@@ -146,7 +163,7 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Chu kỳ thu tiền</label>
                     <select name="chuky" id="" class="form-select">
-                        <!-- <option value="">Chọn chu kỳ</option> -->
+                        <option value="" disabled selected>Chọn chu kỳ</option>
                         <?php
                         for ($i = 1; $i < 7; $i += 2) { ?>
                             <option value="<?php echo $i; ?>"> <?php echo $i; ?> tháng</option>

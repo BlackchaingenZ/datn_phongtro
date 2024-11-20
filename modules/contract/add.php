@@ -83,15 +83,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Giải mã danh sách khách thuê tạm từ JSON
     $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
     $tempCustomers = json_decode($tempCustomersData, true);
+
     // Kiểm tra nếu chưa nhận được khách thuê tạm thời
     if (empty($tempCustomers)) {
-        setFlashData('msg', 'Thiếu thông tin cần thiết để thêm hợp đồng.');
+        setFlashData('msg', 'Bạn chưa nhập thông tin khách thuê!.');
         setFlashData('msg_type', 'err');
         redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
         exit; // Ngừng xử lý
     }
 
     if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
+        // Lấy số lượng hiện tại và số lượng tối đa của phòng
+        $roomCapacity = checkSoluongtoida($room_id); // Hàm trả về ['soluong' => ..., 'soluongtoida' => ...]
+        $currentCapacity = $roomCapacity['soluong'];
+        $maxCapacity = $roomCapacity['soluongtoida'];
+
+        // Kiểm tra nếu tổng số khách sau khi thêm vượt quá sức chứa tối đa
+        if ($currentCapacity + count($tempCustomers) > $maxCapacity) {
+            setFlashData('msg', 'Phòng không đủ chỗ trống!');
+            setFlashData('msg_type', 'err');
+            redirect('?module=contract'); // Chuyển hướng về trang hợp đồng
+        }
         // Thêm hợp đồng
         $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
 

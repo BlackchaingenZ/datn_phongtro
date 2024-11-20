@@ -644,3 +644,11 @@ function updateTenantRoom($tenant_id, $room_id) {
     $stmt = $pdo->prepare("UPDATE tenant SET room_id = :room_id WHERE id = :tenant_id");
     $stmt->execute(['room_id' => $room_id, 'tenant_id' => $tenant_id]);
 }
+
+function checkSoluongtoida($room_id) {
+    global $pdo;
+    $query = "SELECT soluong, soluongtoida FROM room WHERE id = :room_id";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute(['room_id' => $room_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}

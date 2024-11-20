@@ -74,6 +74,18 @@ if ($contract_id) {
 
         // Kiểm tra điều kiện để cập nhật hợp đồng
         if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
+            // Lấy số lượng hiện tại và số lượng tối đa của phòng
+            $roomCapacity = checkSoluongtoida($room_id); // Hàm trả về ['soluong' => ..., 'soluongtoida' => ...]
+            $currentCapacity = $roomCapacity['soluong'];
+            $maxCapacity = $roomCapacity['soluongtoida'];
+
+            // Kiểm tra nếu tổng số khách sau khi thêm vượt quá sức chứa tối đa
+            if ($currentCapacity + count($tempCustomers) > $maxCapacity) {
+                setFlashData('msg', 'Phòng không đủ chỗ trống!');
+                setFlashData('msg_type', 'err');
+                redirect('?module=contract'); // Chuyển hướng về trang hợp đồng
+            }
+
             // Nếu hợp đồng đã có, thực hiện cập nhật
             if (isset($contract_id)) {
                 // Lấy danh sách khách thuê của hợp đồng
