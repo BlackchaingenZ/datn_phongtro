@@ -294,7 +294,7 @@ layout('navbar', 'admin', $data);
                             <input type="text" class="form-control" id="nocu" name="nocu">
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" hidden>
                         <label for="">Tình trạng thu tiền<span style="color: red">*</label>
                         <select name="trangthaihoadon" class="form-select">
                             <option value="" disabled selected>Chọn trạng thái</option>

@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? null;
     $create_at = date("Y-m-d H:i:s") ?? null;
     $ghichu = $_POST['ghichu'] ?? Null;
-    $trangthaihopdong = $_POST['trangthaihopdong'] ?? 1; // chưa thanh lý
+    $trangthaihopdong = $_POST['trangthaihopdong'] ?? null; // chưa thanh lý
     if (empty(trim($ghichu))) {
         $ghichu = 'Bỏ trống';
     }
@@ -293,6 +293,12 @@ layout('navbar', 'admin', $data);
                             <option value="" disabled selected>Chọn trạng thái</option>
                             <option value="2">Chưa thu</option>
                             <option value="1">Đã thu</option>
+                        </select>
+                    </div>
+                    <div class="form-group" hidden>
+                        <label for="">Trạng thái hợp đồng<span style="color: red">*</label>
+                        <select name="trangthaihopdong" class="form-select">
+                            <option value="1" selected>Chưa thanh lý</option>
                         </select>
                     </div>
                     <div class="form-group">
