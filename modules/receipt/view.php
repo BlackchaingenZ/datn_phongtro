@@ -69,22 +69,22 @@ $receiptDetail = firstRaw("
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>1</b></td>
-                <td>Số tiền thu</td>
+                <td><b>Số tiền thu</b></td>
                 <td style="font-size: 16px;"><b><?php echo number_format($receiptDetail['sotien'], 0, ',', '.') ?> đ</b></td>
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>2</b></td>
-                <td>Ghi chú</td>
+                <td><b>Ghi chú</b></td>
                 <td style="font-size: 16px;"><b><?php echo htmlspecialchars($receiptDetail['ghichu'], ENT_QUOTES, 'UTF-8'); ?></b></td>
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>3</b></td>
-                <td>Ngày thu</td>
+                <td><b>Ngày thu</b></td>
                 <td style="font-size: 16px;"><b><?php echo htmlspecialchars(getDateFormat($receiptDetail['ngaythu'], 'd-m-Y'), ENT_QUOTES, 'UTF-8'); ?></b></td>
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>4</b></td>
-                <td>Phương thức thanh toán</td>
+                <td><b>Phương thức thanh toán</b></td>
                 <td style="font-size: 16px;">
                     <b>
                         <?php
