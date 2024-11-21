@@ -65,7 +65,7 @@ if ($filterType && $dateInput) {
 
         $loinhuan = $tongthu - $tongchi - $tiencoc;
 
-        $labels = ["$year-$month"];
+        $labels[] = "$month-$year";
         $profits = [$loinhuan];
     } elseif ($filterType == 'year') {
         $year = date('Y', strtotime($dateInput));
@@ -83,7 +83,7 @@ if ($filterType && $dateInput) {
 
             $monthly_profit = $monthly_thu - $monthly_chi - $monthly_datcoc;
 
-            $labels[] = "$year-$month";
+            $labels[] = "$month-$year";
             $profits[] = $monthly_profit;
         }
 
