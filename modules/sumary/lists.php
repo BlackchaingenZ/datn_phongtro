@@ -209,7 +209,9 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </div>
-            <p></p>
+            <br>
+
+
             <div class="report-area-revenue">
                 <h3 class="sumary-title">Doanh thu theo từng khu vực</h3>
                 <p></p>
@@ -236,6 +238,8 @@ layout('navbar', 'admin', $data);
                     </tbody>
                 </table>
             </div>
+            <br>
+
 
             <div class="report-area-revenue">
                 <h3 class="sumary-title">Doanh thu theo từng phòng</h3>
