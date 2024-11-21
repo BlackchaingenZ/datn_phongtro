@@ -317,7 +317,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <!-- Thông tin -->
                                     <span class="tooltip-icon">
-                                        <i class="fa-solid fa-eye"></i>
+                                        <i class="nav-icon fas fa-solid fa-eye"></i>
                                         <span class="tooltiptext">
                                             <?php
                                             // Kiểm tra nếu 'tenthietbi' trống hoặc NULL thì hiển thị 'Trống'

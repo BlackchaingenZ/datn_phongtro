@@ -398,7 +398,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <!-- Thông tin -->
                                     <span class="tooltip-icon">
-                                        <i class="fa-solid fa-eye"></i>
+                                        <i class="nav-icon fas fa-solid fa-eye"></i>
                                         <span class="tooltiptext"><?php echo $item['ghichu']; ?></span>
                                     </span>
                                 </td>

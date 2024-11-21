@@ -167,7 +167,8 @@ if ($userDetail['group_id'] == 7) {
         </div>
 <?php
     } else {
-        echo '<img style="width: 4%" src="https://i.pinimg.com/564x/7d/dc/51/7ddc51549b1d53cb4ffe482f872e4c11.jpg" />';
+        echo '<h3 style="padding: 20px 0 20px 20px">Bạn chưa có hóa đơn nào!</h3>';
+       
     }
 }
 

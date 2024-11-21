@@ -20,11 +20,6 @@ $roomtDetail = firstRaw("
       AND contract.trangthaihopdong = 1
     GROUP BY room.id
 ");
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +33,7 @@ $roomtDetail = firstRaw("
 
 <body style="display: flex; justify-content: center; margin-top: 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7fafc;">
     <div class="bill-content" style="width: 60%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
-        <img style="width: 150px; " src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logo-final.png" alt="">
+    <img style="width: 150px;" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logomain.png" alt="Logo">
         <h2 style="font-size: 28px; margin: 10px 0;">Hóa đơn tiền thuê phòng trọ Thảo Nguyên</h2>
         <h3 style="margin-top: 10px;">Tháng <?php echo $date['month'] ?>/<?php echo $date['year'] ?></h3>
         <p style="font-size: 14px;">Địa chỉ: 56 - Nam Pháp, Ngô Quyền, Hải Phòng</p>

@@ -147,7 +147,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center"><?php echo getDateFormat($item['ngaychi'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center"><?php echo $item['phuongthuc'] == 0 ? '<span class="btn-kyhopdong-second">Tiền mặt</span>' : '<span class="btn-kyhopdong-second">Chuyển khoản</span>' ?></td>
                                 <td class="" style="text-align: center">
-                                    <!-- <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('payment', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i> </a> -->
+                                <a title="Xem phiếu chi" target="_blank" href="<?php echo getLinkAdmin('payment', 'view', ['id' => $item['id']]) ?>" class="btn btn-primary btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
                                     <a href="<?php echo getLinkAdmin('payment', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('payment', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
