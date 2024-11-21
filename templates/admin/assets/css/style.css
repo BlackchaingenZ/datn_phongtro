@@ -1290,17 +1290,15 @@ th {
 /* Căn giữa nút trong trang */
 #showPopupBtn {
     display: block; /* Đặt nút thành block để có thể căn giữa */
-    margin: 0 auto; /* Căn giữa theo chiều ngang */
+    margin: 0 auto ; /* Căn giữa theo chiều ngang */
     background-color: #4fb953; /* Màu nền của nút */
     color: white; /* Màu chữ */
     border: 2px solid #4CAF50; /* Màu khung của nút */
     padding: 10px 20px; /* Khoảng cách bên trong nút */
     font-size: 16px; /* Kích thước chữ */
     font-weight: bold; /* Đậm chữ */
-    border-radius: 5px; /* Bo tròn các góc */
+    border-radius: 10px; /* Bo tròn các góc */
     cursor: pointer; /* Hiển thị con trỏ khi di chuột */
-    transition: all 0.3s ease; /* Hiệu ứng chuyển tiếp mượt mà */
-    width: auto; /* Đặt độ rộng của nút tự động */
     text-align: center; /* Căn giữa chữ trong nút */
 }
 
@@ -1308,7 +1306,6 @@ th {
 #showPopupBtn:hover {
     background-color: #45a049; /* Màu nền thay đổi khi hover */
     border-color: #45a049; /* Màu khung thay đổi khi hover */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Thêm hiệu ứng bóng đổ */
 }
 
 /* Hiệu ứng khi nhấn vào nút */
@@ -1316,6 +1313,7 @@ th {
     background-color: #3e8e41; /* Màu nền khi nút được nhấn */
     border-color: #3e8e41; /* Màu khung khi nút được nhấn */
 }
+
 
 
 
@@ -1329,10 +1327,8 @@ th {
     padding: 10px 20px; /* Khoảng cách bên trong nút */
     font-size: 16px; /* Kích thước chữ */
     font-weight: bold; /* Đậm chữ */
-    border-radius: 5px; /* Bo tròn các góc */
+    border-radius: 10px; /* Bo tròn các góc */
     cursor: pointer; /* Hiển thị con trỏ khi di chuột */
-    transition: all 0.3s ease; /* Hiệu ứng chuyển tiếp mượt mà */
-    width: auto; /* Đặt độ rộng của nút tự động */
     text-align: center; /* Căn giữa chữ trong nút */
 }
 
@@ -1340,7 +1336,6 @@ th {
 #showEquipmentPopupBtn:hover {
     background-color: #45a049; /* Màu nền thay đổi khi hover */
     border-color: #45a049; /* Màu khung thay đổi khi hover */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Thêm hiệu ứng bóng đổ */
 }
 
 /* Hiệu ứng khi nhấn vào nút */
