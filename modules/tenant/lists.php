@@ -60,15 +60,25 @@ if (isGet()) {
     // Xử lý lọc theo từ khóa
     if (!empty($body['keyword'])) {
         $keyword = $body['keyword'];
-
-        if (!empty($filter) && strpos($filter, 'WHERE') >= 0) {
+    
+        // Kiểm tra từ khóa là số và có độ dài 9 hoặc 12 ký tự
+        if (ctype_digit($keyword) && (strlen($keyword) === 9 || strlen($keyword) === 12)) {
+            $searchField = 'cmnd'; // Tìm theo CCCD
+        } else {
+            $searchField = 'tenkhach'; // Tìm theo tên khách
+        }
+    
+        // Xác định toán tử (WHERE hoặc AND)
+        if (!empty($filter) && strpos($filter, 'WHERE') !== false) {
             $operator = 'AND';
         } else {
             $operator = 'WHERE';
         }
-
-        $filter .= " $operator tenkhach LIKE '%$keyword%'";
+    
+        // Bổ sung điều kiện tìm kiếm vào bộ lọc
+        $filter .= " $operator $searchField LIKE '%$keyword%'";
     }
+    
 
     //Xử lý lọc theo groups
     if (!empty($body['room_id'])) {
@@ -153,7 +163,7 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách cần tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
+                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách, hoặc cmnd/cccd cần tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
                 </div>
 
                 <div class="col">
