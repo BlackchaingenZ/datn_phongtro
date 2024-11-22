@@ -193,9 +193,9 @@ layout('navbar', 'admin', $data);
         <!-- Tìm kiếm , Lọc dưz liệu -->
         <form action="" method="get">
             <div class="row">
-            <div class="col-2">
+                <div class="col-2">
 
-            </div>
+                </div>
                 <div class="col-3">
                     <div class="form-group">
                         <select name="status" id="" class="form-select">
@@ -266,7 +266,9 @@ layout('navbar', 'admin', $data);
 
 
                                 <td style="text-align: center;"><?php echo $count; ?></td>
-                                <td style="text-align: center;"><img style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt=""></td>
+                                <td style="text-align: center;">
+                                    <img class="zoom-image" style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt="">
+                                </td>
                                 <td style="text-align: center;"><b><?php echo $item['tenkhuvuc']; ?></b></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
                                 <td style="text-align: center;"><?php echo $item['dientich'] ?> m2</td>

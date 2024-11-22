@@ -75,7 +75,6 @@ if (isPost()) {
         if (!empty($body['ngayvao'])) $dataUpdate['ngayvao'] = $body['ngayvao'];
         if (!empty($body['anhmattruoc'])) $dataUpdate['anhmattruoc'] = $body['anhmattruoc'];
         if (!empty($body['anhmatsau'])) $dataUpdate['anhmatsau'] = $body['anhmatsau'];
-        if (!empty($body['zalo'])) $dataUpdate['zalo'] = $body['zalo'];
         $dataUpdate['room_id'] = $room_id; // Có thể NULL nếu không chọn phòng
 
         $condition = "id=$id";
@@ -205,13 +204,7 @@ layout('navbar', 'admin', $data);
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="">Zalo</label>
-                    <input type="text" placeholder="Link zalo" name="zalo" id="" class="form-control" value="<?php echo old('zalo', $old); ?>">
-                    <?php echo form_error('zalo', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
+                
                 <div class="form-group">
                     <label for="">Phòng đang ở <span style="color: red">*</span></label>
                     <select name="room_id" id="" class="form-select">

@@ -1343,3 +1343,20 @@ th {
     background-color: #3e8e41; /* Màu nền khi nút được nhấn */
     border-color: #3e8e41; /* Màu khung khi nút được nhấn */
 }
+
+.zoom-image {
+    transition: transform 0.3s ease;
+    /* Hiệu ứng chuyển động mượt mà */
+    transition-delay: 0s;
+    /* Không có độ trễ khi trở về kích thước ban đầu */
+}
+
+.zoom-image:hover {
+    transform: scale(2.5);
+    /* Phóng to ảnh khi di chuột */
+    cursor: pointer;
+    /* Thêm con trỏ tay khi di chuột vào ảnh */
+    transition-delay: 1s;
+    /* Đợi 1 giây trước khi phóng to */
+}
+
