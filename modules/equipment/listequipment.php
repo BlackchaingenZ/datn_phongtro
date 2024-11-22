@@ -58,8 +58,8 @@ $sqlSearchRooms = "
     FROM room r
     JOIN equipment_room er ON r.id = er.room_id
     JOIN equipment e ON er.equipment_id = e.id
-    WHERE e.tenthietbi LIKE '%$searchTerm%'
-    GROUP BY e.id
+    WHERE e.tenthietbi LIKE '%$searchTerm%' OR e.mathietbi LIKE '%$searchTerm%'
+    GROUP BY e.id 
     ORDER BY e.tenthietbi ASC
 ";
 

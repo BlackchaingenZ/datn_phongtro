@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 21, 2024 lúc 07:21 PM
+-- Thời gian đã tạo: Th10 22, 2024 lúc 04:45 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -113,7 +113,6 @@ CREATE TABLE `bill` (
 INSERT INTO `bill` (`id`, `mahoadon`, `room_id`, `tenant_id`, `chuky`, `songayle`, `tienphong`, `sodiencu`, `sodienmoi`, `img_sodienmoi`, `tiendien`, `sonuoccu`, `sonuocmoi`, `img_sonuocmoi`, `tiennuoc`, `songuoi`, `tienrac`, `tienmang`, `tongtien`, `sotiendatra`, `sotienconthieu`, `nocu`, `trangthaihoadon`, `create_at`) VALUES
 (125, 'KWGUG', 103, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 1, 10000, 50000, 2084000, 2084000, 0, NULL, 1, '2024-11-19'),
 (128, '1n2ur', 104, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 2, 20000, 50000, 2094000, 2094000, 0, NULL, 1, '2024-11-19'),
-(129, 'aUsl6', 86, NULL, 1, 0, 2000000, 1, 3, '', 8000, 1, 4, '', 60000, 1, 10000, 50000, 2128000, NULL, 2128000, 0, 2, '2024-11-19'),
 (130, '54Azf', 86, NULL, 1, 0, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 1, 10000, 50000, 2084000, NULL, 2084000, 0, 2, '2024-11-19'),
 (131, 'M9xqQ', 104, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 2, '', 20000, 2, 20000, 50000, 2094000, 2094000, 0, NULL, 1, '2024-11-19');
 
@@ -492,10 +491,10 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`id`, `mathietbi`, `tenthietbi`, `giathietbi`, `ngaynhap`, `soluongnhap`, `soluongtonkho`) VALUES
-(95, '15247', 'Televison', 1000000, '2024-11-14', 50, 36),
-(96, '65478', 'Bình nóng lạnh', 1000000, '2024-11-14', 50, 38),
-(97, '78972', 'Giường', 800000, '2024-11-14', 50, 37),
-(98, '18252', 'Điều hoà', 1000000, '2024-11-14', 50, 37);
+(95, '15247', 'Televison', 1000000, '2024-11-14', 50, 38),
+(96, '65478', 'Bình nóng lạnh', 1000000, '2024-11-14', 50, 37),
+(97, '78972', 'Giường', 800000, '2024-11-14', 50, 36),
+(98, '18252', 'Điều hoà', 1000000, '2024-11-14', 50, 36);
 
 -- --------------------------------------------------------
 
@@ -561,7 +560,11 @@ INSERT INTO `equipment_room` (`id`, `room_id`, `equipment_id`, `soluongcap`, `th
 (456, 97, 96, 1, '2024-11-15'),
 (457, 97, 97, 1, '2024-11-15'),
 (458, 97, 95, 1, '2024-11-15'),
-(459, 97, 98, 1, '2024-11-15');
+(459, 97, 98, 1, '2024-11-15'),
+(460, 106, 96, 1, '2024-11-22'),
+(461, 106, 97, 1, '2024-11-22'),
+(462, 106, 95, 1, '2024-11-22'),
+(463, 106, 98, 1, '2024-11-22');
 
 -- --------------------------------------------------------
 
@@ -572,18 +575,16 @@ INSERT INTO `equipment_room` (`id`, `room_id`, `equipment_id`, `soluongcap`, `th
 CREATE TABLE `groups` (
   `id` int NOT NULL,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `permission` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  `create_at` datetime DEFAULT NULL,
-  `update_at` datetime DEFAULT NULL
+  `create_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `groups`
 --
 
-INSERT INTO `groups` (`id`, `name`, `permission`, `create_at`, `update_at`) VALUES
-(7, 'Quản lý', NULL, NULL, NULL),
-(9, 'Khách thuê', NULL, NULL, NULL);
+INSERT INTO `groups` (`id`, `name`, `create_at`) VALUES
+(7, 'Quản lý', NULL),
+(9, 'Khách thuê', NULL);
 
 -- --------------------------------------------------------
 
@@ -674,7 +675,8 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (468, 30, '3b453dc273f05f628cad3dbc215ffda92dcbf32d', '2024-11-20 09:17:30'),
 (469, 30, 'f32cc1d2f21aa316b6b2b8aba8dd144610d8f402', '2024-11-20 12:51:56'),
 (470, 30, '6c414afacc8fe3e7e2e0b02c6aa959889d934c7e', '2024-11-20 23:19:48'),
-(476, 30, '7ae402edb70db74626198a6ef46bd5a72c8efe0b', '2024-11-21 23:20:09');
+(476, 30, '7ae402edb70db74626198a6ef46bd5a72c8efe0b', '2024-11-21 23:20:09'),
+(480, 30, 'a0e2c68441a534c865920b64781085e05a01decc', '2024-11-22 22:30:36');
 
 -- --------------------------------------------------------
 
@@ -905,7 +907,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `group_id`, `status`, `last_activity`, `forget_token`, `room_id`, `create_at`) VALUES
-(30, 'Nguyễn Ngọc Nguyên', 'ngocnguyen2k02@gmail.com', '$2y$10$nnhAXtCgHgJSZATqG0/R4O/CLwc.lM4dPEeDURjMo2M5rb99iP9iO', 7, 1, '2024-09-03 13:01:36', '5a2505be899db4882ab8a1d2c98974ba6cbb8070', NULL, '2024-10-01'),
+(30, 'Nguyễn Ngọc Nguyên', 'ngocnguyen2k02@gmail.com', '$2y$10$uo.k.ZWqDtho4Xtgp1GWBuqbARMWjji5zr0LMaTTHAmOKc0/PybcW', 7, 1, '2024-09-03 13:01:36', NULL, NULL, '2024-10-01'),
 (32, 'Nguyễn Văn H', 'ngocnguyen2k981@gmail.com', '$2y$10$tswPy9zKC.oSCKeZinUfl./iySYFG0.4jpRooCj.rrjcA3m.ql28.', 9, 1, NULL, NULL, 104, '2024-10-30'),
 (33, 'Phạm Bảo Ngọc', 'phambaongoc123@gmail.com', '$2y$10$W9m0CZhfPepgyNRr3u6OtObUkq5KEq31boGgkRb1vY2hfw7k.a.Uq', 9, 1, NULL, NULL, 97, '2024-11-21');
 
@@ -1129,7 +1131,7 @@ ALTER TABLE `equipment`
 -- AUTO_INCREMENT cho bảng `equipment_room`
 --
 ALTER TABLE `equipment_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=460;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=464;
 
 --
 -- AUTO_INCREMENT cho bảng `groups`
@@ -1141,7 +1143,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=477;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=481;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -1177,7 +1179,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
