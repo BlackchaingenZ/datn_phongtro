@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 22, 2024 lúc 04:45 PM
+-- Thời gian đã tạo: Th10 22, 2024 lúc 07:02 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -759,19 +759,19 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `tiencoc`, `soluong`, `soluongtoida`, `ngaylaphd`, `chuky`, `ngayvao`, `ngayra`, `trangthai`) VALUES
-(86, '', 'Phòng B01', 20, 300000, 1, 2, 1, 1, '2024-11-19', '2025-01-19', 1),
-(87, '/datn/uploads/images/tro1%20(3).jpg', 'Phòng A02', 30, 1000000, 1, 3, 1, 5, '2025-01-19', '2025-01-19', 1),
-(91, '', 'Phòng A04', 40, 1000000, 0, 4, 1, 1, '2024-11-20', '2024-11-15', 0),
-(96, '', 'Phòng B05', 20, 1000000, 0, 2, 1, 1, '2024-11-08', '2024-11-08', 0),
-(97, '', 'Phòng A03', 30, 1000000, 1, 3, 1, 1, '2025-01-21', '2025-01-21', 1),
-(98, '', 'Phòng A05', 30, 1000000, 0, 3, 1, 1, '2024-11-19', '2024-12-19', 0),
-(99, '', 'Phòng B04', 20, 1000000, 1, 2, 1, 1, '2024-11-19', '2025-01-19', 1),
-(101, '', 'Phòng B06', 40, 1000000, 0, 4, 1, 1, '2024-11-18', '2025-01-18', 0),
-(102, '', 'Phòng A06', 20, 1000000, 0, 2, 1, 1, '2024-12-19', '2025-01-19', 0),
-(103, '', 'Phòng A01', 30, 1000000, 2, 3, 1, 1, '2024-11-19', '2025-01-19', 1),
-(104, '', 'Phòng B02', 30, 1000000, 2, 3, 1, 1, '2024-11-19', '2025-01-19', 1),
-(105, '', 'Phòng B03', 20, 1000000, 0, 2, 1, 1, '2024-11-13', '2024-11-06', 0),
-(106, '', 'Phòng A07', 40, 1000000, 0, 4, 1, 1, NULL, NULL, 0);
+(86, '/datn/uploads/images/anh8.jpg', 'Phòng B01', 20, 300000, 1, 2, 1, 1, '2024-11-19', '2025-01-19', 1),
+(87, '/datn/uploads/images/anh2.jpg', 'Phòng A02', 30, 1000000, 1, 3, 1, 5, '2025-01-19', '2025-01-19', 1),
+(91, '/datn/uploads/images/anh4.jpg', 'Phòng A04', 40, 1000000, 0, 4, 1, 1, '2024-11-20', '2024-11-15', 0),
+(96, '/datn/uploads/images/anh5.jpg', 'Phòng B05', 20, 1000000, 0, 2, 1, 1, '2024-11-08', '2024-11-08', 0),
+(97, '/datn/uploads/images/anh3.jpg', 'Phòng A03', 30, 1000000, 1, 3, 1, 1, '2025-01-21', '2025-01-21', 1),
+(98, '/datn/uploads/images/anh5.jpg', 'Phòng A05', 30, 1000000, 0, 3, 1, 1, '2024-11-19', '2024-12-19', 0),
+(99, '/datn/uploads/images/anh12.jpg', 'Phòng B04', 20, 1000000, 1, 2, 1, 1, '2024-11-19', '2025-01-19', 1),
+(101, '/datn/uploads/images/anh13.jpg', 'Phòng B06', 40, 1000000, 0, 4, 1, 1, '2024-11-18', '2025-01-18', 0),
+(102, '/datn/uploads/images/anh12.jpg', 'Phòng A06', 20, 1000000, 0, 2, 1, 1, '2024-12-19', '2025-01-19', 0),
+(103, '/datn/uploads/images/room1.jpg', 'Phòng A01', 30, 1000000, 2, 3, 1, 1, '2024-11-19', '2025-01-19', 1),
+(104, '/datn/uploads/images/anh10.jpg', 'Phòng B02', 30, 1000000, 2, 3, 1, 1, '2024-11-19', '2025-01-19', 1),
+(105, '/datn/uploads/images/anh9.jpg', 'Phòng B03', 20, 1000000, 0, 2, 1, 1, '2024-11-13', '2024-11-06', 0),
+(106, '/datn/uploads/images/anh6.jpg', 'Phòng A07', 40, 1000000, 0, 4, 1, 1, NULL, NULL, 0);
 
 --
 -- Bẫy `room`
@@ -837,15 +837,15 @@ CREATE TABLE `tenant` (
 --
 
 INSERT INTO `tenant` (`id`, `tenkhach`, `sdt`, `ngaysinh`, `gioitinh`, `diachi`, `nghenghiep`, `cmnd`, `ngaycap`, `anhmattruoc`, `anhmatsau`, `room_id`) VALUES
-(536, 'Nguyễn Văn C', NULL, '2024-11-07', 'Nam', 'Ngô Quyền', NULL, '048776767644', NULL, NULL, NULL, 86),
-(537, 'Nguyễn Ngọc Nguyên', NULL, '2024-11-05', 'Nữ', 'Ngô Quyền', NULL, '088777666777', NULL, NULL, NULL, 103),
-(538, 'Nguyễn Văn M', NULL, '2024-11-12', 'Nam', 'Ngô Quyền', NULL, '088787878777', NULL, NULL, NULL, 86),
-(539, 'Nguyễn Văn H', NULL, '2024-09-19', 'Nam', 'Ngô Quyền', NULL, '048776767622', NULL, NULL, NULL, 104),
-(540, 'Nguyễn Văn G', NULL, '2024-08-19', 'Nam', 'Ngô Quyền', NULL, '048776767666', NULL, NULL, NULL, 104),
-(541, 'Nguyễn Văn Linh', NULL, '2024-09-19', 'Nữ', 'Ngô Quyền', NULL, '088777666711', NULL, NULL, NULL, 99),
-(542, 'Nguyễn Văn Minh', NULL, '2024-11-02', 'Nam', 'Ngô Quyền', NULL, '456565656', NULL, NULL, NULL, 87),
-(543, 'Nguyễn Văn Linh', NULL, '2024-09-21', 'Nam', 'Ngô Quyền', NULL, '056540400', NULL, NULL, NULL, 103),
-(546, 'Phạm Bảo Ngọc', NULL, '2024-09-21', 'Nam', 'Ngô Quyền', NULL, '082676563', NULL, NULL, NULL, 97);
+(536, 'Nguyễn Văn C', NULL, '2024-11-07', 'Nam', 'Ngô Quyền', NULL, '048776767644', NULL, '/datn/uploads/images/4a8a90efac64173a4e75.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 86),
+(537, 'Nguyễn Ngọc Nguyên', NULL, '2024-11-05', 'Nữ', 'Ngô Quyền', NULL, '088777666777', NULL, '/datn/uploads/images/57a785c2b94902175b58.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 103),
+(538, 'Nguyễn Văn M', NULL, '2024-11-12', 'Nam', 'Ngô Quyền', NULL, '088787878777', NULL, '/datn/uploads/images/ee709d15a19e1ac0438f.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 86),
+(539, 'Nguyễn Văn H', NULL, '2024-09-19', 'Nam', 'Ngô Quyền', NULL, '048776767622', NULL, '/datn/uploads/images/57a785c2b94902175b58.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 104),
+(540, 'Nguyễn Văn G', NULL, '2024-08-19', 'Nam', 'Ngô Quyền', NULL, '048776767666', NULL, '/datn/uploads/images/4a1f6c7b50f0ebaeb2e1.jpg', '/datn/uploads/images/cccd-ma-vach.jpg', 104),
+(541, 'Nguyễn Văn Linh', NULL, '2024-09-19', 'Nữ', 'Ngô Quyền', NULL, '088777666711', NULL, '/datn/uploads/images/ed8d3be80763bc3de572.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 99),
+(542, 'Nguyễn Văn Minh', NULL, '2024-11-02', 'Nam', 'Ngô Quyền', NULL, '456565656', NULL, '/datn/uploads/images/57a785c2b94902175b58.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 87),
+(543, 'Nguyễn Văn Linh', '0989898776', '2024-09-21', 'Nam', 'Ngô Quyền', NULL, '056540400', NULL, '/datn/uploads/images/4a8a90efac64173a4e75.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 103),
+(546, 'Phạm Bảo Ngọc', '0987676798', '2024-09-21', 'Nam', 'Ngô Quyền', NULL, '082676563', '2021-02-23', '/datn/uploads/images/4a1f6c7b50f0ebaeb2e1.jpg', '/datn/uploads/images/1d041e2b24a09ffec6b1.jpg', 97);
 
 --
 -- Bẫy `tenant`

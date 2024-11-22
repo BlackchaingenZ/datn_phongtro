@@ -36,6 +36,7 @@ if (isPost()) {
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
 
+
     // Valide họ tên: Bắt buộc phải nhập, >=5 ký tự
     if (empty(trim($body['tenkhach']))) {
         $errors['tenkhach']['required'] = '** Bạn chưa nhập tên khách thuê!';
@@ -52,6 +53,15 @@ if (isPost()) {
             $errors['cmnd']['numeric'] = '** CMND phải là số!';
         } elseif (strlen($cmnd) != 9 && strlen($cmnd) != 12) {
             $errors['cmnd']['length'] = '** CMND phải có đúng 9 hoặc 12 chữ số!';
+        }
+    }
+    // Valide SĐT: Chỉ gồm số, phải có đúng 10 chữ số (không bắt buộc nhập)
+    if (!empty(trim($body['sdt']))) {
+        $sdt = trim($body['sdt']);
+        if (!is_numeric($sdt)) {
+            $errors['sdt']['numeric'] = '** Số điện thoại phải là số!';
+        } elseif (strlen($sdt) != 10) {
+            $errors['sdt']['length'] = '** Số điện thoại phải có 10 chữ số!';
         }
     }
     // Kiểm tra mảng error
@@ -204,7 +214,7 @@ layout('navbar', 'admin', $data);
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="">Phòng đang ở <span style="color: red">*</span></label>
                     <select name="room_id" id="" class="form-select">
