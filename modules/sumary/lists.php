@@ -181,7 +181,7 @@ layout('navbar', 'admin', $data);
                     <p>Tổng khoản thu </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
-                        <p><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
+                        <p style="color: blue"><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
 
@@ -196,7 +196,7 @@ layout('navbar', 'admin', $data);
                 <div class="report-spend">
                     <p>Tổng tiền cọc (đã thu)</p>
                     <div class="report-ts">
-                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: #ed6004"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
