@@ -177,7 +177,7 @@ if ($userDetail['group_id'] == 7) {
                                     <?php endforeach; ?>
                                 </ul>
 
-                                <p class="total-count">Tổng <?php echo $totalTypes1; ?> loại +  số lượng tồn</p>
+                                <p class="total-count">Tổng <?php echo $totalTypes1; ?> loại + số lượng tồn</p>
                                 <ul>
                                     <?php foreach ($equipmentTypes1 as $equipment): ?>
                                         <li><b><?php echo $equipment['tenthietbi']; ?></b>: <?php echo $equipment['total1']; ?> cái</li>

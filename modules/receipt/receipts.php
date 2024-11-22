@@ -137,7 +137,7 @@ layout('navbar', 'admin', $data);
                         <th>Ghi chú</th>
                         <th>Ngày phát sinh</th>
                         <th>Phương thức thanh toán</th>
-                        <th>Thao tác</th>
+                        <th style="width: 4%; text-align:center;">Thao tác</th>
                     </tr>
                 </thead>
                 <tbody id="contractData">
@@ -157,10 +157,15 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center"><?php echo $item['ghichu'] ?></td>
                                 <td style="text-align: center"><?php echo getDateFormat($item['ngaythu'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center"><?php echo $item['phuongthuc'] == 0 ? '<span class="btn-kyhopdong-second">Tiền mặt</span>' : '<span class="btn-kyhopdong-second">Chuyển khoản</span>' ?></td>
-                                <td class="" style="text-align: center">
-                                    <a title="Xem phiếu thu" target="_blank" href="<?php echo getLinkAdmin('receipt', 'view', ['id' => $item['id']]) ?>" class="btn btn-primary btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
-                                    <a href="<?php echo getLinkAdmin('receipt', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
-                                    <a href="<?php echo getLinkAdmin('receipt', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                                <td class="" style="text-align: center;">
+                                    <div class="action">
+                                        <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
+                                        <div class="box-action">
+                                            <a title="Xem phiếu thu" target="_blank" href="<?php echo getLinkAdmin('receipt', 'view', ['id' => $item['id']]) ?>" class="btn btn-primary btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
+                                            <a title="In phiếu thu" target="_blank" href="<?php echo getLinkAdmin('receipt', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i></a>
+                                            <a href="<?php echo getLinkAdmin('receipt', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
+                                            <a href="<?php echo getLinkAdmin('receipt', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                                        </div>
                                 </td>
 
                             <?php endforeach;
@@ -217,6 +222,52 @@ layout('footer', 'admin');
 ?>
 
 <script>
+    function toggle(__this) {
+        let isChecked = __this.checked;
+        let checkbox = document.querySelectorAll('input[name="records[]"]');
+        for (let index = 0; index < checkbox.length; index++) {
+            checkbox[index].checked = isChecked
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select all action buttons
+        const actionButtons = document.querySelectorAll('.action');
+
+        actionButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                // Prevent event bubbling
+                event.stopPropagation();
+
+                // Toggle the active class
+                button.classList.toggle('active');
+
+                // Hide all other .box-action elements
+                actionButtons.forEach(btn => {
+                    if (btn !== button) {
+                        btn.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Hide .box-action when clicking outside
+        document.addEventListener('click', function(event) {
+            actionButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+        });
+
+        // Prevent .box-action click from closing itself
+        const boxActions = document.querySelectorAll('.box-action');
+        boxActions.forEach(box => {
+            box.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+        });
+    });
+
     function toggle(__this) {
         let isChecked = __this.checked;
         let checkbox = document.querySelectorAll('input[name="records[]"]');

@@ -3,7 +3,7 @@
 $body = getBody();
 $id = $_GET['id'];
 
-// Lấy chi tiết phiếu thu từ bảng receipt
+// Lấy chi tiết phiếu chi từ bảng receipt
 $paymentDetail = firstRaw("
     SELECT 
         payment.id, 
@@ -32,10 +32,6 @@ $paymentDetail = firstRaw("
     WHERE 
         payment.id = $id
 ");
-
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -58,13 +54,13 @@ $paymentDetail = firstRaw("
 
         <table border="1" cellspacing="0" width="100%" cellpadding="10" style="text-align: start; margin-top: 20px;">
             <tr>
-                <td><b>STT</b></td>
-                <td><b>Thông tin</b></td>
-                <td><b>Chi tiết</b></td>
+                <th style="width: 50px;">STT</th>
+                <th style="width: 150px;">Thông tin</th>
+                <th style="width: auto;">Chi tiết</th>
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>1</b></td>
-                <td>Số tiền thu</td>
+                <td>Số tiền chi</td>
                 <td style="font-size: 16px;"><b><?php echo number_format($paymentDetail['sotien'], 0, ',', '.') ?> đ</b></td>
             </tr>
             <tr>
@@ -74,7 +70,7 @@ $paymentDetail = firstRaw("
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>3</b></td>
-                <td>Ngày thu</td>
+                <td>Ngày chi</td>
                 <td style="font-size: 16px;"><b><?php echo htmlspecialchars(getDateFormat($paymentDetail['ngaychi'], 'd-m-Y'), ENT_QUOTES, 'UTF-8'); ?></b></td>
             </tr>
             <tr>
@@ -93,6 +89,19 @@ $paymentDetail = firstRaw("
                 </td>
             </tr>
         </table>
+        <div style="font-size: 12pt; margin: 40px 0">
+            <p style="text-align: right;"><i>........, Ngày...... Tháng...... năm 20.........</i></p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                <!-- BÊN xác nhận -->
+                <div>
+                    <strong>Xác nhận </strong><br>
+                    <i>Ký và ghi rõ họ tên</i>
+                    <div style="padding: 10px; height: 150px; overflow: hidden;">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

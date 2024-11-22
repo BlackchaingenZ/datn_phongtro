@@ -53,7 +53,6 @@ $receiptDetail = firstRaw("
     <div class="receipt-content" style="width: 60%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
         <img style="width: 150px;" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logomain.png" alt="Logo">
         <h2 style="font-size: 28px; margin: 10px 0;">Phiếu Thu Phòng Trọ Thảo Nguyên</h2>
-        <h3 style="margin-top: 10px;">Ngày <?php echo date('d/m/Y'); ?></h3>
         <p style="font-size: 14px;">Địa chỉ: 56 - Nam Pháp, Ngô Quyền, Hải Phòng</p>
         <p>Loại phiếu: <b style="color: red; font-size: 18px;"><?php echo htmlspecialchars($receiptDetail['tendanhmuc'], ENT_QUOTES, 'UTF-8'); ?></b></p>
         <div class="rowTwo" style="display: flex; justify-content: space-around; margin-top: 10px;">
@@ -63,9 +62,9 @@ $receiptDetail = firstRaw("
 
         <table border="1" cellspacing="0" width="100%" cellpadding="10" style="text-align: start; margin-top: 20px;">
             <tr>
-                <td><b>STT</b></td>
-                <td><b>Thông tin</b></td>
-                <td><b>Chi tiết</b></td>
+                <th style="width: 50px;">STT</th>
+                <th style="width: 150px;">Thông tin</th>
+                <th style="width: auto;">Chi tiết</th>
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>1</b></td>
@@ -98,7 +97,19 @@ $receiptDetail = firstRaw("
                 </td>
             </tr>
         </table>
-    </div>
+        <div style="font-size: 12pt; margin: 40px 0">
+            <p style="text-align: right;"><i>........, Ngày...... Tháng...... năm 20.........</i></p>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                <!-- BÊN xác nhận -->
+                <div>
+                    <strong>Xác nhận </strong><br>
+                    <i>Ký và ghi rõ họ tên</i>
+                    <div style="padding: 10px; height: 150px; overflow: hidden;">
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
 </body>
 
 </html>
