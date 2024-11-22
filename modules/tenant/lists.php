@@ -119,6 +119,21 @@ if (!empty(getBody()['page'])) {
 $offset = ($page - 1) * $perPage;
 $listAllTenant = getRaw("SELECT *, tenant.id, tenphong  FROM tenant LEFT JOIN room ON tenant.room_id = room.id  $filter ORDER BY tenant.id DESC LIMIT $offset, $perPage");
 
+$allRoomId = getRaw("SELECT room_id FROM contract");
+$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
+// Phân loại phòng theo khu vực
+$roomsByArea = [];
+foreach ($allRoom as $room) {
+
+    $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
+    foreach ($areaIds as $area) {
+        // Thêm thông tin số người vào mỗi phòng theo khu vực
+        $roomsByArea[$area['area_id']][] = [
+            'id' => $room['id'],
+            'tenphong' => $room['tenphong'],
+        ];
+    }
+}
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;
 if (!empty($_SERVER['QUERY_STRING'])) {
@@ -152,23 +167,29 @@ layout('navbar', 'admin', $data);
                 <div class="col-2">
 
                 </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <select name="room_id" id="" class="form-select">
-                            <option value="">Chọn phòng</option>
-                            <?php
-
-                            if (!empty($allRoom)) {
-                                foreach ($allRoom as $item) {
-                            ?>
-                                    <option value="<?php echo $item['id'] ?>" <?php echo (!empty($roomId) && $roomId == $item['id']) ? 'selected' : false; ?>><?php echo $item['tenphong'] ?></option>
-
-                            <?php
-                                }
+                <div class="col-2">
+                    <select name="area_id" id="area-select" class="form-select">
+                        <option value="" disabled selected>Chọn khu vực</option>
+                        <?php
+                        if (!empty($allArea)) {
+                            foreach ($allArea as $item) {
+                        ?>
+                                <option value="<?php echo $item['id'] ?>"
+                                    <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>>
+                                    <?php echo $item['tenkhuvuc'] ?></option>
+                        <?php
                             }
-                            ?>
-                        </select>
-                    </div>
+                        }
+                        ?>
+                    </select>
+                    <?php echo form_error('area_id', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <div class="col-2">
+                    <select name="room_id" id="room-select" class="form-select">
+                        <option value="" disabled selected>Chọn phòng</option>
+                        <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
+                    </select>
+                    <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="col-4">
                     <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách, số điện thoại hoặc cmnd/cccd để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
@@ -366,4 +387,24 @@ layout('footer', 'admin');
             checkbox[index].checked = isChecked
         }
     }
+</script>
+<script>
+    const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
+    const areaSelect = document.getElementById('area-select');
+    const roomSelect = document.getElementById('room-select');
+
+    areaSelect.addEventListener('change', function() {
+        const areaId = this.value;
+        roomSelect.innerHTML = '<option value=""disabled selected>Chọn phòng</option>'; // Reset danh sách phòng
+
+        if (areaId && roomsByArea[areaId]) {
+            roomsByArea[areaId].forEach(room => {
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent =
+                    `${room.tenphong}`; // Hiển thị tên phòng 
+                roomSelect.appendChild(option);
+            });
+        }
+    });
 </script>
