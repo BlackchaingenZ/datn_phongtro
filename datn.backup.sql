@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 23, 2024 lúc 06:16 PM
+-- Thời gian đã tạo: Th10 23, 2024 lúc 06:22 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -669,8 +669,7 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (476, 30, '7ae402edb70db74626198a6ef46bd5a72c8efe0b', '2024-11-21 23:20:09'),
 (480, 30, 'a0e2c68441a534c865920b64781085e05a01decc', '2024-11-22 22:30:36'),
 (487, 30, '571762db39d42b1cdf1c2a807c89440e2bb5a60e', '2024-11-23 09:42:39'),
-(488, 30, '146a2a9f05f8169a39d4ca29d1cf7e0c3c1468e1', '2024-11-23 12:51:23'),
-(497, 30, 'd8afcc588ca0c51552c77063f72cfdff4b9e6849', '2024-11-23 23:06:51');
+(488, 30, '146a2a9f05f8169a39d4ca29d1cf7e0c3c1468e1', '2024-11-23 12:51:23');
 
 -- --------------------------------------------------------
 
@@ -889,8 +888,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `group_id`, `status`, `last_activity`, `forget_token`, `room_id`, `create_at`) VALUES
 (30, 'Nguyễn Ngọc Nguyên', 'ngocnguyen2k02@gmail.com', '$2y$10$uo.k.ZWqDtho4Xtgp1GWBuqbARMWjji5zr0LMaTTHAmOKc0/PybcW', 7, 1, '2024-09-03 13:01:36', NULL, NULL, '2024-10-01'),
-(32, 'Nguyễn Văn H', 'ngocnguyen2k981@gmail.com', '$2y$10$tswPy9zKC.oSCKeZinUfl./iySYFG0.4jpRooCj.rrjcA3m.ql28.', 9, 1, NULL, NULL, 104, '2024-10-30'),
-(33, 'Phạm Bảo Ngọc', 'phambaongoc123@gmail.com', '$2y$10$W9m0CZhfPepgyNRr3u6OtObUkq5KEq31boGgkRb1vY2hfw7k.a.Uq', 9, 1, NULL, NULL, 97, '2024-11-21');
+(32, 'Trần Thị B', 'tranthib@gmail.com', '$2y$10$tswPy9zKC.oSCKeZinUfl./iySYFG0.4jpRooCj.rrjcA3m.ql28.', 9, 1, NULL, NULL, 87, '2024-10-30'),
+(33, 'Nguyễn Văn A', 'nguyenvana@gmail.com', '$2y$10$W9m0CZhfPepgyNRr3u6OtObUkq5KEq31boGgkRb1vY2hfw7k.a.Uq', 9, 1, NULL, NULL, 103, '2024-11-21');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -1124,7 +1123,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=498;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=502;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
