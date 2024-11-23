@@ -188,7 +188,7 @@ layout('navbar', 'admin', $data);
                         <th>
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
                         </th>
-                        <th></th>
+                        <th>STT</th>
                         <th>Tên khách hàng</th>
                         <th>Email</th>
                         <th>Nhóm</th>
@@ -208,15 +208,11 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td>
+                                <td style="text-align: center;">
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
 
-                                <td>
-                                    <div class="tenant_avt">
-                                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/users.svg" class="image__room-img" alt="">
-                                    </div>
-                                </td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td><b><?php echo $item['fullname']; ?></b></td>
                                 <td><?php echo $item['email'] ?> </td>
                                 <td style="text-align: center"><span class="btn-kyhopdong-war"><?php echo ($item['name']) ?></span></td>

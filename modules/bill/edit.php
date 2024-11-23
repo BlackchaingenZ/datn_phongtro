@@ -88,7 +88,7 @@ if (isPost()) {
         $id = (int)$_GET['id'];  // Đảm bảo id là số nguyên
         $condition = "id=$id";
         $updateStatus = update('bill', $dataUpdate, $condition);
-        
+
         if ($updateStatus) {
             setFlashData('msg', 'Cập nhật thông tin hóa đơn thành công');
             setFlashData('msg_type', 'suc');
@@ -291,7 +291,6 @@ layout('navbar', 'admin', $data);
     </div>
 </div>
 
-
 <?php
 layout('footer', 'admin');
 ?>
@@ -308,7 +307,6 @@ layout('footer', 'admin');
             calculateTienMang();
             calculateTotal();
             updateTienPhong();
-            firstMonth();
             updateSoluong();
         }
 
@@ -319,33 +317,13 @@ layout('footer', 'admin');
             const sothang = parseFloat(document.getElementById('chuky').value) || 0;
             const songayle = parseFloat(document.getElementById('songayle').value) || 0;
 
-            // Tính toán tiền phòng
-            var formattedThang = giaPhong * sothang;
-            var formattedSongayle = (giaPhong / 30) * songayle;
-            var tienphong = formattedThang + formattedSongayle;
-
+            // Tính toán tiền phòng và làm tròn
+            const formattedThang = giaPhong * sothang;
+            const formattedSongayle = (giaPhong / 30) * songayle;
+            const tienphong = Math.round(formattedThang + formattedSongayle);
             // Định dạng số tiền với dấu phân cách hàng nghìn
             document.getElementById('tienphong').value = numberWithCommas(tienphong);
             calculateTotal();
-        }
-        // Nếu là tháng đầu tiên vào ở thì thông báo 
-        function firstMonth() {
-            const roomSelect = document.getElementById('room_id');
-            const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-
-            const ngayVaoPhong = selectedOption.getAttribute('data-ngayvao'); // Lấy ngày vào của phòng được chọn
-            const currentMonthYear = getCurrentMonthYear(); // Lấy tháng và năm hiện tại
-
-            // Trích xuất tháng và năm từ ngày vào của phòng
-            const [namPhong, thangPhong] = ngayVaoPhong.split('-');
-
-            // Trích xuất tháng và năm từ thời gian hiện tại
-            const [namHienTai, thangHienTai] = currentMonthYear.split('-');
-
-            // Kiểm tra xem tháng và năm của ngày vào có trùng khớp với tháng và năm hiện tại không
-            if (namPhong === namHienTai && thangPhong === thangHienTai) {
-                alert('Đây là tháng đầu tiên vào ở của phòng này, tính tiền phòng theo số ngày lẻ nha - ngày vào là: ' + reverseDateFormat(ngayVaoPhong))
-            }
         }
 
         // Hàm địng dạng thành YYYY-mm-dd
@@ -381,7 +359,7 @@ layout('footer', 'admin');
         function calculateTienNuoc() {
             const sonuoccu = parseFloat(document.getElementById('sonuoccu').value) || 0;
             const sonuocmoi = parseFloat(document.getElementById('sonuocmoi').value) || 0;
-            const tiennuoc = (sonuocmoi - sonuoccu) * dongiaNuoc;
+            const tiennuoc = Math.round((sonuocmoi - sonuoccu) * dongiaNuoc);
             document.getElementById('tiennuoc').value = numberWithCommas(tiennuoc);
             calculateTotal();
         }
@@ -389,7 +367,7 @@ layout('footer', 'admin');
         function calculateTienDien() {
             const sodiencu = parseFloat(document.getElementById('sodiencu').value) || 0;
             const sodienmoi = parseFloat(document.getElementById('sodienmoi').value) || 0;
-            const tiendien = (sodienmoi - sodiencu) * dongiaDien;
+            const tiendien = Math.round((sodienmoi - sodiencu) * dongiaDien);
             document.getElementById('tiendien').value = numberWithCommas(tiendien);
             calculateTotal();
         }
@@ -397,17 +375,14 @@ layout('footer', 'admin');
         function calculateTienRac() {
             const chuky = parseFloat(document.getElementById('chuky').value) || 1; // Chu kỳ mặc định là 1 tháng nếu không có giá trị
             const soluongNguoi = parseFloat(document.getElementById('soluongNguoi').value) || 1;
-            const tienrac = soluongNguoi * dongiaRac * chuky;
+            const tienrac = Math.round(soluongNguoi * dongiaRac * chuky);
             document.getElementById('tienrac').value = numberWithCommas(tienrac);
             calculateTotal();
         }
 
         function calculateTienMang() {
-            const chuky = parseFloat(document.getElementById('chuky').value) || null; // Chu kỳ mặc định là 1 tháng nếu không có giá trị
-            const songayle = parseFloat(document.getElementById('songayle').value) || 0;
-            const tienmangThang = chuky * dongiaWifi;
-            const tienmangNgayle = (dongiaWifi / 30) * songayle;
-            let tienmang = Math.ceil(tienmangThang + tienmangNgayle);
+            const chuky = parseFloat(document.getElementById('chuky').value) || 1;
+            const tienmang = Math.round(chuky * dongiaWifi);
             document.getElementById('tienmang').value = numberWithCommas(tienmang);
             calculateTotal();
         }
@@ -420,7 +395,7 @@ layout('footer', 'admin');
             const tienmang = parseFloat(document.getElementById('tienmang').value.replace(/,/g, '').replace(' đ', '')) || 0;
             const nocu = parseFloat(document.getElementById('nocu').value.replace(/,/g, '').replace(' đ', '')) || 0;
 
-            const tongtien = tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu;
+            const tongtien = Math.round(tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu);
             document.getElementById('tongtien').value = numberWithCommas(tongtien);
         }
 

@@ -419,8 +419,9 @@ layout('footer', 'admin');
                 return;
             }
 
-            // Tính tiền phòng (giá phòng * số tháng + giá phòng / 30 * số ngày lẻ)
-            const tienphong = (giaPhong * sothang) + ((giaPhong / 30) * songayle);
+            // Tính toán và làm tròn tiền phòng
+            const tienphong = Math.round((giaPhong * sothang) + ((giaPhong / 30) * songayle));
+
             document.getElementById('tienphong').value = numberWithCommas(tienphong);
 
             calculateTotal();
@@ -441,7 +442,7 @@ layout('footer', 'admin');
         function calculateTienNuoc() {
             const sonuoccu = parseFloat(document.getElementById('sonuoccu').value) || 0;
             const sonuocmoi = parseFloat(document.getElementById('sonuocmoi').value) || 0;
-            const tiennuoc = (sonuocmoi - sonuoccu) * dongiaNuoc;
+            const tiennuoc = Math.round((sonuocmoi - sonuoccu) * dongiaNuoc);
             document.getElementById('tiennuoc').value = numberWithCommas(tiennuoc);
             calculateTotal();
         }
@@ -449,7 +450,7 @@ layout('footer', 'admin');
         function calculateTienDien() {
             const sodiencu = parseFloat(document.getElementById('sodiencu').value) || 0;
             const sodienmoi = parseFloat(document.getElementById('sodienmoi').value) || 0;
-            const tiendien = (sodienmoi - sodiencu) * dongiaDien;
+            const tiendien = Math.round((sodienmoi - sodiencu) * dongiaDien);
             document.getElementById('tiendien').value = numberWithCommas(tiendien);
             calculateTotal();
         }
@@ -457,14 +458,14 @@ layout('footer', 'admin');
         function calculateTienRac() {
             const chuky = parseFloat(document.getElementById('chuky').value) || 1;
             const soluongNguoi = parseFloat(document.getElementById('soluongNguoi').value) || 1;
-            const tienrac = soluongNguoi * dongiaRac * chuky;
+            const tienrac = Math.round(soluongNguoi * dongiaRac * chuky);
             document.getElementById('tienrac').value = numberWithCommas(tienrac);
             calculateTotal();
         }
 
         function calculateTienMang() {
             const chuky = parseFloat(document.getElementById('chuky').value) || 1;
-            const tienmang = Math.ceil(chuky * dongiaWifi);
+            const tienmang = Math.round(chuky * dongiaWifi);
             document.getElementById('tienmang').value = numberWithCommas(tienmang);
             calculateTotal();
         }
@@ -477,7 +478,7 @@ layout('footer', 'admin');
             const tienmang = parseFloat(document.getElementById('tienmang').value.replace(/,/g, '')) || 0;
             const nocu = parseFloat(document.getElementById('nocu').value.replace(/,/g, '')) || 0;
 
-            const tongtien = tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu;
+            const tongtien = Math.round(tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu);
             document.getElementById('tongtien').value = numberWithCommas(tongtien);
         }
 
