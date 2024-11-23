@@ -431,9 +431,9 @@ layout('navbar', 'admin', $data);
                                             <!-- Add your actions here -->
                                             <a title="Xem hợp đồng" href="<?php echo getLinkAdmin('contract', 'view', ['id' => $item['id']]); ?>" class="btn btn-success btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i></a>
                                             <a title="In hợp đồng" target="_blank" href="<?php echo getLinkAdmin('contract', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i></a>
-                                            <a href="<?php echo getLinkAdmin('contract', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
-                                            <a href="<?php echo getLinkAdmin('contract', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
-                                            <a href="<?php echo getLinkAdmin('contract', 'liquidation', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-times"></i></a>
+                                            <a title="Chỉnh sửa" href="<?php echo getLinkAdmin('contract', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                            <a title="Xoá hợp đồng" href="<?php echo getLinkAdmin('contract', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
+                                            <a title="Thanh lý" href="<?php echo getLinkAdmin('contract', 'liquidation', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-times"></i></a>
                                         </div>
                                 </td>
 
