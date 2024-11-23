@@ -142,8 +142,8 @@ if (isset($_POST['search'])) {
                                 <td><?php echo number_format($item['giathue'], 0, ',', '.'); ?> VND</td>
                                 <td><?php echo getDateFormat($item['ngaybatdau'], 'd-m-Y'); ?></td>
                                 <td><?php echo getDateFormat($item['ngayketthuc'], 'd-m-Y'); ?></td>
-                                <td class="" style="width: 100px; height: 50px;">
-                                    <a href="<?php echo getLinkAdmin('cost', 'editcostroom', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm" style="margin-right: 9px;"><i class="fa fa-edit"></i> </a>
+                                <td class="" style="width: 100px; height: 50px; text-align:center">
+                                    <a href="<?php echo getLinkAdmin('cost', 'editcostroom', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm" ><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('cost', 'deletecost', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
                             </tr>

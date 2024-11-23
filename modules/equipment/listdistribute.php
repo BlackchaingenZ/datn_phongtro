@@ -146,7 +146,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                                     ?>
                                 </td>
 
-                                <td class="" style="width: 100px; height: 50px;">
+                                <td class="" style="width: 100px; height: 50px; text-align:center">
                                     <a href="<?php echo getLinkAdmin('equipment', 'editdistribute', ['id' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
                                     <a href="<?php echo getLinkAdmin('equipment', 'deletedistribute', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
 

@@ -182,7 +182,7 @@ $msgType = getFlashData('msg_type');
                                 <td><?php echo $item['soluongnhap']; ?></td>
                                 <td><?php echo $item['soluongtonkho']; ?></td>
                                 <td><?php echo getDateFormat($item['ngaynhap'], 'd-m-Y'); ?></td>
-                                <td class="" style="width: 100px; height: 50px;">
+                                <td class="" style="width: 100px; height: 50px; text-align:center">
                                     <a href="<?php echo getLinkAdmin('equipment', 'editequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('equipment', 'deleteequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
