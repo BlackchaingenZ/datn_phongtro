@@ -267,7 +267,7 @@ layout('navbar', 'admin', $data);
 
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;">
-                                    <img class="zoom-image" style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt="">
+                                    <img class="" style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt="">
                                 </td>
                                 <td style="text-align: center;"><b><?php echo $item['tenkhuvuc']; ?></b></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
