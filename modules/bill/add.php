@@ -81,7 +81,18 @@ if (isPost()) {
     // Validate form
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
+    if (empty(trim($body['room_id']))) {
+        $errors['room_id']['required'] = 'Bạn chưa chọn phòng!';
+    }
+    // Kiểm tra nếu songayle không phải là số
+    if (!is_numeric($body['songayle'] ?? '')) {
+        $errors['songayle']['invalid'] = 'Bạn chưa nhập số ngày lẻ!';
+    }
 
+    // Kiểm tra nếu 'nocu' không phải là số
+    if (!is_numeric($body['nocu'] ?? '')) {
+        $errors['nocu']['invalid'] = 'Bạn chưa nhập nợ cũ!';
+    }
     // Kiểm tra mảng error
     if (empty($errors)) {
         // không có lỗi nào
@@ -292,6 +303,7 @@ layout('navbar', 'admin', $data);
                         <div class="form-group">
                             <label for="nocu">Cộng thêm</label>
                             <input type="text" class="form-control" id="nocu" name="nocu">
+                            <?php echo form_error('nocu', $errors, '<span class="error">', '</span>'); ?>
                         </div>
                     </div>
                     <div class="form-group" hidden>

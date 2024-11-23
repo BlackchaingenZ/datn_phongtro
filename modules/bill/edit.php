@@ -270,12 +270,12 @@ layout('navbar', 'admin', $data);
 
                 <div class="col-3">
                     <div class="form-group">
-                        <label for="">Tình trạng thu tiền<span style="color: red">*</label>
+                        <label for="">Tình trạng thu tiền<span style="color: red">*</span></label>
                         <select name="trangthaihoadon" class="form-select">
-                            <option value="" disabled selected>Chọn trạng thái</option>
-                            <option value="2">Chưa thu</option>
-                            <option value="1">Đã thu</option>
-                            <option value="3">Còn nợ</option>
+                            <option value="" disabled <?php echo ($billDetail['trangthaihoadon'] === null) ? 'selected' : ''; ?>>Chọn trạng thái</option>
+                            <option value="2" <?php echo ($billDetail['trangthaihoadon'] == 2) ? 'selected' : ''; ?>>Chưa thu</option>
+                            <option value="1" <?php echo ($billDetail['trangthaihoadon'] == 1) ? 'selected' : ''; ?>>Đã thu</option>
+                            <option value="3" <?php echo ($billDetail['trangthaihoadon'] == 3) ? 'selected' : ''; ?>>Còn nợ</option>
                         </select>
                     </div>
                 </div>

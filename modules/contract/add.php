@@ -535,6 +535,7 @@ layout('navbar', 'admin', $data);
             document.querySelector('[name="cmnd"]').value = '';
             // Cập nhật danh sách hiển thị
             updateTempCustomerList();
+            alert('Bạn đã thêm thành công!.');
         } else {
             alert('Vui lòng nhập đầy đủ thông tin khách thuê.');
         }

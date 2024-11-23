@@ -279,7 +279,7 @@ layout('navbar', 'admin', $data);
                         <?php endforeach;
                     else: ?>
                         <tr>
-                            <td colspan="21">
+                            <td colspan="22">
                                 <div class="alert alert-danger text-center">Không có dữ liệu hóa đơn</div>
                             </td>
                         </tr>
