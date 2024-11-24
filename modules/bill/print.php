@@ -109,7 +109,7 @@ $html = '
                 <td style="font-size: 10px;"><b>Thanh toán</b></td>
                 <td colspan="2">
                     <div>
-                        <img style="width: 80px; height: 80px;" src="https://jeju.com.vn/wp-content/uploads/2020/05/vnpay-qr-23-06-2020-2.jpg" alt="">
+                        <img style="width: 80px; height: 80px;" src="/datn/templates/admin/assets/img/QR.jpg" alt="">
                         <p style="font-size: 10px;"><i><b>Nội dung thanh toán: </b></i><strong style="color: red">THANH TOAN + MÃ HOÁ ĐƠN</strong></p>                           
                     </div>
                 </td>

@@ -170,8 +170,12 @@ layout('navbar', 'admin', $data);
                     <div class="col">
                         <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary" <?php echo !$filterType ? 'disabled' : ''; ?>><i class="fa fa-search"></i></button>
                     </div>
+                    
                 </div>
+                
             </form>
+            <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+            <a href="<?php echo getLinkAdmin('sumary', 'print.all'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất tất cả</a>
             <h3 class="sumary-title">Thống kê doanh thu theo từng tháng</h3>
             <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p>
             <p style="color:red"><i>Lợi nhuận = ( tổng khoản thu - tổng khoản chi - tổng tiền cọc ) </i></p>
@@ -209,11 +213,136 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </div>
+
+            <?php
+            $sql = "SELECT 
+            category_collect.tendanhmuc,
+            SUM(receipt.sotien) AS tong_thu
+        FROM 
+            receipt
+        INNER JOIN 
+            category_collect 
+        ON 
+            receipt.danhmucthu_id = category_collect.id
+        GROUP BY 
+            category_collect.tendanhmuc
+        ORDER BY tong_thu DESC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+
             <br>
 
+            <h3 class="sumary-title">
+                Chi tiết tổng thu
+                <a href="<?php echo getLinkAdmin('sumary', 'print_chitiet_tongthu'); ?>" class="btn btn-primary btn-sm" style="margin-left: 15px;">
+                    <i class="fa fa-save"></i> Xuất Excel
+                </a>
+            </h3>
+            <p></p>
+            <?php if (empty($results)): ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Khoản thu</th>
+                            <th>Tổng thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">Không có dữ liệu doanh thu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Khoản thu</th>
+                            <th>Tổng thu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($results as $row): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['tendanhmuc'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row['tong_thu'], 0, ',', '.'); ?> VNĐ</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+
+            <?php
+            $sql = "SELECT 
+            category_spend.tendanhmuc,
+            SUM(payment.sotien) AS tong_chi
+        FROM 
+            payment
+        INNER JOIN 
+            category_spend
+        ON 
+            payment.danhmucchi_id = category_spend.id
+        GROUP BY 
+            category_spend.tendanhmuc
+        ORDER BY tong_chi DESC";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+
+
+
+            <h3 class="sumary-title">
+                Chi tiết tổng chi
+                <a href="<?php echo getLinkAdmin('sumary', 'print_chitiet_tongchi'); ?>" class="btn btn-primary btn-sm" style="margin-left: 15px;">
+                    <i class="fa fa-save"></i> Xuất Excel
+                </a>
+            </h3>
+            <p></p>
+            <?php if (empty($results)): ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Khoản chi</th>
+                            <th>Tổng chi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">Không có dữ liệu doanh thu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Khoản chi</th>
+                            <th>Tổng chi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($results as $row): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['tendanhmuc'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row['tong_chi'], 0, ',', '.'); ?> VNĐ</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
 
             <div class="report-area-revenue">
-                <h3 class="sumary-title">Doanh thu theo từng khu vực</h3>
+                <h3 class="sumary-title">
+                    Doanh thu theo từng khu vực
+                    <a href="<?php echo getLinkAdmin('sumary', 'print_doanhthu_theokhuvuc'); ?>" class="btn btn-primary btn-sm" style="margin-left: 15px;">
+                        <i class="fa fa-save"></i> Xuất Excel
+                    </a>
+                </h3>
                 <p></p>
                 <table class="table table-striped">
                     <thead>
@@ -242,7 +371,12 @@ layout('navbar', 'admin', $data);
 
 
             <div class="report-area-revenue">
-                <h3 class="sumary-title">Doanh thu theo từng phòng</h3>
+                <h3 class="sumary-title">
+                    Doanh thu theo phòng
+                    <a href="<?php echo getLinkAdmin('sumary', 'print_doanhthu_theophong'); ?>" class="btn btn-primary btn-sm" style="margin-left: 15px;">
+                        <i class="fa fa-save"></i> Xuất Excel
+                    </a>
+                </h3>
                 <p></p>
                 <table class="table table-striped">
                     <thead>
