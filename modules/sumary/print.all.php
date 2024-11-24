@@ -5,18 +5,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
-// Kết nối đến cơ sở dữ liệu
-$servername = "localhost";
-$username = "root";
-$password = "123456";
-$dbname = "datn";
 
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Kết nối thất bại: " . $e->getMessage());
-}
 
 // Tạo file Excel
 $spreadsheet = new Spreadsheet();
