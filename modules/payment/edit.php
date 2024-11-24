@@ -144,7 +144,7 @@ layout('navbar', 'admin', $data);
                         </div>
         
                         <div class="form-group">
-                            <label for="">Ngày thu <span style="color: red">*</span></label>
+                            <label for="">Ngày lập phiếu <span style="color: red">*</span></label>
                             <input type="date" name="ngaychi" id="" class="form-control" value="<?php echo old('ngaychi', $old); ?>">
                             <?php echo form_error('ngaychi', $errors, '<span class="error">', '</span>'); ?>
                         </div>
@@ -162,7 +162,7 @@ layout('navbar', 'admin', $data);
                     <div class="from-group">                    
                             <div class="btn-row">
                             <a style="margin-right: 20px " href="<?php echo getLinkAdmin('payment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                                <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i> Cập nhật phiếu thu</button>
+                                <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i> Cập nhật phiếu chi</button>
                             </div>
                     </div>
                 </form>

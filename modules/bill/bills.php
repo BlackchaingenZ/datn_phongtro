@@ -248,7 +248,7 @@ layout('navbar', 'admin', $data);
                                     <b style="color: #15a05c"><?php echo number_format($item['sotiendatra'], 0, ',', '.') ?> đ</b>
                                 </td>
                                 <td style="text-align: center; color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo getDateFormat($item['ngayvao'], 'd-m-Y') ?></td>
+                                <td><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
                                 <td style="text-align: center;">
 
                                     <?php

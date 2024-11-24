@@ -116,7 +116,7 @@ if (isPost()) {
             'nocu' => $body['nocu'],
             'tongtien' => $body['tongtien'],
             'sotienconthieu' => $body['tongtien'],
-            'create_at' => date('Y-m-d H:i:s'),
+            'create_at' => date('d-m-Y H:i:s'), // hàm date của php lấy thời gian hiện tại
             'trangthaihoadon' => $body['trangthaihoadon'],
         ];
 

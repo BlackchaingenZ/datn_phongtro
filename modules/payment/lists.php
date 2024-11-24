@@ -47,8 +47,9 @@ if (!empty(getBody()['page'])) {
 }
 $offset = ($page - 1) * $perPage;
 
-$listAllPayment = getRaw("SELECT *, tenphong, tendanhmuc, payment.id FROM payment LEFT JOIN room ON room.id = payment.room_id 
-LEFT JOIN category_spend ON category_spend.id = payment.danhmucchi_id $filter LIMIT $offset, $perPage");
+$listAllPayment = getRaw("SELECT *, tenphong, tendanhmuc, payment.id 
+FROM payment LEFT JOIN room ON room.id = payment.room_id 
+LEFT JOIN category_spend ON category_spend.id = payment.danhmucchi_id ORDER BY payment.id DESC $filter LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;
