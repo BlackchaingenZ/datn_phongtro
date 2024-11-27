@@ -19,7 +19,6 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 // Xử lý yêu cầu OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    // Chấp nhận yêu cầu OPTIONS và trả về mã trạng thái 200 OK
     http_response_code(200);
     exit;
 }
@@ -48,14 +47,27 @@ if (empty($email) || empty($password)) {
 
 try {
     // Truy vấn kiểm tra thông tin người dùng
-    $stmt = $pdo->prepare("SELECT id, password FROM users WHERE email = :email AND status = 1");
+    $stmt = $pdo->prepare("
+        SELECT id, fullname, email, password, status 
+        FROM users 
+        WHERE email = :email AND status = 1
+    ");
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user) {
         // Kiểm tra mật khẩu
         if (password_verify($password, $user['password'])) {
-            echo json_encode(['success' => true, 'message' => 'Đăng nhập thành công']);
+            // Trả về thông tin người dùng
+            echo json_encode([
+                'success' => true,
+                'message' => 'Đăng nhập thành công',
+                'data' => [
+                    'fullname' => $user['fullname'],
+                    'email' => $user['email'],
+                    'trangthaihoatdong' => $user['status']
+                ]
+            ]);
         } else {
             echo json_encode(['error' => 'Mật khẩu không chính xác']);
         }
@@ -63,6 +75,6 @@ try {
         echo json_encode(['error' => 'Email chưa được kích hoạt hoặc không tồn tại']);
     }
 } catch (PDOException $e) {
-    echo json_encode(['error' => 'Đã xảy ra lỗi trong quá trình xử lý']);
+    echo json_encode(['error' => 'Đã xảy ra lỗi trong quá trình xử lý: ' . $e->getMessage()]);
 }
 ?>

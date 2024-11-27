@@ -408,15 +408,15 @@ layout('navbar', 'admin', $data);
             <canvas id="profitChart" width="400" height="200"></canvas>
             <p></p>
             <!-- Thêm phần tử canvas cho biểu đồ -->
-            <h3 style="text-align:center">Biểu đồ doanh thu theo khu vực</h3>
+            <!-- <h3 style="text-align:center">Biểu đồ doanh thu theo khu vực</h3>
             <div style="display: flex; justify-content: center; align-items: center; height: 35vh;">
                 <canvas id="revenueChart1"></canvas>
-            </div>
-            <p></p>
+            </div> -->
+            <!-- <p></p>
             <h3 style="text-align:center">Biểu đồ doanh thu theo phòng</h3>
             <div style="display: flex; justify-content: center; align-items: center; height: 43vh;">
                 <canvas id="revenueChart2"></canvas>
-            </div>
+            </div> -->
         </div>
 
     </div>
