@@ -25,4 +25,4 @@ if(!empty($body['id'])) {
     }
 }
 
-redirect('?module=receipt');
+redirect('?module=receipt&action=receipts');

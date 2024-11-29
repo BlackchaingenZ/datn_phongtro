@@ -1,6 +1,6 @@
 <?php
 $listAllroom = getRaw("
-    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue,            
+    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue, contract.ngayvao AS ngayvao,contract.ngayra AS ngayra,            
     GROUP_CONCAT(DISTINCT equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
     FROM room
     JOIN area_room ON room.id = area_room.room_id
@@ -9,6 +9,7 @@ $listAllroom = getRaw("
     JOIN cost ON cost_room.cost_id = cost_id
     JOIN equipment_room ON room.id = equipment_room.room_id
     JOIN equipment ON equipment_room.equipment_id = equipment_id
+    LEFT JOIN contract ON contract.room_id = room.id
     GROUP BY room.id
 ");
 //group by giúp trả về tất cả phòng có trong room

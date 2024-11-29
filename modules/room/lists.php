@@ -16,7 +16,7 @@ if ($grouId != 7) {
 }
 
 $data = [
-    'pageTitle' => 'Danh sách phòng trọ'
+    'pageTitle' => 'Quản lý phòng '
 ];
 
 layout('header', 'admin', $data);
@@ -76,12 +76,19 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-//lấy thông tin giá thuê từ bảng cost và tên thiết bị từ bảng equipment( distint lấy thông tin mới ,ko trùng)
 $listAllroom = getRaw("
     SELECT room.*, 
            cost.giathue, 
            area.tenkhuvuc,
-           GROUP_CONCAT(DISTINCT equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
+           contract.ngayvao, 
+           contract.ngayra,
+           GROUP_CONCAT(
+               CASE 
+                   WHEN equipment_room.soluongcap > 0 
+                   THEN CONCAT(equipment.tenthietbi, ' (', equipment_room.soluongcap, ')')
+                   ELSE NULL
+               END 
+               SEPARATOR ', ') AS tenthietbi
     FROM room 
     LEFT JOIN cost_room ON room.id = cost_room.room_id 
     LEFT JOIN cost ON cost_room.cost_id = cost.id
@@ -89,11 +96,13 @@ $listAllroom = getRaw("
     LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
     LEFT JOIN area_room ON room.id = area_room.room_id
     LEFT JOIN area ON area_room.area_id = area.id
+    LEFT JOIN contract ON room.id = contract.room_id  -- Lấy thông tin hợp đồng từ bảng contract
     $filter 
     GROUP BY room.id
     ORDER BY tenphong ASC 
     LIMIT $offset, $perPage
 ");
+
 
 
 
@@ -184,10 +193,13 @@ layout('navbar', 'admin', $data);
         <!-- Tìm kiếm , Lọc dưz liệu -->
         <form action="" method="get">
             <div class="row">
+            <div class="col-2">
+
+            </div>
                 <div class="col-3">
                     <div class="form-group">
                         <select name="status" id="" class="form-select">
-                            <option value="0">Chọn trạng thái</option>
+                            <option value="0" disabled selected>Chọn trạng thái</option>
                             <option value="1" <?php echo (!empty($status) && $status == 1) ? 'selected' : false; ?>>Đang ở</option>
                             <option value="2" <?php echo (!empty($status) && $status == 2) ? 'selected' : false; ?>>Đang trống</option>
                         </select>
@@ -234,7 +246,7 @@ layout('navbar', 'admin', $data);
                         <th>Ngày vào ở</th>
                         <th>Ngày hết hạn</th>
                         <th>Trạng thái</th>
-                        <th style="width: 6%; text-align: center;">Cơ sở vật chất</th>
+                        <th style="width: 5%; text-align: center;">Cơ sở vật chất</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -248,30 +260,75 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td>
+                                <td style="text-align: center;">
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
                                 </td>
 
 
-                                <td><?php echo $count; ?></td>
-                                <td><img style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt=""></td>
-                                <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
-                                <td><b><?php echo $item['tenphong']; ?></b></td>
-                                <td><?php echo $item['dientich'] ?> m2</td>
-                                <td><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
-                                <td><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
-                                <td><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?>/2 người</td>
-                                <td>Ngày <?php echo $item['ngaylaphd'] ?></td>
-                                <td><?php echo $item['chuky'] ?> tháng</td>
-                                <td><?php echo $item['ngayvao'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvao'], 'd-m-Y'); ?></td>
-                                <td><?php echo $item['ngayra']  == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayra'], 'd-m-Y'); ?></td>
-                                <td>
+                                <td style="text-align: center;"><?php echo $count; ?></td>
+                                <td style="text-align: center;"><img style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt=""></td>
+                                <td style="text-align: center;"><b><?php echo $item['tenkhuvuc']; ?></b></td>
+                                <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
+                                <td style="text-align: center;"><?php echo $item['dientich'] ?> m2</td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
+                                <td style="text-align: center;"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?>/<?php echo $item['soluongtoida'] ?> người</td>
+                                <td style="text-align: center;">Ngày <?php echo $item['ngaylaphd'] ?></td>
+                                <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngayvao'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngayvao']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngayvao']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Trống";
+                                    }
+                                    ?>
+                                </td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    if (!empty($item['ngayra'])) {
+                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['ngayra']);
+
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['ngayra']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Trống";
+                                    }
+                                    ?>
+                                </td>
+                                <td style="text-align: center;">
                                     <?php
                                     echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>' : '<span class="btn-status-err">Đang trống</span>';
                                     ?>
                                 </td>
-                                <td><b><?php echo $item['tenthietbi']; ?></b></td>
-                                <td class="">
+                                <td style="text-align: center;">
+                                    <!-- Thông tin -->
+                                    <span class="tooltip-icon">
+                                        <i class="nav-icon fas fa-solid fa-eye"></i>
+                                        <span class="tooltiptext">
+                                            <?php
+                                            // Kiểm tra nếu 'tenthietbi' trống hoặc NULL thì hiển thị 'Trống'
+                                            echo !empty($item['tenthietbi']) ? $item['tenthietbi'] : 'Trống';
+                                            ?>
+                                        </span>
+                                    </span>
+                                </td>
+
+
+                                <td class="" style="text-align: center;">
                                     <a href="<?php echo getLinkAdmin('room', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('room', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>

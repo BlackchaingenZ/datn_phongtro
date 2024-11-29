@@ -222,7 +222,7 @@ th {
     box-shadow: 0px 20px 60px 10px rgba(237, 237, 246, 0.1);
     padding: 0 30px;
     border-bottom: 1px solid #000;
-    z-index: 9999;
+    z-index: 999;
 }
 
 
@@ -312,6 +312,9 @@ th {
     margin-top: 100px;
 }
 
+.content-header1 {
+    margin-top: 20px;
+}
 
 .image__contract {
     display: flex;
@@ -400,6 +403,22 @@ th {
     cursor: pointer;
 }
 
+.btn-trangthaihopdong-second {
+    font-size: 10px;
+    padding: 6px 8px;
+    color: #fff;
+    background-color: #35a0f7;
+    border-radius: 8px;
+}
+
+.btn-trangthaihopdong-war {
+    font-size: 10px;
+    padding: 6px 8px;
+    color: #fff;
+    background-color: #ff1100;
+    border-radius: 8px;
+}
+
 .btn-kyhopdong-err {
     font-size: 10px;
     padding: 6px 8px;
@@ -469,16 +488,6 @@ th {
     height: 120px;
     color: #000000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
-
-.total-room:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 .content-left-title {
@@ -523,17 +532,6 @@ th {
     background: #979593;
     border-radius: 14px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
-
-/* Hiệu ứng khi di chuột vào */
-.child-one:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 .child-two {
@@ -543,17 +541,6 @@ th {
     background-color: #979593;
     border-radius: 14px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
-
-/* Hiệu ứng khi di chuột vào */
-.child-two:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 .child-three {
@@ -563,17 +550,7 @@ th {
     background-color: #979593;
     border-radius: 14px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
 
-/* Hiệu ứng khi di chuột vào */
-.child-three:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 .child-four {
@@ -585,15 +562,19 @@ th {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     /* Bóng đổ nhẹ */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
+
 }
 
-/* Hiệu ứng khi di chuột vào */
-.child-four:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
+.child-equipment {
+    position: relative;
+    height: 126px;
+    width: 50%;
+    background-color: #979593;
+    border-radius: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
 }
 
 .child-five {
@@ -604,17 +585,7 @@ th {
     border-radius: 14px;
     color: rgb(0, 0, 0);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
 
-/* Hiệu ứng khi di chuột vào */
-.child-five:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 .child-six {
@@ -626,17 +597,7 @@ th {
     border-radius: 14px;
     color: #000000 !important;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
 
-/* Hiệu ứng khi di chuột vào */
-.child-six:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 .child-seven {
@@ -648,17 +609,7 @@ th {
     border-radius: 14px;
     color: #000000 !important;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
 
-/* Hiệu ứng khi di chuột vào */
-.child-seven:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 /*viền bo góc*/
@@ -761,6 +712,13 @@ th {
     /* Bóng lớn hơn khi hover */
 }
 
+.services-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* Cho phép các phần tử con tự động xuống dòng */
+    gap: 10px;
+    /* Khoảng cách giữa các phần tử */
+}
 
 .service-item {
     display: flex;
@@ -1136,24 +1094,252 @@ th {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     /* Tăng bóng đổ khi hover */
 }
-/* của dịch vụ*/
-.scroll-container {
-    width: 400px;
-    /* Chiều rộng của khung chứa */
-    height: 400px;
-    /* Chiều cao của khung chứa */
-    overflow-y: auto;
-    /* Bật thanh cuộn dọc */
-    border: 1px solid #ccc;
-    /* Đường viền cho khung chứa */
-    padding: 20px;
-    /* Khoảng cách giữa nội dung và đường viền */
-}
 
 .checkbox-container {
-    display: flex;           /* Sử dụng flexbox để sắp xếp hàng ngang */
-    flex-wrap: wrap;        /* Cho phép các mục tự động xuống dòng nếu không đủ chỗ */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 15px;
+    /* Chỉnh kích cỡ chữ theo nhu cầu */
 }
+
 .checkbox-item {
-    margin-right: 20px;     /* Khoảng cách giữa các checkbox */
+    margin-bottom: 2px;
+}
+
+
+.popup {
+    position: fixed;
+    /* Đảm bảo popup không bị cuộn */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Nền mờ */
+    display: flex;
+    /* Sử dụng flex để căn giữa */
+    justify-content: center;
+    /* Căn giữa theo chiều ngang */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    z-index: 2000;
+    /* Đặt z-index cao để popup nổi lên trên */
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%;
+    /* Có thể điều chỉnh tùy ý */
+    max-width: 600px;
+    /* Giới hạn chiều rộng tối đa */
+    position: relative;
+    z-index: 1001;
+    /* Đảm bảo nội dung của popup ở phía trên nền mờ */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002;
+    /* Đảm bảo nút đóng luôn ở trên cùng */
+}
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    color: blue;
+}
+
+.tooltip-icon {
+    font-size: 15px;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: blue;
+    margin-left: 5px;
+}
+
+.tooltip-icon .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    /* Vị trí tooltip */
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 10px;
+    /* Thêm thuộc tính giảm cỡ chữ */
+}
+
+.tooltip-icon:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.service-items {
+
+    display: flex;
+    /* Sử dụng flexbox cho dịch vụ */
+    justify-content: space-between;
+    /* Căn giữa nội dung */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    margin-bottom: 20px;
+    /* Khoảng cách giữa các item */
+    border: 1px solid #ccc;
+    /* Optional: thêm đường viền */
+    padding: 10px;
+    /* Optional: thêm padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Thêm bóng */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
+}
+
+.service-items:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Bóng lớn hơn khi hover */
+    transform: scale(1.05);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
+}
+
+
+/* Popup Modal */
+.popup-modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    top: 0; /* Đặt popup ở trên cùng */
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 1000;
+}
+
+/* Popup Content */
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    margin: 20px auto; /* Thêm margin để tránh bị dính vào đầu trang */
+    width: 60%;
+    border-radius: 10px;
+    position: absolute;
+    top: 10px; /* Đặt popup ở khoảng cách 10px từ đầu trang */
+    left: 50%;
+    transform: translateX(-50%); /* Căn giữa theo chiều ngang */
+    max-height: 80%; /* Giới hạn chiều cao của popup */
+    overflow-y: auto; /* Cho phép cuộn dọc nếu nội dung vượt quá chiều cao */
+}
+
+/* Close Button */
+.close-btn {
+    font-size: 30px;
+    color: #aaa;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.close-btn:hover {
+    color: black;
+}
+
+/* Room Details */
+.room-details {
+    margin-top: 20px;
+}
+
+.room-name {
+    font-size: 16px;
+}
+
+/* Căn giữa nút trong trang */
+#showPopupBtn {
+    display: block; /* Đặt nút thành block để có thể căn giữa */
+    margin: 0 auto ; /* Căn giữa theo chiều ngang */
+    background-color: #4fb953; /* Màu nền của nút */
+    color: white; /* Màu chữ */
+    border: 2px solid #4CAF50; /* Màu khung của nút */
+    padding: 10px 20px; /* Khoảng cách bên trong nút */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    border-radius: 10px; /* Bo tròn các góc */
+    cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+    text-align: center; /* Căn giữa chữ trong nút */
+}
+
+/* Hiệu ứng khi di chuột qua nút */
+#showPopupBtn:hover {
+    background-color: #45a049; /* Màu nền thay đổi khi hover */
+    border-color: #45a049; /* Màu khung thay đổi khi hover */
+}
+
+/* Hiệu ứng khi nhấn vào nút */
+#showPopupBtn:active {
+    background-color: #3e8e41; /* Màu nền khi nút được nhấn */
+    border-color: #3e8e41; /* Màu khung khi nút được nhấn */
+}
+
+
+
+
+/* Căn giữa nút trong trang */
+#showEquipmentPopupBtn {
+    display: block; /* Đặt nút thành block để có thể căn giữa */
+    margin: 0 auto; /* Căn giữa theo chiều ngang */
+    background-color: #4fb953; /* Màu nền của nút */
+    color: white; /* Màu chữ */
+    border: 2px solid #4CAF50; /* Màu khung của nút */
+    padding: 10px 20px; /* Khoảng cách bên trong nút */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    border-radius: 10px; /* Bo tròn các góc */
+    cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+    text-align: center; /* Căn giữa chữ trong nút */
+}
+
+/* Hiệu ứng khi di chuột qua nút */
+#showEquipmentPopupBtn:hover {
+    background-color: #45a049; /* Màu nền thay đổi khi hover */
+    border-color: #45a049; /* Màu khung thay đổi khi hover */
+}
+
+/* Hiệu ứng khi nhấn vào nút */
+#showEquipmentPopupBtn:active {
+    background-color: #3e8e41; /* Màu nền khi nút được nhấn */
+    border-color: #3e8e41; /* Màu khung khi nút được nhấn */
 }

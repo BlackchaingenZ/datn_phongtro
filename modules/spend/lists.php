@@ -98,11 +98,10 @@ layout('navbar', 'admin', $data);
                         <input type="text" placeholder="Tên danh mục" name="tendanhmuc" id="" class="form-control" value="<?php echo old('tendanhmuc', $old); ?>">
                         <?php echo form_error('tendanhmuc', $errors, '<span class="error">', '</span>'); ?>
                     </div>
-
                 </div>
                 <div class="form-group">                    
                     <div class="btn-row">
-                        <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Thêm danh mục</button>
+                        <button type="submit" class="btn btn-secondary"><i class="fa fa-plus"></i> Thêm danh mục</button>
                     </div>
                 </div>
             </form>
@@ -138,11 +137,6 @@ layout('navbar', 'admin', $data);
                                 </div>
 
                                 <div class="service-item_right">
-                                    <div class="edit">
-
-                                        <a href="<?php echo getLinkAdmin('spend','edit',['id' => $item['id']]); ?>"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-edit.svg" alt=""></a>
-                                    
-                                    </div>
                                     <div class="del">
                                         <a href="<?php echo getLinkAdmin('spend','delete',['id' => $item['id']]); ?>" onclick="return confirm('Bạn có chắc chắn muốn xóa dịch vụ không ?')"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/service-delete.svg" alt=""></a>
                                     </div>
@@ -154,7 +148,7 @@ layout('navbar', 'admin', $data);
                 
              ?>
             </div>
-           <a style="margin-top: 20px " href="<?php echo getLinkAdmin('sumary') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại  </a>
+           <a style="margin-top: 20px " href="<?php echo getLinkAdmin('receipt') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại  </a>
             
         </div>
     <div>

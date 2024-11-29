@@ -3,34 +3,88 @@
 if (!defined('_INCODE'))
     die('Access denied...');
 
-
+// Ngăn chặn quyền truy cập
 $userId = isLogin()['user_id'];
 $userDetail = getUserInfo($userId);
-$roomId  = $userDetail['room_id'];
+
+$grouId = $userDetail['group_id'];
+
+if ($grouId != 7) {
+    setFlashData('msg', 'Trang bạn muốn truy cập không tồn tại');
+    setFlashData('msg_type', 'err');
+    redirect('?module=dashboard');
+}
 
 $data = [
-    'pageTitle' => 'Lịch sử hóa đơn'
+    'pageTitle' => 'Danh sách hóa đơn'
 ];
 
-layout('header-tenant', 'admin', $data);
-layout('sidebar', 'admin', $data);
+layout('header', 'admin', $data);
+layout('breadcrumb', 'admin', $data);
 
 
 $allService = getRaw("SELECT * FROM services");
 $currentMonthYear = date('Y-m');
 
-// Lấy ID phòng của người dùng hiện tại
-$roomId = $userDetail['room_id'];
-
 // Xử lý lọc dữ liệu
-$filter = "WHERE bill.room_id = $roomId";
+$filter = '';
+if (isGet()) {
+    $body = getBody('get');
 
-// Xử lý phân trang
+    // Xử lý lọc theo từ khóa
+    if (!empty($body['keyword'])) {
+        $keyword = $body['keyword'];
+
+        if (!empty($filter) && strpos($filter, 'WHERE') !== false) {
+            $operator = 'AND';
+        } else {
+            $operator = 'WHERE';
+        }
+
+        $filter .= " $operator mahoadon LIKE '%$keyword%'";
+    }
+
+    // Xử lý lọc theo ngày hóa đơn
+    if (!empty($body['datebill'])) {
+        $datebill = $body['datebill'];
+
+        if (!empty($filter) && strpos($filter, 'WHERE') !== false) {
+            $operator = 'AND';
+        } else {
+            $operator = 'WHERE';
+        }
+
+        $filter .= " $operator create_at LIKE '%$datebill%'";
+    }
+
+    // Xử lý lọc Status theo trạng thái hoadon
+    if (!empty($body['status'])) {
+        $status = $body['status'];
+
+        if ($status == 2) {
+            $statusSql = 0;
+        } elseif ($status == 3) {
+            $statusSql = 2;
+        } else {
+            $statusSql = $status;
+        }
+
+        if (!empty($filter) && strpos($filter, 'WHERE') !== false) {
+            $operator = 'AND';
+        } else {
+            $operator = 'WHERE';
+        }
+
+        $filter .= "$operator bill.trangthaihoadon=$statusSql";
+    }
+}
+
+/// Xử lý phân trang
 $allBill = getRows("SELECT id FROM bill $filter");
 $perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
 $maxPage = ceil($allBill / $perPage);
 
-// Xử lý số trang dựa vào phương thức GET
+// 3. Xử lý số trang dựa vào phương thức GET
 if (!empty(getBody()['page'])) {
     $page = getBody()['page'];
     if ($page < 1 and $page > $maxPage) {
@@ -40,16 +94,8 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-
-// Cập nhật câu truy vấn để chỉ lấy hóa đơn của người dùng hiện tại
-$listAllBill = getRaw("SELECT *, bill.id, bill.chuky, room.tenphong 
-FROM bill 
-INNER JOIN room ON bill.room_id = room.id 
-LEFT JOIN tenant ON bill.tenant_id = tenant.id 
-$filter  
-ORDER BY bill.create_at DESC 
-LIMIT $offset, $perPage");
-
+$listAllBill = getRaw("SELECT *, bill.id, bill.chuky, room.tenphong FROM bill 
+INNER JOIN room ON bill.room_id = room.id LEFT JOIN tenant ON bill.tenant_id = tenant.id $filter  ORDER BY bill.id DESC  LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;
@@ -67,6 +113,10 @@ $errors = getFlashData('errors');
 $old = getFlashData('old');
 ?>
 
+<?php
+layout('navbar', 'admin', $data);
+?>
+
 <div class="container-fluid">
 
     <div id="MessageFlash">
@@ -75,10 +125,47 @@ $old = getFlashData('old');
 
     <!-- Tìm kiếm -->
     <div class="box-content">
+        <!-- Tìm kiếm , Lọc dưz liệu -->
+        <form action="" method="get">
+            <div class="row">
+                <div class="col-2"></div>
+                <div class="col-2">
+                    <div class="form-group">
+                        <select name="status" id="" class="form-select">
+                            <option value="">Chọn trạng thái</option>
+                            <option value="1" <?php echo (!empty($status) && $status == 1) ? 'selected' : false; ?>>Đã thu</option>
+                            <option value="2" <?php echo (!empty($status) && $status == 2) ? 'selected' : false; ?>>Chưa thu</option>
+                            <option value="3" <?php echo (!empty($status) && $status == 3) ? 'selected' : false; ?>>Đang nợ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-3">
+                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập mã hóa đơn cần tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
+                </div>
+
+                <div class="col-2">
+                    <input style="height: 50px" type="month" class="form-control" name="datebill" id="" value="<?php echo (!empty($datebill)) ? $datebill : $currentMonthYear; ?>">
+                </div>
+
+                <div class="col">
+                    <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary"> <i class="fa fa-search"></i></button>
+                </div>
+            </div>
+            <!-- chuyển hướng khi tìm liếm-->
+            <input type="hidden" name="module" value="bill">
+            <input type="hidden" name="action" value="bills">
+        </form>
+
         <form action="" method="POST" class="mt-3">
             <div>
-                <h3>Lịch sử hóa đơn tiền phòng</h3>
+
             </div>
+            <a style="margin-right: 5px" href="<?php echo getLinkAdmin('bill', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+            <a href="<?php echo getLinkAdmin('bill', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
+            <a href="<?php echo getLinkAdmin('bill', 'bills'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+            <a href="<?php echo getLinkAdmin('bill', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
+
             <table class="table table-bordered mt-3" style="overflow-x: auto;">
                 <thead>
                     <tr>
@@ -95,6 +182,7 @@ $old = getFlashData('old');
                         <th rowspan="2">Còn nợ</th>
                         <th rowspan="2">Ngày lập</th>
                         <th rowspan="2">Trạng thái</th>
+                        <th rowspan="2">Thao tác</th>
                     </tr>
                     <tr>
                         <th width="3%">Số tháng</th>
@@ -121,12 +209,12 @@ $old = getFlashData('old');
                             $count++;
 
                     ?>
-                            <tr>
+                            <tr >
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center; color: red"><?php echo $item['mahoadon']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['tenphong']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
-
+                                
                                 <td style="text-align: center;">
                                     <?php
                                     if (empty($item['songayle'])) {
@@ -172,6 +260,19 @@ $old = getFlashData('old');
                                         echo '<span class="btn-kyhopdong-err">Đang nợ</span>';
                                     }
                                     ?>
+                                </td>
+
+                                <td class="" style="text-align: center;">
+                                    <div class="action">
+                                        <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
+                                        <div class="box-action">
+                                            <!-- Add your actions here -->
+                                            <a title="Xem hoá đơn" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
+                                            <a title="In hoá đơn" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
+                                                <a href="<?php echo getLinkAdmin('bill', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm small"><i class="fa fa-edit"></i> </a>
+                                            <a href="<?php echo getLinkAdmin('bill', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm small" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
 
@@ -229,6 +330,43 @@ layout('footer', 'admin');
 ?>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Select all action buttons
+        const actionButtons = document.querySelectorAll('.action');
+
+        actionButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                // Prevent event bubbling
+                event.stopPropagation();
+
+                // Toggle the active class
+                button.classList.toggle('active');
+
+                // Hide all other .box-action elements
+                actionButtons.forEach(btn => {
+                    if (btn !== button) {
+                        btn.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Hide .box-action when clicking outside
+        document.addEventListener('click', function(event) {
+            actionButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+        });
+
+        // Prevent .box-action click from closing itself
+        const boxActions = document.querySelectorAll('.box-action');
+        boxActions.forEach(box => {
+            box.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+        });
+    });
+
     function toggle(__this) {
         let isChecked = __this.checked;
         let checkbox = document.querySelectorAll('input[name="records[]"]');
