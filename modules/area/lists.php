@@ -4,7 +4,7 @@ if (!defined('_INCODE'))
     die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Quản lý Khu vực'
+    'pageTitle' => 'Quản lý khu vực'
 ];
 
 layout('header', 'admin', $data);
@@ -80,9 +80,6 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
     <div>

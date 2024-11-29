@@ -4,7 +4,7 @@ if (!defined('_INCODE'))
     die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Áp dụng'
+    'pageTitle' => 'Danh sách khu vực-phòng'
 ];
 
 layout('header', 'admin', $data);
@@ -102,8 +102,8 @@ layout('navbar', 'admin', $data);
                         <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Mã phòng</th>
-                        <th>Tên Phòng</th>
                         <th>Tên khu vực</th>
+                        <th>Tên Phòng</th>
                         <th>Mô tả</th>
                         <th>Thao tác</th>
                     </tr>
@@ -121,14 +121,12 @@ layout('navbar', 'admin', $data);
                                 <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
-                                <td><?php echo $item['tenphong']; ?></td>
                                 <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
+                                <td><?php echo $item['tenphong']; ?></td>
                                 <td><?php echo $item['mota']; ?></td>
 
-                                <td class="" style="width: 100px; height: 50px;">
-
+                                <td class="" style="width: 100px; height: 50px;text-align:center">
                                     <a href="<?php echo getLinkAdmin('area', 'editapplyarea', ['applyarea' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
-
                                     <a href="<?php echo getLinkAdmin('area', 'deleteapplyarea', ['room_id' => $item['room_id']]); ?>"
                                         class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
                                 </td>

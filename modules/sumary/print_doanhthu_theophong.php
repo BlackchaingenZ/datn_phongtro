@@ -1,0 +1,61 @@
+<?php
+require 'vendor/autoload.php'; // Tải thư viện PhpSpreadsheet
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+
+
+// Truy vấn dữ liệu doanh thu theo khu phòng
+$sql = "SELECT tenphong AS tenphong, SUM(receipt.sotien) AS doanhthu
+            FROM room
+            JOIN receipt ON room.id = receipt.room_id
+            WHERE receipt.ngaythu IS NOT NULL
+            GROUP BY tenphong
+            ORDER BY doanhthu DESC";
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$roomRevenue = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Tạo đối tượng Spreadsheet
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
+
+// Thiết lập tiêu đề bảng
+$sheet->setCellValue('A1', 'Tên Phòng');
+$sheet->setCellValue('B1', 'Doanh thu (VNĐ)');
+
+$sheet->getStyle('A1:B1')->getFont()->setBold(true);
+$sheet->getStyle('A1:B1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
+// Dữ liệu bảng
+$row = 2;
+if (!empty($roomRevenue)) {
+    foreach ($roomRevenue as $room) {
+        $sheet->setCellValue('A' . $row, htmlspecialchars($room['tenphong'], ENT_QUOTES, 'UTF-8'));
+        $sheet->setCellValue('B' . $row, number_format($room['doanhthu'], 0, ',', '.') . ' đ');
+        $row++;
+    }
+} else {
+    $sheet->setCellValue('A2', 'Không có dữ liệu doanh thu.');
+    $sheet->mergeCells('A2:B2');
+}
+
+// Thiết lập kích thước cột
+$sheet->getColumnDimension('A')->setAutoSize(true);
+$sheet->getColumnDimension('B')->setAutoSize(true);
+
+// Tạo đối tượng Writer và xuất file Excel
+$writer = new Xlsx($spreadsheet);
+$filename = 'bao_cao_doanh_thu_theo_phong.xlsx';
+
+// Gửi file đến trình duyệt
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="' . $filename . '"');
+header('Cache-Control: max-age=0');
+
+// Xuất file Excel
+$writer->save('php://output');
+exit;
+?>

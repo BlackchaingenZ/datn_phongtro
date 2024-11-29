@@ -1,6 +1,9 @@
 <?php
-$listAllReceipt = getRaw("SELECT receipt.id, room.tenphong, category_collect.tendanhmuc, sotien, ghichu, ngaythu, phuongthuc FROM receipt INNER JOIN room ON receipt.room_id = room.id 
-INNER JOIN category_collect ON receipt.danhmucthu_id = category_collect.id");
+$listAllReceipt = getRaw("SELECT receipt.id, room.tenphong, category_collect.tendanhmuc, sotien, ghichu, ngaythu, phuongthuc 
+FROM receipt 
+INNER JOIN room ON receipt.room_id = room.id 
+INNER JOIN category_collect ON receipt.danhmucthu_id = category_collect.id
+ORDER BY receipt.id DESC");
 $dataReceipt = json_encode($listAllReceipt);
 
 $receiptFinal = json_decode($dataReceipt,true);
@@ -118,8 +121,9 @@ foreach($receiptFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $item['tenphong']);
       $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $item['sotien']);
       $spreadsheet->getActiveSheet()->setCellValue('E'.$row, $item['ghichu']);
-      $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['ngaythu']);
-      $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['phuongthuc']);
+      $spreadsheet->getActiveSheet()->setCellValue('F'.$row, getDateFormat($item['ngaythu'],'d-m-Y'));
+      $phuongThuc = ($item['phuongthuc'] == 0) ? 'Tiền mặt' : 'Chuyển khoản';
+      $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $phuongThuc);
 
                // set row style
              if($row % 2 == 0) {

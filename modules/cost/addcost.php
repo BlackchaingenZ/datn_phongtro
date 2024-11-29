@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Thêm danh mục bảng giá'
+    'pageTitle' => 'Thêm bảng giá'
 ];
 
 layout('header', 'admin', $data);
@@ -71,7 +71,7 @@ $errors = getFlashData('errors');
 $old = getFlashData('old');
 
 // Tạo URL quay về trang danh sách bảng giá
-$linkreturnlist = getLinkAdmin('cost', 'list');
+$linkreturnlist = getLinkAdmin('cost', 'lists');
 
 ?>
 
@@ -86,16 +86,22 @@ $linkreturnlist = getLinkAdmin('cost', 'list');
         <form action="" method="post" class="row">
             <div class="col-5">
                 <div class="form-group">
-                    <label for="">Tên giá <span style="color: red">*</span></label>
+                    <label for="">Tên loại giá <span style="color: red">*</span></label>
                     <input type="text" placeholder="Tên giá" name="tengia" class="form-control" value="<?php echo old('tengia', $old); ?>">
                     <?php echo form_error('tengia', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
                 <div class="form-group">
                     <label for="">Giá thuê <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Giá thuê (VND)" name="giathue" class="form-control" value="<?php echo old('giathue', $old); ?>">
+                    <input type="text" placeholder="Giá thuê (VND)" name="giathue" class="form-control" value="<?php echo old('giathue', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('giathue', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="">Ngày bắt đầu <span style="color: red">*</span></label>

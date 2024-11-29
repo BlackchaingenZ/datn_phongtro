@@ -98,7 +98,7 @@ layout('navbar', 'admin', $data);
                         <div class="form-group">
                             <label for="">Danh mục chi <span style="color: red">*</span></label>
                             <select name="danhmucchi_id" id="" class="form-select">
-                                <option value="">Chọn danh mục</option>
+                                <option value="" disabled selected>Chọn danh mục</option>
                                 <?php
                                     if(!empty($allSpend)) {
                                         foreach($allSpend as $item) {                                            
@@ -114,7 +114,7 @@ layout('navbar', 'admin', $data);
                         <div class="form-group">
                             <label for="">Chọn phòng lập phiếu chi <span style="color: red">*</span></label>
                             <select name="room_id" id="" class="form-select">
-                                <option value="">Chọn phòng</option>
+                                <option value="" disabled selected>Chọn phòng</option>
                                 <?php
                                     if(!empty($allRoom)) {
                                         foreach($allRoom as $item) {                                            
@@ -144,7 +144,7 @@ layout('navbar', 'admin', $data);
                         </div>
         
                         <div class="form-group">
-                            <label for="">Ngày thu <span style="color: red">*</span></label>
+                            <label for="">Ngày lập phiếu <span style="color: red">*</span></label>
                             <input type="date" name="ngaychi" id="" class="form-control" value="<?php echo old('ngaychi', $old); ?>">
                             <?php echo form_error('ngaychi', $errors, '<span class="error">', '</span>'); ?>
                         </div>
@@ -152,7 +152,7 @@ layout('navbar', 'admin', $data);
                         <div class="form-group">
                             <label for="">Phương thức thanh toán</label>
                             <select name="phuongthuc" class="form-select">
-                                <option value="">Chọn phương thức</option>
+                                <option value="" disabled selected>Chọn phương thức</option>
                                 <option value="0" <?php if($paymentDetail['phuongthuc'] == 0) echo 'selected' ?> >Tiền mặt</option>
                                 <option value="1" <?php if($paymentDetail['phuongthuc'] == 1) echo 'selected' ?>>Chuyển khoản</option>
                             </select>
@@ -162,7 +162,7 @@ layout('navbar', 'admin', $data);
                     <div class="from-group">                    
                             <div class="btn-row">
                             <a style="margin-right: 20px " href="<?php echo getLinkAdmin('payment') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                                <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i> Cập nhật phiếu thu</button>
+                                <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i> Cập nhật phiếu chi</button>
                             </div>
                     </div>
                 </form>
