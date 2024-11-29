@@ -123,15 +123,28 @@ layout('navbar', 'admin', $data);
 
                 <div class="form-group">
                     <label for="">Diện tích</label>
-                    <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>">
+                    <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>"oninput="validateNumber(this)">
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
                     <label for="">Giá tiền cọc <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>">
+                    <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
+
             </div>
 
             <div class="col-5">

@@ -344,6 +344,25 @@ function generateInvoiceCode($length = 5)
     return $randomString;
 }
 
+// in ra mã đơn hàng tự động kiểu số
+
+function generateInvoiceNumber($length = 5)
+{
+    // Đảm bảo chiều dài là một số hợp lệ
+    if ($length <= 0) {
+        return 0;
+    }
+
+    // Tạo số ngẫu nhiên
+    $randomNumber = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomNumber .= random_int(0, 9); // Tạo số ngẫu nhiên từ 0 đến 9
+    }
+
+    return (int)$randomNumber; // Trả về số nguyên
+}
+
+
 // check trạng thái hợp đồng
 function getContractStatus($endDate)
 {
@@ -516,4 +535,112 @@ function executeResult($query, $params = [])
         echo "Lỗi truy vấn cơ sở dữ liệu: " . $e->getMessage();
         return [];
     }
+}
+/*Khi bạn thêm một khách thuê mới vào bảng tenant, bạn cần biết ID của khách thuê đó để có thể thêm hợp đồng liên quan đến khách thuê đó. 
+Nếu bạn không có ID này, bạn sẽ không thể liên kết hợp đồng với đúng khách thuê.*/
+function lastInsertId()
+{
+    global $pdo; // Giả sử $pdo là biến toàn cục của kết nối PDO
+    return $pdo->lastInsertId();
+}
+
+function addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract (room_id, ngaylaphopdong, ngayvao, ngayra, tinhtrangcoc, create_at, ghichu, sotiencoc, dieukhoan1, dieukhoan2, dieukhoan3) VALUES (:room_id, :ngaylaphopdong, :ngayvao, :ngayra, :tinhtrangcoc, :create_at, :ghichu, :sotiencoc, :dieukhoan1, :dieukhoan2, :dieukhoan3)");
+    $stmt->execute([
+        ':room_id' => $room_id,
+        ':ngaylaphopdong' => $ngaylaphopdong,
+        ':ngayvao' => $ngayvao,
+        ':ngayra' => $ngayra,
+        ':tinhtrangcoc' => $tinhtrangcoc,
+        ':create_at' => $create_at,
+        ':ghichu' => $ghichu,
+        ':sotiencoc' => $sotiencoc,
+        ':dieukhoan1' => $dieukhoan1,
+        ':dieukhoan2' => $dieukhoan2,
+        ':dieukhoan3' => $dieukhoan3
+    ]);
+    return $pdo->lastInsertId(); // Trả về ID của hợp đồng vừa được tạo
+}
+
+function addTenant($tenkhach, $ngaysinh, $gioitinh, $diachi, $room_id, $cmnd)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO tenant (tenkhach, ngaysinh, gioitinh, diachi, room_id, cmnd) VALUES (:tenkhach, :ngaysinh, :gioitinh, :diachi, :room_id, :cmnd)");
+    $stmt->execute([
+        ':tenkhach' => $tenkhach,
+        ':ngaysinh' => $ngaysinh,
+        ':gioitinh' => $gioitinh,
+        ':diachi' => $diachi,
+        ':room_id' => $room_id,
+        ':cmnd' => $cmnd,
+    ]);
+    return $pdo->lastInsertId(); // Trả về ID của khách thuê vừa được tạo
+}
+
+function linkContractTenant($contract_id, $tenant_id)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract_tenant (contract_id_1, tenant_id_1) VALUES (:contract_id, :tenant_id)");
+    $stmt->execute([
+        ':contract_id' => $contract_id,
+        ':tenant_id' => $tenant_id
+    ]);
+}
+
+function linkContractService($contract_id, $services_id)
+{
+    global $pdo;
+    $stmt = $pdo->prepare("INSERT INTO contract_services (contract_id, services_id) VALUES (:contract_id, :services_id)");
+    $stmt->execute([
+        ':contract_id' => $contract_id,
+        ':services_id' => $services_id
+    ]);
+}
+function getAll($query, $params = []) {
+    global $pdo; // Giả sử bạn đang dùng PDO để kết nối CSDL
+    $stmt = $pdo->prepare($query); // Chuẩn bị câu lệnh SQL
+    $stmt->execute($params); // Truyền tham số vào execute
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Trả về kết quả
+}
+
+function getTenantIdByCmnd($cmnd) {
+    // Kết nối cơ sở dữ liệu, giả sử bạn đang sử dụng PDO
+    global $pdo;
+
+    // Truy vấn để kiểm tra CMND trong bảng tenant
+    $stmt = $pdo->prepare("SELECT id FROM tenant WHERE cmnd = :cmnd LIMIT 1");
+    $stmt->bindParam(':cmnd', $cmnd, PDO::PARAM_STR);
+    $stmt->execute();
+
+    // Lấy kết quả truy vấn
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Kiểm tra kết quả và trả về tenant_id nếu tồn tại
+    return $result ? $result['id'] : null;
+}
+
+function getTenantRoomById($tenant_id) {
+    // Kết nối cơ sở dữ liệu, giả sử sử dụng PDO
+    global $pdo;
+
+    // Truy vấn lấy room_id của khách thuê dựa trên tenant_id
+    $stmt = $pdo->prepare("SELECT room_id FROM tenant WHERE id = :tenant_id");
+    $stmt->execute(['tenant_id' => $tenant_id]);
+
+    // Lấy kết quả
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Trả về room_id hoặc null nếu không tìm thấy
+    return $result ? $result['room_id'] : null;
+}
+
+function updateTenantRoom($tenant_id, $room_id) {
+    // Kết nối cơ sở dữ liệu, giả sử sử dụng PDO
+    global $pdo;
+
+    // Cập nhật room_id cho khách thuê dựa trên tenant_id
+    $stmt = $pdo->prepare("UPDATE tenant SET room_id = :room_id WHERE id = :tenant_id");
+    $stmt->execute(['room_id' => $room_id, 'tenant_id' => $tenant_id]);
 }

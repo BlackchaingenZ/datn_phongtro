@@ -80,9 +80,6 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </div>
-
-
-
         </div>
     </div>
     <div>

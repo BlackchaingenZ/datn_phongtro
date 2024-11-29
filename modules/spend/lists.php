@@ -154,7 +154,7 @@ layout('navbar', 'admin', $data);
                 
              ?>
             </div>
-           <a style="margin-top: 20px " href="<?php echo getLinkAdmin('sumary') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại  </a>
+           <a style="margin-top: 20px " href="<?php echo getLinkAdmin('receipt') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại  </a>
             
         </div>
     <div>

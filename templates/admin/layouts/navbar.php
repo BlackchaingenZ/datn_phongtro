@@ -31,7 +31,7 @@
   <section class="content">
     <div class="container-fluid">
       <div class="menu__list">
-        
+
         <!-- Item 1 -->
         <a href="<?php echo getLinkAdmin('room') ?>" class="link__menu ">
           <div class="menu__item">
@@ -47,7 +47,6 @@
             <p class="menu__item-title">Quản lý khu vực</p>
           </div>
         </a>
-
         <!-- Item 3 -->
         <a href="<?php echo getLinkAdmin('equipment'); ?>" class="link__menu ">
           <div class="menu__item">
@@ -91,10 +90,17 @@
         <!-- Item 8 -->
         <a href="<?php echo getLinkAdmin('bill'); ?>" class="link__menu ">
           <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/bill.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Quản lý hóa đơn</p>
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/receipt.png" class="menu__item-image" alt="">
+            <p class="menu__item-title">Quản lý phiếu thu</p>
           </div>
         </a>
+        <a href="<?php echo getLinkAdmin('receipt'); ?>" class="link__menu ">
+          <div class="menu__item">
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/payment.png" class="menu__item-image" alt="">
+            <p class="menu__item-title">Quản lý phiếu chi</p>
+          </div>
+        </a>
+        
 
         <!-- Item 9 -->
         <a href="<?php echo getLinkAdmin('sumary'); ?>" class="link__menu ">
@@ -110,31 +116,13 @@
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Người dùng hệ thống</p>
           </div>
-        </a>
-
-        <!-- Item 11 -->
-        <!-- <a href="<?php echo getLinkAdmin('groups'); ?>" class="link__menu ">
-          <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/group.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Nhóm người dùng</p>
-          </div>
-        </a> -->
-
-        <!-- Item 12 -->
-        <a href="<?php echo getLinkAdmin('rental_history'); ?>" class="link__menu ">
-          <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/history.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Lịch sử hợp đồng</p>
-          </div>
-        </a>
-
-        <!-- Item 13 -->
-        <a href="<?php echo getLinkAdmin('sum'); ?>" class="link__menu ">
-          <div class="menu__item">
-            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/report.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Báo cáo tổng hợp</p>
-          </div>
-        </a>
+          <!-- Item 11 -->
+          <a href="<?php echo getLinkAdmin('sum'); ?>" class="link__menu ">
+            <div class="menu__item">
+              <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/report.png" class="menu__item-image" alt="">
+              <p class="menu__item-title">Báo cáo tổng hợp</p>
+            </div>
+          </a>
 
       </div>
     </div>

@@ -222,7 +222,7 @@ th {
     box-shadow: 0px 20px 60px 10px rgba(237, 237, 246, 0.1);
     padding: 0 30px;
     border-bottom: 1px solid #000;
-    z-index: 9999;
+    z-index: 999;
 }
 
 
@@ -761,6 +761,11 @@ th {
     /* Bóng lớn hơn khi hover */
 }
 
+.services-container {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các phần tử con tự động xuống dòng */
+    gap: 10px; /* Khoảng cách giữa các phần tử */
+}
 
 .service-item {
     display: flex;
@@ -1136,24 +1141,120 @@ th {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     /* Tăng bóng đổ khi hover */
 }
-/* của dịch vụ*/
-.scroll-container {
-    width: 400px;
-    /* Chiều rộng của khung chứa */
-    height: 400px;
-    /* Chiều cao của khung chứa */
-    overflow-y: auto;
-    /* Bật thanh cuộn dọc */
-    border: 1px solid #ccc;
-    /* Đường viền cho khung chứa */
-    padding: 20px;
-    /* Khoảng cách giữa nội dung và đường viền */
-}
 
 .checkbox-container {
     display: flex;           /* Sử dụng flexbox để sắp xếp hàng ngang */
     flex-wrap: wrap;        /* Cho phép các mục tự động xuống dòng nếu không đủ chỗ */
 }
 .checkbox-item {
-    margin-right: 20px;     /* Khoảng cách giữa các checkbox */
+    margin-right: 3px;     /* Khoảng cách giữa các checkbox */
+}
+
+
+.popup {
+    position: fixed; /* Đảm bảo popup không bị cuộn */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+    display: flex; /* Sử dụng flex để căn giữa */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    z-index: 2000; /* Đặt z-index cao để popup nổi lên trên */
+}
+
+.popup-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%; /* Có thể điều chỉnh tùy ý */
+    max-width: 600px; /* Giới hạn chiều rộng tối đa */
+    position: relative;
+    z-index: 1001; /* Đảm bảo nội dung của popup ở phía trên nền mờ */
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002; /* Đảm bảo nút đóng luôn ở trên cùng */
+}
+
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.tooltip {
+    position: relative;
+    cursor: pointer;
+    text-align: center;
+    color: blue;
+}
+
+.tooltip-icon {
+    font-size: 15px;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: blue;
+    margin-left: 5px;
+}
+
+.tooltip-icon .tooltiptext {
+    visibility: hidden;
+    width: 200px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Vị trí tooltip */
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 10px; /* Thêm thuộc tính giảm cỡ chữ */
+}
+
+.tooltip-icon:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.service-items {
+    
+    display: flex; /* Sử dụng flexbox cho dịch vụ */
+    justify-content: space-between; /* Căn giữa nội dung */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    margin-bottom: 20px; /* Khoảng cách giữa các item */
+    border: 1px solid #ccc; /* Optional: thêm đường viền */
+    padding: 10px; /* Optional: thêm padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Thêm bóng */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Hiệu ứng mượt mà */
+}
+
+.service-items:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    /* Bóng lớn hơn khi hover */
+    transform: scale(1.05);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    /* Tăng bóng đổ khi hover */
 }
