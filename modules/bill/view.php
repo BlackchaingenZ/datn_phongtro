@@ -86,6 +86,7 @@ $roomtDetail = firstRaw("
                 <td style="font-size: 14px;"><b>Tổng tiền</b></td>
                 <td colspan="2" style="text-align: right; font-size: 18px; color: #dc3545;"><b><?php echo number_format($billDetail['tongtien'], 0, ',', '.') ?> đ</b></td>
             </tr>
+            
 
             <!-- <tr style="background: #4caf5021">
                 <td style="font-size: 14px;"><b>Đã thu</b></td>

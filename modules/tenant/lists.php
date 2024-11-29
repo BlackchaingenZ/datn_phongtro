@@ -308,8 +308,34 @@ layout('navbar', 'admin', $data);
                                     }
                                     ?>
                                 </td>
-                                <td style="text-align: center;"><a href="<?php echo getLinkAdmin('tenant', 'view-pre', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmattruoc'])) ? $item['anhmattruoc'] : '<img src="' . $item['anhmattruoc'] . '"  width=70 height=50/>' ?></a></td>
-                                <td style="text-align: center;"><a href="<?php echo getLinkAdmin('tenant', 'view-after', ['id' => $item['id']]); ?>" target="_blank"><?php echo (isFontIcon($item['anhmatsau'])) ? $item['anhmatsau'] : '<img src="' . $item['anhmatsau'] . '"  width=70 height=50/>' ?></a></td>
+                                <td style="text-align: center;">
+                                    <?php if (!empty($item['anhmattruoc'])): ?>
+                                        <a href="<?php echo getLinkAdmin('tenant', 'view-pre', ['id' => $item['id']]); ?>" target="_blank">
+                                            <?php
+                                            echo isFontIcon($item['anhmattruoc'])
+                                                ? $item['anhmattruoc']
+                                                : '<img src="' . $item['anhmattruoc'] . '" width="70" height="50"/>';
+                                            ?>
+                                        </a>
+                                    <?php else: ?>
+                                        <!-- Giá trị mặc định nếu chưa có -->
+                                        Trống
+                                    <?php endif; ?>
+                                </td>
+                                <td style="text-align: center;">
+                                    <?php if (!empty($item['anhmatsau'])): ?>
+                                        <a href="<?php echo getLinkAdmin('tenant', 'view-after', ['id' => $item['id']]); ?>" target="_blank">
+                                            <?php
+                                            echo isFontIcon($item['anhmatsau'])
+                                                ? $item['anhmatsau']
+                                                : '<img src="' . $item['anhmatsau'] . '" width="70" height="50"/>';
+                                            ?>
+                                        </a>
+                                    <?php else: ?>
+                                        <!-- Giá trị mặc định nếu chưa có -->
+                                        Trống
+                                    <?php endif; ?>
+                                </td>
                                 <td style="text-align: center;">
                                     <?php if (!empty($item['tenphong'])) { ?>
                                         <p class="btn btn-primary btn-sm" style="color: #fff; font-size: 12px"><?php echo $item['tenphong'] ?></p>

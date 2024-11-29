@@ -60,7 +60,6 @@ if (isPost()) {
             'ghichu' => $body['ghichu'],
             'ngaythu' => $body['ngaythu'],
             'phuongthuc' => $body['phuongthuc'],
-            // 'create_at' => date('Y-m-d H:i:s'),
         ];
 
         $insertStatus = insert('receipt', $dataInsert);
