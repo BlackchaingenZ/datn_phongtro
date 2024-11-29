@@ -13,7 +13,7 @@ if(!isLogin()) { // Khi CSDL không còn dữ liệu trùng khớp thì tự đ�
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title><?php echo $data['pageTitle']; ?></title>
+  <!-- <title><?php echo $data['pageTitle']; ?></title> -->
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Font Awesome -->
@@ -69,7 +69,7 @@ if(!isLogin()) { // Khi CSDL không còn dữ liệu trùng khớp thì tự đ�
 
       <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#">
-            <i class="far fa-user"></i> Hi, <?php echo $userDetail['fullname']; ?>
+            <i class="far fa-user"></i> Xin chào, <?php echo $userDetail['fullname']; ?>
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" style="margin-right: 10px; width: 200px">
               <a href="<?php echo getLinkAdmin('users','profile') ?>" class="dropdown-item">

@@ -4,7 +4,7 @@ if (!defined('_INCODE'))
     die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Quản lý Bảng giá phòng'
+    'pageTitle' => 'Quản lý bảng giá'
 ];
 
 layout('header', 'admin', $data);

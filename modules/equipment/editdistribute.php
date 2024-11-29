@@ -15,66 +15,62 @@ $errors = getFlashData('errors');
 $old = getFlashData('old');
 
 // Lấy danh sách thiết bị
-$listAllEquipment = getRaw("SELECT id AS equipment_id, tenthietbi FROM equipment ORDER BY tenthietbi ASC");
+$listAllEquipment = getRaw("SELECT id AS equipment_id, tenthietbi, soluongnhap, soluongtonkho FROM equipment ORDER BY tenthietbi ASC");
 
 // Lấy danh sách phòng
 $roomId = $_GET['id'];
 $roomData = firstRaw("SELECT * FROM room WHERE id = $roomId");
 $equipmentData = getRaw("SELECT * FROM equipment_room WHERE room_id = $roomId");
 
-if (empty($equipmentData)) {
-    setFlashData('msg', 'Hãy phân bổ thiết bị cho phòng này trước!');
-    setFlashData('msg_type', 'err');
-    redirect('?module=equipment&action=listdistribute');
-}
-
 // Xử lý form khi người dùng gửi yêu cầu
 if (isPost()) {
     $body = getBody(); // Lấy dữ liệu từ form
     $errors = [];  // Mảng lưu trữ các lỗi
 
-    // Kiểm tra xem có thiết bị nào được chọn không
-    if (empty($body['equipment_ids'])) {
-        $errors['equipment_ids']['required'] = 'Bạn chưa chọn thiết bị nào!';
-    }
-
-    // Kiểm tra thời gian cấp
-    if (empty($body['thoigiancap'])) {
-        $errors['thoigiancap']['required'] = 'Bạn chưa chọn thời gian cấp!';
-    }
-
     // Kiểm tra mảng error
     if (empty($errors)) {
-        // Không có lỗi nào
-        // Xóa tất cả các phân bổ cũ trước khi thêm mới
-        delete('equipment_room', "room_id = $roomId");
+        // Cập nhật phân bổ thiết bị
+        if (isset($body['equipment_ids']) && !empty($body['equipment_ids'])) {
+            foreach ($body['equipment_ids'] as $equipmentId => $quantity) {
+                // Kiểm tra số lượng thiết bị có hợp lệ
+                if ($quantity >= 0) {
+                    // Kiểm tra thiết bị đã được phân bổ cho phòng chưa
+                    $existingAllocation = firstRaw("SELECT * FROM equipment_room WHERE room_id = $roomId AND equipment_id = $equipmentId");
 
-        // Thêm giờ 00:00 vào thời gian cấp
-        $thoigiancap = $body['thoigiancap'] . ' 00:00:00';
+                    if ($existingAllocation) {
+                        // Nếu có phân bổ, chỉ cần cập nhật lại số lượng (không cộng dồn)
+                        query("UPDATE equipment_room SET soluongcap = $quantity, thoigiancap = '{$body['thoigiancap']}' WHERE room_id = $roomId AND equipment_id = $equipmentId");
+                    } else {
+                        // Nếu chưa có phân bổ, thêm mới phân bổ thiết bị cho phòng
+                        query("INSERT INTO equipment_room (room_id, equipment_id, soluongcap, thoigiancap) VALUES ($roomId, $equipmentId, $quantity, '{$body['thoigiancap']}')");
+                    }
 
-        // Chèn dữ liệu cho từng thiết bị được chọn
-        foreach ($body['equipment_ids'] as $equipmentId) {
-            $dataInsert = [
-                'room_id' => $roomId,
-                'equipment_id' => $equipmentId,
-                'thoigiancap' => $thoigiancap // Lưu thời gian cấp từ form
-            ];
-            insert('equipment_room', $dataInsert);
+                    // Cập nhật lại số lượng tồn kho trong bảng equipment
+                    $totalAllocated = firstRaw("SELECT SUM(soluongcap) AS total FROM equipment_room WHERE equipment_id = $equipmentId");
+                    $totalAllocated = $totalAllocated['total'] ?: 0;
+
+                    // Lấy số lượng nhập vào của thiết bị
+                    $equipment = firstRaw("SELECT soluongnhap FROM equipment WHERE id = $equipmentId");
+                    $newStock = $equipment['soluongnhap'] - $totalAllocated;
+
+                    // Cập nhật số lượng tồn kho mới cho thiết bị
+                    query("UPDATE equipment SET soluongtonkho = $newStock WHERE id = $equipmentId");
+                }
+            }
         }
 
-
+        // Lưu thông báo thành công và chuyển hướng
         setFlashData('msg', 'Cập nhật phân bổ thiết bị thành công!');
         setFlashData('msg_type', 'suc');
         redirect('?module=equipment&action=listdistribute');
     } else {
-        // Có lỗi xảy ra
+        // Nếu có lỗi, lưu thông báo lỗi và dữ liệu cũ
         setFlashData('msg', 'Vui lòng kiểm tra thông tin nhập vào!');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
         setFlashData('old', $body); // Giữ lại dữ liệu đã nhập
+        redirect('?module=equipment&action=editdistribute');
     }
-
-    redirect('?module=equipment&action=editdistribute');
 }
 
 
@@ -91,21 +87,31 @@ layout('navbar', 'admin', $data);
         <p><?php echo $roomData['tenphong']; ?></p>
         <form method="POST" action="">
             <div class="form-group">
-                
-                <label for="equipment">Chọn thiết bị:</label>
-                <select multiple name="equipment_ids[]" class="form-control" style="width: 40%; height: auto;" size="9" required>
+                <label for="equipment">Danh sách thiết bị:</label>
+                <div class="equipment-list">
                     <?php foreach ($listAllEquipment as $equipment): ?>
-                        <option value="<?php echo $equipment['equipment_id']; ?>"
-                            <?php if (in_array($equipment['equipment_id'], array_column($equipmentData, 'equipment_id'))) echo 'selected'; ?>>
-                            <?php echo $equipment['tenthietbi']; ?>
-                        </option>
+                        <?php
+                        // Kiểm tra xem thiết bị này đã được phân bổ cho phòng chưa
+                        $equipmentAssigned = null;
+                        foreach ($equipmentData as $assigned) {
+                            if ($assigned['equipment_id'] == $equipment['equipment_id']) {
+                                $equipmentAssigned = $assigned;
+                                break;
+                            }
+                        }
+                        ?>
+                        <div class="equipment-item">
+                            <label for="equipment_<?php echo $equipment['equipment_id']; ?>"><?php echo $equipment['tenthietbi']; ?>:</label>
+                            <input type="number" name="equipment_ids[<?php echo $equipment['equipment_id']; ?>]"
+                                class="form-control" style="width: 40%; height: auto;"
+                                value="<?php echo isset($equipmentAssigned) ? $equipmentAssigned['soluongcap'] : ''; ?>"
+                                placeholder="Số lượng cấp" min="0">
+                        </div>
                     <?php endforeach; ?>
-                </select>
-
+                </div>
                 <?php echo form_error('equipment_ids', $errors, '<span class="error">', '</span>'); ?>
             </div>
 
-            <!-- Thêm trường nhập thời gian cấp -->
             <div class="form-group">
                 <label for="thoigiancap">Chọn thời gian cấp:</label>
                 <input type="date" name="thoigiancap" class="form-control" style="width: 40%; height: auto;" required
