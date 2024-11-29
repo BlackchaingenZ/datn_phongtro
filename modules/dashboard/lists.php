@@ -90,7 +90,7 @@ if ($userDetail['group_id'] == 7) {
                 </tr>
                 <tr>
                     <td style="font-size: 14px;"><b>Tiền phòng</b></td>
-                    <td><?php echo $billNear['chuky'] == 0 ? '0' : $billNear['chuky'] ?> tháng x <?php echo number_format($roomtDetail['giathue'], 0, ',', '.') ?> đ + <?php echo $billNear['songayle'] ? $billNear['songayle'] : '0' ?> ngày lẻ</td>
+                    <td>Tính tiền: <?php echo number_format($roomtDetail['giathue'], 0, ',', '.') ?> đ</td>
                     <td style="font-size: 16px;"><b><?php echo number_format($billNear['tienphong'], 0, ',', '.') ?> đ</b></td>
                 </tr>
                 <tr>
@@ -112,13 +112,8 @@ if ($userDetail['group_id'] == 7) {
 
                 <tr>
                     <td style="font-size: 14px;"><b>Tiền Wifi (tháng)</b></td>
-                    <td>Tính tiền: <?php echo $billNear['chuky'] ?> x 50.000đ</td>
+                    <td>Tính tiền: 50.000đ</td>
                     <td style="font-size: 16px;"><b><?php echo number_format($billNear['tienmang'], 0, ',', '.') ?> đ</b></td>
-                </tr>
-                <tr>
-                    <td style="font-size: 14px;"><b>Cộng thêm</b></td>
-                    <td><b><?php echo number_format($billNear['nocu'], 0, ',', '.') ?> đ</b></td>
-                    <td style="font-size: 16px;"><b><?php echo number_format($billNear['nocu'], 0, ',', '.') ?> đ</b></td>
                 </tr>
                 <tr>
                     <td style="font-size: 14px;"><b>Tổng tiền</b></td>
@@ -126,18 +121,9 @@ if ($userDetail['group_id'] == 7) {
                 </tr>
 
                 <tr style="background: #4caf5021">
-                    <td style="font-size: 14px;"><b>Đã thu</b></td>
-                    <td colspan="2" style="text-align: right; font-size: 18px; color: #258e0c;"><b><?php echo number_format($billNear['sotiendatra'], 0, ',', '.') ?> đ</b></td>
-                </tr>
-
-                <tr>
-                    <td style="font-size: 14px;"><b>Còn lại</b></td>
-                    <td colspan="2" style="text-align: right; font-size: 18px; color: #dc3545;"><b><?php echo number_format($billNear['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
-                </tr>
-                <tr style="background: #4caf5021">
                     <td style="font-size: 14px;"><b>Trạng thái thanh toán</b></td>
                     <td colspan="2" style="text-align: right; font-size: 18px; color: #258e0c;"><b><?php
-                                                                                                    echo $billNear['trangthaihoadon'] == 1 ? '<span class="btn-kyhopdong-suc">Đã thu</span>' : ($billNear['trangthaihoadon'] == 2 ? '<span class="btn-kyhopdong-err">Chưa thu</span>' : ($billNear['trangthaihoadon'] == 3 ? '<span class="btn-kyhopdong-err">Đang nợ</span>' : ''));
+                                                                                                    echo $billNear['trangthaihoadon'] == 1 ? '<span class="btn-kyhopdong-suc">Đã thu hết</span>' : ($billNear['trangthaihoadon'] == 2 ? '<span class="btn-kyhopdong-err">Chưa thu</span>' : ($billNear['trangthaihoadon'] == 3 ? '<span class="btn-kyhopdong-err">Còn nợ</span>' : ''));
                                                                                                     ?></b></td>
                 </tr>
                 <tr>
