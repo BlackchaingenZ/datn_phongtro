@@ -25,4 +25,4 @@ if(!empty($body['id'])) {
     }
 }
 
-redirect('?module=bill');
+redirect('?module=bill&action=bills');
