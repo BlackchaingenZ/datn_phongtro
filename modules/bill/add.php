@@ -18,11 +18,10 @@ $dongiaWifi = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền
 
 $allRoom = getRaw("
     SELECT 
-        room.id, 
+       room.id, 
         tenphong, 
         cost.giathue, 
-        soluong, 
-        chuky, 
+        soluong,  
         room.ngayvao 
     FROM room 
     INNER JOIN contract ON contract.room_id = room.id
@@ -36,9 +35,6 @@ $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 $roomsByArea = [];
 
 foreach ($allRoom as $room) {
-    $songayle = isset($_POST['songayle']) ? $_POST['songayle'] : 0;
-    // Lấy giá trị chu kỳ từ input của người dùng
-    $chuky = isset($_POST['chuky']) ? $_POST['chuky'] : 0;
     // Lấy số lượng người hiện tại trong phòng từ bảng tenant co phòng nhưng trangthaihopdong=1(chưa thanh lý)
     $soluong = getRaw("
     SELECT COUNT(*) AS soluong
@@ -70,8 +66,6 @@ foreach ($allRoom as $room) {
             'tenphong' => $room['tenphong'],
             'soluong' => $soluong,
             'giathue' => $giaPhong, // Thêm giá thuê vào mảng
-            'chuky' => $chuky,      // Thêm chu kỳ vào mảng
-            'songayle' => $songayle // Thêm số ngày lẻ vào mảng
         ];
     }
 }
@@ -84,41 +78,57 @@ if (isPost()) {
     if (empty(trim($body['room_id']))) {
         $errors['room_id']['required'] = 'Bạn chưa chọn phòng!';
     }
-    // Kiểm tra nếu songayle không phải là số
-    if (!is_numeric($body['songayle'] ?? '')) {
-        $errors['songayle']['invalid'] = 'Bạn chưa nhập số ngày lẻ!';
-    }
-
-    // Kiểm tra nếu 'nocu' không phải là số
-    if (!is_numeric($body['nocu'] ?? '')) {
-        $errors['nocu']['invalid'] = 'Bạn chưa nhập nợ cũ!';
+    if (empty(trim($body['thang']))) {
+        $errors['thang']['required'] = 'Bạn chưa chọn tháng!';
     }
     // Kiểm tra mảng error
     if (empty($errors)) {
         // không có lỗi nào
+        // Xử lý giá trị cho các trường cần kiểu dữ liệu số
+        $tienphong = isset($body['tienphong']) ? str_replace(',', '', $body['tienphong']) : 0;  // Loại bỏ dấu phẩy trong giá trị tiền phòng
+        $tienphong = floatval($tienphong);  // Chuyển sang kiểu số thực (float)
+
+        $tiendien = isset($body['tiendien']) ? str_replace(',', '', $body['tiendien']) : 0;
+        $tiendien = floatval($tiendien);
+
+        $tiennuoc = isset($body['tiennuoc']) ? str_replace(',', '', $body['tiennuoc']) : 0;
+        $tiennuoc = floatval($tiennuoc);
+
+        $tienrac = isset($body['tienrac']) ? str_replace(',', '', $body['tienrac']) : 0;
+        $tienrac = floatval($tienrac);
+
+        $tienmang = isset($body['tienmang']) ? str_replace(',', '', $body['tienmang']) : 0;
+        $tienmang = floatval($tienmang);
+
+        $tongtien = isset($body['tongtien']) ? str_replace(',', '', $body['tongtien']) : 0;
+        $tongtien = floatval($tongtien);
+
+        $sotienconthieu = isset($body['tongtien']) ? str_replace(',', '', $body['tongtien']) : 0;
+        $sotienconthieu = floatval($sotienconthieu);
+
+        // Kiểm tra các giá trị chuỗi và số khác, ví dụ: room_id, mahoadon, v.v.
         $dataInsert = [
-            'room_id' => $body['room_id'],
+            'room_id' => isset($body['room_id']) ? $body['room_id'] : 0,
             'mahoadon' => generateInvoiceCode(),
-            'chuky' => $body['chuky'],
-            'songayle' => $body['songayle'],
-            'tienphong' => $body['tienphong'],
-            'sodiencu' => $body['sodiencu'],
-            'sodienmoi' => $body['sodienmoi'],
-            'img_sodienmoi' => $body['img_sodienmoi'],
-            'tiendien' => $body['tiendien'],
-            'sonuoccu' => $body['sonuoccu'],
-            'sonuocmoi' => $body['sonuocmoi'],
-            'img_sonuocmoi' => $body['img_sonuocmoi'],
-            'tiennuoc' => $body['tiennuoc'],
-            'songuoi' => $body['soluong'],
-            'tienrac' => $body['tienrac'],
-            'tienmang' => $body['tienmang'],
-            'nocu' => $body['nocu'],
-            'tongtien' => $body['tongtien'],
-            'sotienconthieu' => $body['tongtien'],
-            'create_at' => date('d-m-Y H:i:s'), // hàm date của php lấy thời gian hiện tại
-            'trangthaihoadon' => $body['trangthaihoadon'],
+            'tienphong' => $tienphong,
+            'sodiencu' => isset($body['sodiencu']) ? $body['sodiencu'] : 0,
+            'sodienmoi' => isset($body['sodienmoi']) ? $body['sodienmoi'] : 0,
+            'img_sodienmoi' => isset($body['img_sodienmoi']) ? $body['img_sodienmoi'] : '',
+            'tiendien' => $tiendien,
+            'sonuoccu' => isset($body['sonuoccu']) ? $body['sonuoccu'] : 0,
+            'sonuocmoi' => isset($body['sonuocmoi']) ? $body['sonuocmoi'] : 0,
+            'img_sonuocmoi' => isset($body['img_sonuocmoi']) ? $body['img_sonuocmoi'] : '',
+            'tiennuoc' => $tiennuoc,
+            'songuoi' => isset($body['soluong']) ? $body['soluong'] : 0,
+            'tienrac' => $tienrac,
+            'tienmang' => $tienmang,
+            'tongtien' => $tongtien,
+            'sotienconthieu' => $sotienconthieu,
+            'create_at' => date('Y-m-d H:i:s'),  // Lấy thời gian hiện tại
+            'trangthaihoadon' => isset($body['trangthaihoadon']) ? $body['trangthaihoadon'] : '',
+            'thang' => isset($body['thang']) ? $body['thang'] : '',
         ];
+
 
         $insertStatus = insert('bill', $dataInsert);
         if ($insertStatus) {
@@ -193,17 +203,25 @@ layout('navbar', 'admin', $data);
             <div class="row">
                 <div class="col-3">
                     <div class="form-group">
-                        <label for="">Số ngày lẻ <span style="color: red">*</span></label>
-                        <input type="text" name="songayle" id="songayle" class="form-control">
-                        <?php echo form_error('songayle', $errors, '<span class="error">', '</span>'); ?>
+                        <label for="thang">Chọn tháng<span style="color: red">*</span></label>
+                        <select name="thang" id="thang" class="form-select">
+                            <option value="" disabled selected>Chọn tháng</option>
+                            <option value="1">Tháng 1</option>
+                            <option value="2">Tháng 2</option>
+                            <option value="3">Tháng 3</option>
+                            <option value="4">Tháng 4</option>
+                            <option value="5">Tháng 5</option>
+                            <option value="6">Tháng 6</option>
+                            <option value="7">Tháng 7</option>
+                            <option value="8">Tháng 8</option>
+                            <option value="9">Tháng 9</option>
+                            <option value="10">Tháng 10</option>
+                            <option value="11">Tháng 11</option>
+                            <option value="12">Tháng 12</option>
+                        </select>
+                        <?php echo form_error('thang', $errors, '<span class="error">', '</span>'); ?>
                     </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label for="">Số tháng <span style="color: red">*</span></label>
-                        <input type="text" name="chuky" id="chuky" class="form-control">
-                        <?php echo form_error('chuky', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
+
                 </div>
                 <div class="col-3">
                     <div class="form-group">
@@ -298,14 +316,6 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="col-3">
-
-                    <div class="water">
-                        <div class="form-group">
-                            <label for="nocu">Cộng thêm</label>
-                            <input type="text" class="form-control" id="nocu" name="nocu">
-                            <?php echo form_error('nocu', $errors, '<span class="error">', '</span>'); ?>
-                        </div>
-                    </div>
                     <div class="form-group" hidden>
                         <label for="">Tình trạng thu tiền<span style="color: red">*</label>
                         <select name="trangthaihoadon" class="form-select">
@@ -346,7 +356,6 @@ layout('footer', 'admin');
         const dongiaNuoc = <?php echo $donGiaNuoc['giadichvu']; ?>;
         const dongiaDien = <?php echo $dongiaDien['giadichvu']; ?>;
         const dongiaRac = <?php echo $dongiaRac['giadichvu']; ?>;
-        const dongiaWifi = <?php echo $dongiaWifi['giadichvu']; ?>;
 
         const roomsByArea = <?php echo json_encode($roomsByArea); ?>;
         const areaSelect = document.getElementById('area-select');
@@ -370,16 +379,34 @@ layout('footer', 'admin');
                     // Lấy giá thuê từ dữ liệu phòng
                     const giaPhong = room.giathue || 0; // Nếu không có giá thuê, gán giá trị mặc định là 0
                     option.dataset.tienPhong = giaPhong;
-                    option.dataset.chuky = room.chuky;
                     option.dataset.soluong = room.soluong;
                     option.dataset.cs = room.cs;
-                    option.dataset.songayle = room.songayle; // Sử dụng số ngày lẻ từ dataset
 
                     roomSelect.appendChild(option);
                 });
             }
         });
         roomSelect.addEventListener('change', function() {
+            // Lấy giá trị từ PHP
+            const dongiaWifi = <?php echo $dongiaWifi['giadichvu']; ?>;
+
+            // Kiểm tra và cập nhật tiền mạng mặc định khi trang tải
+            updateTienMang(dongiaWifi);
+
+            // Hàm cập nhật tiền mạng
+            function updateTienMang(dongiaWifi) {
+                // Kiểm tra xem có giá trị hay không
+                if (dongiaWifi !== undefined && dongiaWifi !== null) {
+                    document.getElementById('tienmang').value = numberWithCommas(dongiaWifi);
+                }
+            }
+
+            // Hàm định dạng số với dấu phẩy
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+
             const selectedRoom = roomSelect.options[roomSelect.selectedIndex];
 
             if (selectedRoom) {
@@ -397,54 +424,23 @@ layout('footer', 'admin');
 
                 // Nếu giaPhong hợp lệ, gọi hàm updateTienPhong
                 updateTienPhong(giaPhong);
-
-                // Tiếp tục xử lý các phần còn lại
-                const sothang = parseFloat(document.getElementById('chuky').value) || 0;
-                updateChuky(sothang);
                 updateSoluong(parseInt(selectedRoom.dataset.soluong, 10));
                 updateCSD(selectedRoom.dataset.cs);
             }
         });
 
         function updateTienPhong(giaPhong) {
+
             // Kiểm tra giaPhong hợp lệ trước khi tính toán
             if (isNaN(giaPhong) || giaPhong <= 0) {
                 console.error("giaPhong is NaN or less than or equal to 0");
                 document.getElementById('tienphong').value = "0";
                 return;
             }
-
-            const sothang = parseFloat(document.getElementById('chuky').value);
-            const songayle = parseFloat(document.getElementById('songayle').value);
-
-            // Kiểm tra nếu số tháng không hợp lệ hoặc không được nhập
-            if (isNaN(sothang) || sothang <= 0) {
-                console.error("Chu kỳ không hợp lệ");
-                document.getElementById('tienphong').value = "0";
-                return;
-            }
-
-            // Kiểm tra số ngày lẻ, chỉ tiếp tục nếu hợp lệ
-            if (isNaN(songayle) || songayle < 0) {
-                console.error("Số ngày lẻ không hợp lệ");
-                document.getElementById('tienphong').value = "0";
-                return;
-            }
-
-            // Tính toán và làm tròn tiền phòng
-            const tienphong = Math.round((giaPhong * sothang) + ((giaPhong / 30) * songayle));
-
-            document.getElementById('tienphong').value = numberWithCommas(tienphong);
+            // Đặt giá tiền phòng trực tiếp (bỏ qua công thức tính toán)
+            document.getElementById('tienphong').value = numberWithCommas(giaPhong);
 
             calculateTotal();
-        }
-
-        function updateChuky(chuky) {
-            document.getElementById('chuky').value = chuky;
-        }
-
-        function updateSoluong(soluong) {
-            document.getElementById('soluongNguoi').value = soluong;
         }
 
         function updateCSD(cs) {
@@ -468,17 +464,9 @@ layout('footer', 'admin');
         }
 
         function calculateTienRac() {
-            const chuky = parseFloat(document.getElementById('chuky').value) || 1;
             const soluongNguoi = parseFloat(document.getElementById('soluongNguoi').value) || 1;
-            const tienrac = Math.round(soluongNguoi * dongiaRac * chuky);
+            const tienrac = Math.round(soluongNguoi * dongiaRac);
             document.getElementById('tienrac').value = numberWithCommas(tienrac);
-            calculateTotal();
-        }
-
-        function calculateTienMang() {
-            const chuky = parseFloat(document.getElementById('chuky').value) || 1;
-            const tienmang = Math.round(chuky * dongiaWifi);
-            document.getElementById('tienmang').value = numberWithCommas(tienmang);
             calculateTotal();
         }
 
@@ -488,9 +476,7 @@ layout('footer', 'admin');
             const tiennuoc = parseFloat(document.getElementById('tiennuoc').value.replace(/,/g, '')) || 0;
             const tienrac = parseFloat(document.getElementById('tienrac').value.replace(/,/g, '')) || 0;
             const tienmang = parseFloat(document.getElementById('tienmang').value.replace(/,/g, '')) || 0;
-            const nocu = parseFloat(document.getElementById('nocu').value.replace(/,/g, '')) || 0;
-
-            const tongtien = Math.round(tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu);
+            const tongtien = Math.round(tienphong + tiendien + tiennuoc + tienrac + tienmang);
             document.getElementById('tongtien').value = numberWithCommas(tongtien);
         }
 
@@ -507,21 +493,13 @@ layout('footer', 'admin');
         document.getElementById('sodiencu').addEventListener('input', calculateTienDien);
         document.getElementById('sodienmoi').addEventListener('input', calculateTienDien);
         document.getElementById('soluongNguoi').addEventListener('input', calculateTienRac);
-        document.getElementById('chuky').addEventListener('input', function() {
-            calculateTienMang();
-            updateTienPhong(parseFloat(document.getElementById('room-select').selectedOptions[0].dataset.tienPhong));
-            calculateTienRac();
-        });
-        document.getElementById('songayle').addEventListener('input', updateTienPhong);
-        document.getElementById('nocu').addEventListener('input', calculateTotal);
-
+        document.getElementById('tienmang').addEventListener('input', calculateTienMang);
         document.querySelector('form').addEventListener('submit', function(e) {
             document.getElementById('tienphong').value = removeCommas(document.getElementById('tienphong').value);
             document.getElementById('tiendien').value = removeCommas(document.getElementById('tiendien').value);
             document.getElementById('tiennuoc').value = removeCommas(document.getElementById('tiennuoc').value);
             document.getElementById('tienrac').value = removeCommas(document.getElementById('tienrac').value);
             document.getElementById('tienmang').value = removeCommas(document.getElementById('tienmang').value);
-            document.getElementById('nocu').value = removeCommas(document.getElementById('nocu').value);
             document.getElementById('tongtien').value = removeCommas(document.getElementById('tongtien').value);
         });
         // Hàm địng dạng thành YYYY-mm-dd

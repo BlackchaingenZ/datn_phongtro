@@ -97,11 +97,6 @@ $html = '
                 <td style="font-size: 12px;"><b>' . number_format($billDetail['tienmang'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>
-                <td style="font-size: 10px;"><b>Nợ cũ</b></td>
-                <td style="font-size: 12px;"><b>' . number_format($billDetail['nocu'], 0, ',', '.') . ' đ</b></td>
-                <td style="font-size: 12px;"><b>' . number_format($billDetail['nocu'], 0, ',', '.') . ' đ</b></td>
-            </tr>
-            <tr>
                 <td style="font-size: 10px;"><b>Tổng tiền</b></td>
                 <td colspan="2" style="text-align: right; font-size: 12px; color: #dc3545;"><b>' . number_format($billDetail['tongtien'], 0, ',', '.') . ' đ</b></td>
             </tr>

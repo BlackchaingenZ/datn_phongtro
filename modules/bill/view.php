@@ -52,7 +52,7 @@ $roomtDetail = firstRaw("
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>Tiền phòng</b></td>
-                <td><?php echo $billDetail['chuky'] == 0 ? '0' : $billDetail['chuky'] ?> tháng x <?php echo number_format($roomtDetail['giathue'], 0, ',', '.') ?> đ + <?php echo $billDetail['songayle'] ? $billDetail['songayle'] : '0' ?> ngày lẻ</td>
+                <td>Tính tiền: <?php echo number_format($roomtDetail['giathue'], 0, ',', '.') ?> đ </td>
                 <td style="font-size: 16px;"><b><?php echo number_format($billDetail['tienphong'], 0, ',', '.') ?> đ</b></td>
             </tr>
             <tr>
@@ -77,25 +77,25 @@ $roomtDetail = firstRaw("
                 <td>Tính tiền: <?php echo $billDetail['chuky'] ?> tháng x 50.000đ</td>
                 <td style="font-size: 16px;"><b><?php echo number_format($billDetail['tienmang'], 0, ',', '.') ?> đ</b></td>
             </tr>
-            <tr>
+            <!-- <tr>
                 <td style="font-size: 14px;"><b>Cộng thêm</b></td>
                 <td><b><?php echo number_format($billDetail['nocu'], 0, ',', '.') ?> đ</b></td>
                 <td style="font-size: 16px;"><b><?php echo number_format($billDetail['nocu'], 0, ',', '.') ?> đ</b></td>
-            </tr>
+            </tr> -->
             <tr>
                 <td style="font-size: 14px;"><b>Tổng tiền</b></td>
                 <td colspan="2" style="text-align: right; font-size: 18px; color: #dc3545;"><b><?php echo number_format($billDetail['tongtien'], 0, ',', '.') ?> đ</b></td>
             </tr>
 
-            <tr style="background: #4caf5021">
+            <!-- <tr style="background: #4caf5021">
                 <td style="font-size: 14px;"><b>Đã thu</b></td>
                 <td colspan="2" style="text-align: right; font-size: 18px; color: #258e0c;"><b><?php echo number_format($billDetail['sotiendatra'], 0, ',', '.') ?> đ</b></td>
-            </tr>
-
+            </tr> -->
+<!-- 
             <tr>
                 <td style="font-size: 14px;"><b>Còn lại</b></td>
                 <td colspan="2" style="text-align: right; font-size: 18px; color: #dc3545;"><b><?php echo number_format($billDetail['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
-            </tr>
+            </tr> -->
             <tr>
                 <td style="font-size: 14px;"><b>Thanh toán</b></td>
                 <td colspan="2">

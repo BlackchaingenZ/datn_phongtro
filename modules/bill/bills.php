@@ -94,7 +94,7 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-$listAllBill = getRaw("SELECT *, bill.id, bill.chuky, room.tenphong FROM bill 
+$listAllBill = getRaw("SELECT *, bill.id, room.tenphong FROM bill 
 INNER JOIN room ON bill.room_id = room.id LEFT JOIN tenant ON bill.tenant_id = tenant.id $filter  ORDER BY bill.id DESC  LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
@@ -172,12 +172,12 @@ layout('navbar', 'admin', $data);
                         <th width="3%" rowspan="2"> STT</th>
                         <th rowspan="2">Mã hoá đơn</th>
                         <th rowspan="2">Tên phòng</th>
-                        <th colspan="3">Tiền phòng</th>
+                        <th rowspan="2">Tháng</th>
+                        <th colspan="1">Tiền phòng</th>
                         <th colspan="3">Tiền điện</th>
                         <th colspan="3">Tiền nước</th>
                         <th colspan="2">Tiền rác</th>
-                        <th colspan="2">Tiền Wifi</th>
-                        <th width="3%" rowspan="2">Cộng thêm</th>
+                        <th colspan="1">Tiền Wifi</th>
                         <th rowspan="2">Tổng cộng</th>
                         <th rowspan="2">Còn nợ</th>
                         <th width="6%" rowspan="2">Ngày lập</th>
@@ -185,9 +185,7 @@ layout('navbar', 'admin', $data);
                         <th rowspan="2">Thao tác</th>
                     </tr>
                     <tr>
-                        <th width="3%">Số tháng</th>
-                        <th width="4%">Ngày lẻ</th>
-                        <th>Tiền phòng</th>
+                        <th>Thành tiền</th>
                         <th>Số cũ</th>
                         <th>Số mới</th>
                         <th>Thành tiền</th>
@@ -196,7 +194,6 @@ layout('navbar', 'admin', $data);
                         <th>Thành tiền</th>
                         <th>Người</th>
                         <th>Thành tiền</th>
-                        <th>Tháng</th>
                         <th>Thành tiền</th>
                     </tr>
                 </thead>
@@ -209,21 +206,11 @@ layout('navbar', 'admin', $data);
                             $count++;
 
                     ?>
-                            <tr >
+                            <tr>
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center; color: red"><?php echo $item['mahoadon']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['tenphong']; ?></td>
-                                <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
-                                
-                                <td style="text-align: center;">
-                                    <?php
-                                    if (empty($item['songayle'])) {
-                                        echo "0";
-                                    } else {
-                                        echo "" . $item['songayle'];
-                                    }
-                                    ?>
-                                </td>
+                                <td style="text-align: center;"><?php echo $item['thang']; ?></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienphong'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['sodiencu']; ?></td>
                                 <td style="text-align: center;">
@@ -239,14 +226,22 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['songuoi']; ?></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienrac'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienmang'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center;"><b><?php echo number_format($item['nocu'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center ;color: #ed6004">
-                                    <b><?php echo number_format($item['tongtien'], 0, ',', '.') ?> đ</b> <br />
-                                    <i style="color: #000">Số tiền đã trả</i><br />
-                                    <b style="color: #15a05c"><?php echo number_format($item['sotiendatra'], 0, ',', '.') ?> đ</b>
+                                <td style="text-align: center; color: #ed6004;">
+                                    <b><?php echo number_format($item['tongtien'], 0, ',', '.'); ?> đ</b> <br />
+                                    <i style="color: #000;">Số tiền đã trả</i><br />
+                                    <b style="color: #15a05c;">
+                                        <?php
+                                        // Kiểm tra nếu sotienconthieu = 0 thì hiển thị tongtien
+                                        if ($item['sotienconthieu'] == 0) {
+                                            echo number_format($item['tongtien'], 0, ',', '.');
+                                        } else {
+                                            echo number_format($item['sotiendatra'], 0, ',', '.');
+                                        }
+                                        ?> đ
+                                    </b>
                                 </td>
+
                                 <td style="text-align: center; color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
                                 <td><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
                                 <td style="text-align: center;">
@@ -269,7 +264,7 @@ layout('navbar', 'admin', $data);
                                             <!-- Add your actions here -->
                                             <a title="Xem hoá đơn" href="<?php echo getLinkAdmin('bill', 'view', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm small"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
                                             <a title="In hoá đơn" target="_blank" href="<?php echo getLinkAdmin('bill', 'print', ['id' => $item['id']]) ?>" class="btn btn-secondary btn-sm small"><i class="fa fa-print"></i> </a>
-                                                <a href="<?php echo getLinkAdmin('bill', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm small"><i class="fa fa-edit"></i> </a>
+                                            <a href="<?php echo getLinkAdmin('bill', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm small"><i class="fa fa-edit"></i> </a>
                                             <a href="<?php echo getLinkAdmin('bill', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm small" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                         </div>
                                     </div>
