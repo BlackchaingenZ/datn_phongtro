@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 23, 2024 lúc 06:22 PM
+-- Thời gian đã tạo: Th10 29, 2024 lúc 12:55 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -71,7 +71,8 @@ INSERT INTO `area_room` (`id`, `room_id`, `area_id`) VALUES
 (29, 103, 5),
 (30, 104, 6),
 (31, 105, 6),
-(32, 106, 5);
+(32, 106, 5),
+(33, 107, 5);
 
 -- --------------------------------------------------------
 
@@ -84,8 +85,6 @@ CREATE TABLE `bill` (
   `mahoadon` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `room_id` int DEFAULT NULL,
   `tenant_id` int DEFAULT NULL,
-  `chuky` int DEFAULT NULL,
-  `songayle` int DEFAULT NULL,
   `tienphong` float DEFAULT NULL,
   `sodiencu` int DEFAULT NULL,
   `sodienmoi` int DEFAULT NULL,
@@ -101,8 +100,8 @@ CREATE TABLE `bill` (
   `tongtien` float DEFAULT NULL,
   `sotiendatra` float DEFAULT NULL,
   `sotienconthieu` float DEFAULT NULL,
-  `nocu` float DEFAULT NULL,
   `trangthaihoadon` int DEFAULT NULL,
+  `thang` int DEFAULT NULL,
   `create_at` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -110,9 +109,8 @@ CREATE TABLE `bill` (
 -- Đang đổ dữ liệu cho bảng `bill`
 --
 
-INSERT INTO `bill` (`id`, `mahoadon`, `room_id`, `tenant_id`, `chuky`, `songayle`, `tienphong`, `sodiencu`, `sodienmoi`, `img_sodienmoi`, `tiendien`, `sonuoccu`, `sonuocmoi`, `img_sonuocmoi`, `tiennuoc`, `songuoi`, `tienrac`, `tienmang`, `tongtien`, `sotiendatra`, `sotienconthieu`, `nocu`, `trangthaihoadon`, `create_at`) VALUES
-(140, 'cja3f', 103, NULL, 1, NULL, 2000000, 1, 5, '', 16000, 2, 4, '', 40000, 1, 10000, 50000, 2116000, 500000, 1616000, NULL, 3, '2024-11-24'),
-(141, 'PsPMc', 87, NULL, 1, NULL, 2000000, 1, 2, '', 4000, 1, 3, '', 40000, 1, 10000, 50000, 2104000, NULL, 2104000, NULL, 2, '2024-11-24');
+INSERT INTO `bill` (`id`, `mahoadon`, `room_id`, `tenant_id`, `tienphong`, `sodiencu`, `sodienmoi`, `img_sodienmoi`, `tiendien`, `sonuoccu`, `sonuocmoi`, `img_sonuocmoi`, `tiennuoc`, `songuoi`, `tienrac`, `tienmang`, `tongtien`, `sotiendatra`, `sotienconthieu`, `trangthaihoadon`, `thang`, `create_at`) VALUES
+(176, 'pJ7J0', 103, NULL, 2000000, 2, 3, '', 4000, 3, 5, '', 40000, 1, 10000, 50000, 2104000, 1104000, NULL, 1, 11, '2024-11-29');
 
 --
 -- Bẫy `bill`
@@ -133,8 +131,8 @@ CREATE TRIGGER `after_hoadon_update_status` AFTER UPDATE ON `bill` FOR EACH ROW 
             NEW.id,                        -- Lưu hoadon_id
             NEW.room_id,                   -- room_id từ bảng hoadon
             NEW.tongtien,                  -- Số tiền tổng từ bảng hoadon
-            'Thu tiền trọ hàng tháng',     -- Ghi chú
-            NOW(),    
+            'Thu tiền trọ hàng tháng',    -- Ghi chú
+            NOW(),                         -- Ngày thu
             1,                             -- Phương thức thanh toán (ví dụ: 1)
             1                              -- Danh mục thu (ví dụ: 1)
         );
@@ -152,19 +150,31 @@ CREATE TRIGGER `after_hoadon_update_status` AFTER UPDATE ON `bill` FOR EACH ROW 
             NEW.id,                        -- Lưu hoadon_id
             NEW.room_id,                   -- room_id từ bảng hoadon
             NEW.sotiendatra,               -- Số tiền đã trả từ bảng hoadon
-            'Thu tiền nhà hàng tháng - Đang nợ', -- Ghi chú
-            NOW(),    
+             CONCAT('Thu tiền trọ hàng tháng - Còn nợ. Số tiền còn nợ: ', 
+                   FORMAT(NEW.sotienconthieu, 0, 'de_DE'),'đ'), -- Ghi chú với số tiền định dạng có dấu chấm
+            NOW(),                         -- Ngày thu
             1,                             -- Phương thức thanh toán (ví dụ: 1)
             1                              -- Danh mục thu (ví dụ: 1)
         );
     ELSEIF OLD.trangthaihoadon = 3 AND NEW.trangthaihoadon = 1 THEN
-        -- Cập nhật lại số tiền đã trả khi trạng thái hóa đơn chuyển từ 3 (đang nợ) sang 1 (đã thu)
-        UPDATE receipt
-        SET
-            sotien = NEW.sotiendatra,
-            ngaythu = NOW(),
-            ghichu = 'Thu tiền nhà hàng tháng - Đã thanh toán'
-        WHERE bill_id = NEW.id;
+        -- Tạo một phiếu thu mới khi trạng thái hóa đơn chuyển từ 3 (đang nợ) sang 1 (đã thanh toán)
+        INSERT INTO receipt (
+            bill_id,
+            room_id, 
+            sotien, 
+            ghichu, 
+            ngaythu, 
+            phuongthuc, 
+            danhmucthu_id
+        ) VALUES (
+            NEW.id,                        -- Lưu hoadon_id
+            NEW.room_id,                   -- room_id từ bảng hoadon
+            NEW.sotiendatra,               -- Số tiền đã trả từ bảng hoadon
+            'Thu tiền trọ hàng tháng - Đã thanh toán phần còn nợ', -- Ghi chú
+            NOW(),                         -- Ngày thu
+            1,                             -- Phương thức thanh toán (ví dụ: 1)
+            1                              -- Danh mục thu (ví dụ: 1)
+        );
     END IF;
 END
 $$
@@ -459,7 +469,8 @@ INSERT INTO `cost_room` (`id`, `room_id`, `cost_id`, `thoigianapdung`) VALUES
 (40, 86, 39, '2024-11-16'),
 (41, 103, 39, '2024-11-16'),
 (42, 87, 39, '2024-11-16'),
-(43, 106, 39, '2024-11-20');
+(43, 106, 39, '2024-11-20'),
+(44, 107, 39, '2024-11-29');
 
 -- --------------------------------------------------------
 
@@ -669,7 +680,8 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (476, 30, '7ae402edb70db74626198a6ef46bd5a72c8efe0b', '2024-11-21 23:20:09'),
 (480, 30, 'a0e2c68441a534c865920b64781085e05a01decc', '2024-11-22 22:30:36'),
 (487, 30, '571762db39d42b1cdf1c2a807c89440e2bb5a60e', '2024-11-23 09:42:39'),
-(488, 30, '146a2a9f05f8169a39d4ca29d1cf7e0c3c1468e1', '2024-11-23 12:51:23');
+(488, 30, '146a2a9f05f8169a39d4ca29d1cf7e0c3c1468e1', '2024-11-23 12:51:23'),
+(508, 30, '72fcf17597e00b2d29462b9c1a9d8a8f0cf3e717', '2024-11-29 18:38:41');
 
 -- --------------------------------------------------------
 
@@ -713,7 +725,8 @@ INSERT INTO `receipt` (`id`, `room_id`, `sotien`, `ghichu`, `ngaythu`, `phuongth
 (124, 103, 1000000, 'Thu tiền cọc phòng - Đã thu', '2024-11-23', 0, 2, NULL, 500),
 (125, 86, 500000, 'Thu tiền cọc phòng - Đã thu', '2024-11-23', 0, 2, NULL, 502),
 (126, 98, 500000, 'Thu tiền cọc phòng - Đã thu', '2024-11-23', 0, 2, NULL, 503),
-(127, 103, 500000, 'Thu tiền nhà hàng tháng - Đang nợ', '2024-11-24', 1, 1, 140, NULL);
+(182, 103, 1000000, 'Thu tiền trọ hàng tháng - Còn nợ. Số tiền còn nợ: 1.104.000đ', '2024-11-29', 1, 1, 176, NULL),
+(183, 103, 1104000, 'Thu tiền trọ hàng tháng - Đã thanh toán phần còn nợ', '2024-11-29', 1, 1, 176, NULL);
 
 -- --------------------------------------------------------
 
@@ -729,8 +742,6 @@ CREATE TABLE `room` (
   `tiencoc` float DEFAULT NULL,
   `soluong` int DEFAULT '0',
   `soluongtoida` int DEFAULT NULL,
-  `ngaylaphd` int DEFAULT NULL,
-  `chuky` int DEFAULT NULL,
   `ngayvao` date DEFAULT NULL,
   `ngayra` date DEFAULT NULL,
   `trangthai` int DEFAULT '0'
@@ -740,20 +751,21 @@ CREATE TABLE `room` (
 -- Đang đổ dữ liệu cho bảng `room`
 --
 
-INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `tiencoc`, `soluong`, `soluongtoida`, `ngaylaphd`, `chuky`, `ngayvao`, `ngayra`, `trangthai`) VALUES
-(86, '/datn/uploads/images/anh8.jpg', 'Phòng B01', 20, 300000, 1, 2, 1, 1, '2024-11-24', '2025-01-24', 1),
-(87, '/datn/uploads/images/anh2.jpg', 'Phòng A02', 30, 1000000, 1, 3, 1, 5, '2024-11-23', '2025-01-23', 1),
-(91, '/datn/uploads/images/anh4.jpg', 'Phòng A04', 40, 1000000, 0, 4, 1, 1, '2024-11-20', '2024-11-15', 0),
-(96, '/datn/uploads/images/anh5.jpg', 'Phòng B05', 20, 1000000, 1, 2, 1, 1, '2024-11-23', '2025-01-23', 1),
-(97, '/datn/uploads/images/anh3.jpg', 'Phòng A03', 30, 1000000, 0, 3, 1, 1, '2025-01-21', '2025-01-21', 0),
-(98, '/datn/uploads/images/anh5.jpg', 'Phòng A05', 30, 1000000, 2, 3, 1, 1, '2024-11-23', '2025-02-23', 1),
-(99, '/datn/uploads/images/anh12.jpg', 'Phòng B04', 20, 1000000, 0, 2, 1, 1, '2024-11-19', '2025-01-19', 0),
-(101, '/datn/uploads/images/anh13.jpg', 'Phòng B06', 40, 1000000, 0, 4, 1, 1, '2024-11-18', '2025-01-18', 0),
-(102, '/datn/uploads/images/anh12.jpg', 'Phòng A06', 20, 1000000, 0, 2, 1, 1, '2024-12-19', '2025-01-19', 0),
-(103, '/datn/uploads/images/room1.jpg', 'Phòng A01', 30, 1000000, 1, 3, 1, 1, '2024-11-23', '2025-01-23', 1),
-(104, '/datn/uploads/images/anh10.jpg', 'Phòng B02', 30, 1000000, 0, 3, 1, 1, '2024-11-19', '2025-01-19', 0),
-(105, '/datn/uploads/images/anh9.jpg', 'Phòng B03', 20, 1000000, 0, 2, 1, 1, '2024-11-13', '2024-11-06', 0),
-(106, '/datn/uploads/images/anh6.jpg', 'Phòng A07', 40, 1000000, 0, 4, 1, 1, NULL, NULL, 0);
+INSERT INTO `room` (`id`, `image`, `tenphong`, `dientich`, `tiencoc`, `soluong`, `soluongtoida`, `ngayvao`, `ngayra`, `trangthai`) VALUES
+(86, '/datn/uploads/images/anh8.jpg', 'Phòng B01', 20, 300000, 1, 2, '2024-11-24', '2025-01-24', 1),
+(87, '/datn/uploads/images/anh2.jpg', 'Phòng A02', 30, 1000000, 1, 3, '2024-11-23', '2025-01-23', 1),
+(91, '/datn/uploads/images/anh4.jpg', 'Phòng A04', 40, 1000000, 0, 4, '2024-11-20', '2024-11-15', 0),
+(96, '/datn/uploads/images/anh5.jpg', 'Phòng B05', 20, 1000000, 1, 2, '2024-11-23', '2025-01-23', 1),
+(97, '/datn/uploads/images/anh3.jpg', 'Phòng A03', 30, 1000000, 0, 3, '2025-01-21', '2025-01-21', 0),
+(98, '/datn/uploads/images/anh5.jpg', 'Phòng A05', 30, 1000000, 2, 3, '2024-11-23', '2025-02-23', 1),
+(99, '/datn/uploads/images/anh12.jpg', 'Phòng B04', 20, 1000000, 0, 2, '2024-11-19', '2025-01-19', 0),
+(101, '/datn/uploads/images/anh13.jpg', 'Phòng B06', 40, 1000000, 0, 4, '2024-11-18', '2025-01-18', 0),
+(102, '/datn/uploads/images/anh12.jpg', 'Phòng A06', 20, 1000000, 0, 2, '2024-12-19', '2025-01-19', 0),
+(103, '/datn/uploads/images/room1.jpg', 'Phòng A01', 30, 1000000, 1, 3, '2024-11-23', '2025-01-23', 1),
+(104, '/datn/uploads/images/anh10.jpg', 'Phòng B02', 30, 1000000, 0, 3, '2024-11-19', '2025-01-19', 0),
+(105, '/datn/uploads/images/anh9.jpg', 'Phòng B03', 20, 1000000, 0, 2, '2024-11-13', '2024-11-06', 0),
+(106, '/datn/uploads/images/anh6.jpg', 'Phòng A07', 40, 1000000, 0, 4, NULL, NULL, 0),
+(107, '', 'Phòng A10', 30, 200000, 0, 30, NULL, NULL, 0);
 
 --
 -- Bẫy `room`
@@ -1051,13 +1063,13 @@ ALTER TABLE `area`
 -- AUTO_INCREMENT cho bảng `area_room`
 --
 ALTER TABLE `area_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT cho bảng `bill`
 --
 ALTER TABLE `bill`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=142;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=177;
 
 --
 -- AUTO_INCREMENT cho bảng `category_collect`
@@ -1099,7 +1111,7 @@ ALTER TABLE `cost`
 -- AUTO_INCREMENT cho bảng `cost_room`
 --
 ALTER TABLE `cost_room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT cho bảng `equipment`
@@ -1123,7 +1135,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=502;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=509;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -1135,13 +1147,13 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT cho bảng `receipt`
 --
 ALTER TABLE `receipt`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=184;
 
 --
 -- AUTO_INCREMENT cho bảng `room`
 --
 ALTER TABLE `room`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT cho bảng `services`

@@ -241,8 +241,6 @@ layout('navbar', 'admin', $data);
                         <th>Giá thuê</th>
                         <th>Giá tiền cọc</th>
                         <th>Khách thuê</th>
-                        <th style="width: 6%; text-align: center;">Ngày lập hoá đơn</th>
-                        <th>Chu kỳ thu tiền</th>
                         <th>Ngày vào ở</th>
                         <th>Ngày hết hạn</th>
                         <th>Trạng thái</th>
@@ -275,8 +273,6 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.svg" alt=""> <?php echo $item['soluong'] ?>/<?php echo $item['soluongtoida'] ?> người</td>
-                                <td style="text-align: center;">Ngày <?php echo $item['ngaylaphd'] ?></td>
-                                <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
                                 <td style="text-align: center;">
                                     <?php
                                     if (!empty($item['ngayvao'])) {

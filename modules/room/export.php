@@ -97,9 +97,7 @@ $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(50);
+$spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(50);
 
 //header Text
 $spreadsheet->getActiveSheet()
@@ -110,14 +108,12 @@ $spreadsheet->getActiveSheet()
    ->setCellValue('E2', 'Giá thuê')
    ->setCellValue('F2', 'Giá tiền cọc')
    ->setCellValue('G2', 'Số lượng')
-   ->setCellValue('H2', 'Ngày lập hóa đơn')
-   ->setCellValue('I2', 'Chu kỳ')
-   ->setCellValue('J2', 'Ngày vào ở')
-   ->setCellValue('K2', 'Ngày hết hạn')
-   ->setCellValue('L2', 'Cơ sở vật chất');
+   ->setCellValue('H2', 'Ngày vào ở')
+   ->setCellValue('I2', 'Ngày hết hạn')
+   ->setCellValue('J2', 'Cơ sở vật chất');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:L2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:J2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -143,16 +139,14 @@ foreach ($roomFinal as $room) {
    $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $room['giathue']);
    $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $room['tiencoc']);
    $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $room['soluong']);
-   $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $room['ngaylaphd']);
-   $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['chuky']);
-   $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['ngayvao']);
-   $spreadsheet->getActiveSheet()->setCellValue('K' . $row, $room['ngayra']);
-   $spreadsheet->getActiveSheet()->setCellValue('L' . $row, $room['tenthietbi']);
+   $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $room['ngayvao']);
+   $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['ngayra']);
+   $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['tenthietbi']);
    // set row style
    if ($row % 2 == 0) {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':L' . $row)->applyFromArray($evenRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($evenRow);
    } else {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':L' . $row)->applyFromArray($oddRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($oddRow);
    }
 
    $row++;
@@ -161,7 +155,7 @@ foreach ($roomFinal as $room) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row - 1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":L" . $lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":J" . $lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
