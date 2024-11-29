@@ -133,7 +133,6 @@ if (!empty($searchContract)) {
         LEFT JOIN contract_services ON contract.id = contract_services.contract_id 
         LEFT JOIN services ON contract_services.services_id = services.id 
         GROUP BY contract.id
-         ORDER BY contract.ngayvao DESC -- Sắp xếp theo ngày vào để hợp đồng mới nhất lên đầu
     ");
 }
 

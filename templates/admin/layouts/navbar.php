@@ -31,7 +31,7 @@
   <section class="content">
     <div class="container-fluid">
       <div class="menu__list">
-        
+
         <!-- Item 1 -->
         <a href="<?php echo getLinkAdmin('room') ?>" class="link__menu ">
           <div class="menu__item">
@@ -47,7 +47,6 @@
             <p class="menu__item-title">Quản lý khu vực</p>
           </div>
         </a>
-
         <!-- Item 3 -->
         <a href="<?php echo getLinkAdmin('equipment'); ?>" class="link__menu ">
           <div class="menu__item">

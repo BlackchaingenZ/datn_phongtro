@@ -61,24 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ngayra = $_POST['ngayra'] ?? null;
     $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? null;
     $create_at = date("Y-m-d H:i:s") ?? null;
-    $ghichu = $_POST['ghichu'] ?? 'Bỏ Trống';
-    if (empty(trim($ghichu))) {
-        $ghichu = 'Sử dụng nhà đúng mục đích đã thoả thuận';
-    }
-    $sotiencoc = $_POST['sotiencoc'] ?? null;
-    // Nếu `dieukhoan1` trống, gán giá trị mặc định
-    $dieukhoan1 = $_POST['dieukhoan1'] ?? 'Sử dụng nhà đúng mục đích đã thoả thuận';
-    if (empty(trim($dieukhoan1))) {
-        $dieukhoan1 = 'Sử dụng nhà đúng mục đích đã thoả thuận';
-    }
-    $dieukhoan2 = $_POST['dieukhoan2'] ?? 'Trả đủ tiền thuê nhà đúng kỳ hạn đã thỏa thuận';
-    if (empty(trim($dieukhoan2))) {
-        $dieukhoan2 = 'Trả đủ tiền thuê nhà đúng kỳ hạn đã thỏa thuận';
-    }
-    $dieukhoan3 = $_POST['dieukhoan3'] ?? 'Tôn trọng quy tắc sinh hoạt công cộng';
-    if (empty(trim($dieukhoan3))) {
-        $dieukhoan3 = 'Tôn trọng quy tắc sinh hoạt công cộng';
-    }
+    $ghichu = $_POST['ghichu'] ?? null;
 
     // Lấy danh sách dịch vụ từ POST
     $services = $_POST['services'] ?? []; // Danh sách dịch vụ được gửi từ form
@@ -87,9 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
     $tempCustomers = json_decode($tempCustomersData, true);
 
-    if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
+    if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu) {
         // Thêm hợp đồng
-        $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu, $sotiencoc, $dieukhoan1, $dieukhoan2, $dieukhoan3);
+        $contract_id = addContract($room_id, $ngaylaphopdong, $ngayvao, $ngayra, $tinhtrangcoc, $create_at, $ghichu);
 
         // Thêm từng dịch vụ vào bảng contract_services
         foreach ($services as $services_id) {
@@ -134,6 +117,16 @@ layout('navbar', 'admin', $data);
     </div>
     <div class="box-content">
         <form id="contractForm" action="" method="post" class="row">
+            <div class="col-4">
+                <label for="">Danh sách khách vừa tạo</label>
+                <div class="form-group">
+                    <!-- Khu vực để hiển thị danh sách khách tạm thời -->
+                    <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 450px; background-color: #f9f9f9;">
+                        <div id="tempCustomerInfo" style="color: green;"></div>
+                    </div>
+
+                </div>
+            </div>
             <div class="col-4">
                 <div class="form-group">
                     <label for="">Chọn khu vực <span style="color: red">*</span></label>
@@ -214,76 +207,37 @@ layout('navbar', 'admin', $data);
                         </div>
                     </div>
                 </div>
-                <label for="">Danh sách khách vừa tạo</label>
-                <div class="form-group">
-                    <!-- Khu vực để hiển thị danh sách khách tạm thời -->
-                    <div style="border: 1px solid #ccc; border-radius: 5px; padding: 10px; margin-top: 10px; height: 150px; background-color: #f9f9f9;">
-                        <div id="tempCustomerInfo" style="color: green;"></div>
+
+                <form id="contractForm" action="add_contracts.php" method="post">
+                    <div class="form-group">
+                        <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
+                        <input type="date" name="ngaylaphopdong" id="" class="form-control"
+                            value="<?php echo old('ngaylaphopdong', $old); ?>">
+                        <?php echo form_error('ngaylaphopdong', $errors, '<span class="error">', '</span>'); ?>
                     </div>
-
-                </div>
-                <div class="form-group">
-                    <label for="">Ngày lập hợp đồng <span style="color: red">*</span></label>
-                    <input type="date" name="ngaylaphopdong" id="" class="form-control"
-                        value="<?php echo old('ngaylaphopdong', $old); ?>">
-                    <?php echo form_error('ngaylaphopdong', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-            </div>
-            <div class="col-4">
-
-                <form id="contractForm" action="" method="post">
                     <div class="form-group">
                         <label for="">Ngày vào ở <span style="color: red">*</span></label>
                         <input type="date" name="ngayvao" id="" class="form-control"
                             value="<?php echo old('ngayvao', $old); ?>">
                         <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
                     </div>
-                    <div class="form-group">
-                        <label for="">Ngày hết hạn hợp đồng <span style="color: red">*</span></label>
-                        <input type="date" name="ngayra" id="" class="form-control"
-                            value="<?php echo old('ngayra', $old); ?>">
-                        <?php echo form_error('ngayra', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Tình trạng cọc<span style="color: red">*</label>
-                        <select name="tinhtrangcoc" class="form-select">
-                            <option value="" disabled selected>Chọn trạng thái</option>
-                            <option value="0">Chưa thu tiền</option>
-                            <option value="1">Đã thu tiền</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Số tiền cọc <span style="color: red">*</span></label>
-                        <input type="number" placeholder="Nhập số tiền" name="sotiencoc" id="" class="form-control"
-                            value="<?php echo old('sotiencoc', $old); ?>" step="0.01" min="0">
-                        <?php echo form_error('sotiencoc', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="">Ghi chú<span style="color: red">*</span></label>
-                        <textarea name="ghichu" class="form-control" rows="4" style="width: 100%; height: 116px;"><?php echo htmlspecialchars(old('ghichu', $old) ?? 'Bỏ trống'); ?></textarea>
-                        <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
-                    </div>
-
             </div>
 
             <div class="col-4">
                 <div class="form-group">
-                    <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan1', $old) ?? 'Sử dụng nhà đúng mục đích đã thoả thuận'); ?></textarea>
-                    <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
+                    <label for="">Ngày hết hạn hợp đồng <span style="color: red">*</span></label>
+                    <input type="date" name="ngayra" id="" class="form-control"
+                        value="<?php echo old('ngayra', $old); ?>">
+                    <?php echo form_error('ngayra', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-                <div class="form-group">
-                    <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan2', $old) ?? 'Trả đủ tiền thuê nhà đúng kỳ hạn đã thỏa thuận'); ?></textarea>
-                    <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-                <div class="form-group">
-                    <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 82px;"><?php echo htmlspecialchars(old('dieukhoan3', $old) ?? 'Tôn trọng quy tắc sinh hoạt công cộng'); ?></textarea>
 
-                    <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
+                <div class="form-group">
+                    <label for="">Tình trạng cọc<span style="color: red">*</label>
+                    <select name="tinhtrangcoc" class="form-select">
+                        <option value="" disabled selected>Chọn trạng thái</option>
+                        <option value="0">Chưa thu tiền</option>
+                        <option value="1">Đã thu tiền</option>
+                    </select>
                 </div>
                 <!-- Phần chọn dịch vụ -->
                 <div class="form-group">
@@ -301,6 +255,12 @@ layout('navbar', 'admin', $data);
                     <?php if (isset($errors['services'])) { ?>
                         <span class="error" style="color: red;"><?php echo htmlspecialchars($errors['services'], ENT_QUOTES, 'UTF-8'); ?></span>
                     <?php } ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="">Ghi chú<span style="color: red">*</span></label>
+                    <textarea name="ghichu" class="form-control" rows="4" style="width: 100%; height: 100px;"><?php echo old('ghichu', $old); ?></textarea>
+                    <?php echo form_error('ghichu', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
                 <!-- Input ẩn để lưu danh sách khách thuê tạm -->
