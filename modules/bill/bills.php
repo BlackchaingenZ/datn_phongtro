@@ -180,8 +180,8 @@ layout('navbar', 'admin', $data);
                         <th colspan="1">Tiền Wifi</th>
                         <th rowspan="2">Tổng cộng</th>
                         <th rowspan="2">Còn nợ</th>
-                        <th width="6%" rowspan="2">Ngày lập</th>
                         <th width="6%" rowspan="2">Trạng thái</th>
+                        <th width="6%" rowspan="2">Ngày lập</th>
                         <th rowspan="2">Thao tác</th>
                     </tr>
                     <tr>
@@ -243,19 +243,19 @@ layout('navbar', 'admin', $data);
                                 </td>
 
                                 <td style="text-align: center; color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
                                 <td style="text-align: center;">
 
                                     <?php
                                     if ($item['trangthaihoadon'] == 1) {
-                                        echo '<span class="btn-kyhopdong-suc">Đã thu</span>';
+                                        echo '<span class="btn-kyhopdong-suc">Đã thu hết</span>';
                                     } elseif ($item['trangthaihoadon'] == 2) {
                                         echo '<span class="btn-kyhopdong-warning">Chưa thu</span>';
                                     } else {
-                                        echo '<span class="btn-kyhopdong-err">Đang nợ</span>';
+                                        echo '<span class="btn-kyhopdong-err">Còn nợ</span>';
                                     }
                                     ?>
                                 </td>
+                                <td><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
 
                                 <td class="" style="text-align: center;">
                                     <div class="action">

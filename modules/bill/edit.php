@@ -75,7 +75,7 @@ if (isPost()) {
         // Kiểm tra và cập nhật trạng thái hóa đơn
         if ($tongtien !== null) {
             if ($sotienconthieu === null || $sotienconthieu == 0) {
-                $body['trangthaihoadon'] = 1; // Đã thu
+                $body['trangthaihoadon'] = 1; // Đã thu hết
             } elseif ($sotienconthieu > 0 && $sotienconthieu < $tongtien) {
                 $body['trangthaihoadon'] = 3; // Còn nợ
             }
