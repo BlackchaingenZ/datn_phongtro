@@ -3,7 +3,7 @@ if (!defined('_INCODE')) die('Access denied...');
 
 // Đặt tiêu đề trang
 $data = [
-    'pageTitle' => 'Cập nhật hợp đồng'
+    'pageTitle' => 'Thanh lý hợp đồng'
 ];
 
 layout('header', 'admin', $data);
@@ -68,6 +68,8 @@ if ($contract_id) {
         $dieukhoan1 = $_POST['dieukhoan1'] ?? $contract['dieukhoan1'];
         $dieukhoan2 = $_POST['dieukhoan2'] ?? $contract['dieukhoan2'];
         $dieukhoan3 = $_POST['dieukhoan3'] ?? $contract['dieukhoan3'];
+        $trangthaihopdong = $_POST['trangthaihopdong'] ?? $contract['trangthaihopdong'];
+        $lydothanhly = $_POST['lydothanhly'] ?? $contract['lydothanhly'];
         $services = $_POST['services'] ?? []; // Danh sách dịch vụ được chọn từ form
         $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
         $tempCustomers = json_decode($tempCustomersData, true);
@@ -76,30 +78,27 @@ if ($contract_id) {
         if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
             // Nếu hợp đồng đã có, thực hiện cập nhật
             if (isset($contract_id)) {
-                // Lấy danh sách khách thuê của hợp đồng
-                $query = "SELECT tenant_id_1 FROM contract_tenant WHERE contract_id_1 = ?";
-                $stmt = $pdo->prepare($query);
-                $stmt->execute([$contract_id]);
-                $existingTenants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                // Kiểm tra trạng thái hợp đồng
+                if ($trangthaihopdong == 0 ) {
+                    // Lấy danh sách khách thuê liên quan đến hợp đồng
+                    $query = "SELECT tenant_id_1 FROM contract_tenant WHERE contract_id_1 = ?";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute([$contract_id]);
+                    $tenants = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                // Cập nhật phòng cho từng khách thuê nếu khách chưa ở phòng mới
-                foreach ($existingTenants as $tenant) {
-                    $tenant_id = $tenant['tenant_id_1'];
-
-                    // Kiểm tra xem khách đã ở phòng mới chưa
-                    $stmt_check = $pdo->prepare("SELECT room_id FROM tenant WHERE id = ?");
-                    $stmt_check->execute([$tenant_id]);
-                    $tenant_room = $stmt_check->fetchColumn();
-
-                    // Nếu khách chưa ở phòng mới, cập nhật phòng cho khách
-                    if ($tenant_room != $room_id) {
-                        // Cập nhật phòng mới cho khách thuê
-                        $stmt_update_room = $pdo->prepare("UPDATE tenant SET room_id = ? WHERE id = ?");
-                        $stmt_update_room->execute([$room_id, $tenant_id]);
+                    // Duy trì liên kết khách với phòng
+                    foreach ($tenants as $tenant) {
+                        $tenant_id = $tenant['tenant_id_1'];
+                        // Không cập nhật room_id của khách thuê, liên kết vẫn giữ nguyên
                     }
+
+                    // Cập nhật số người trong phòng về 0
+                    $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
+                    $stmt_update_room->execute([$room_id]);
+                    
                 }
 
-                // Cập nhật hợp đồng trong cơ sở dữ liệu
+                // Cập nhật thông tin hợp đồng trong cơ sở dữ liệu
                 $update = update('contract', [
                     'room_id' => $room_id,
                     'ngaylaphopdong' => $ngaylaphopdong,
@@ -111,12 +110,13 @@ if ($contract_id) {
                     'dieukhoan1' => $dieukhoan1,
                     'dieukhoan2' => $dieukhoan2,
                     'dieukhoan3' => $dieukhoan3,
+                    'trangthaihopdong' => $trangthaihopdong,
+                    'lydothanhly' => $lydothanhly
                 ], "id = $contract_id");
 
                 // Xóa tất cả các dịch vụ đã liên kết với hợp đồng hiện tại
                 $stmt_delete_services = $pdo->prepare("DELETE FROM contract_services WHERE contract_id = ?");
                 $stmt_delete_services->execute([$contract_id]);
-
 
                 // Cập nhật các dịch vụ nếu có thay đổi
                 foreach ($services as $services_id) {
@@ -137,7 +137,7 @@ if ($contract_id) {
 
                     if ($stmt_check->rowCount() == 0) {
                         // Kiểm tra nếu khách thuê đã tồn tại dựa trên CMND
-                        $tenant_id = getTenantIdByCmnd($cmnd); // Hàm này sẽ trả về tenant_id nếu tồn tại, nếu không sẽ trả về null
+                        $tenant_id = getTenantIdByCmnd($cmnd); // Hàm này trả về tenant_id nếu tồn tại, nếu không trả về null
 
                         if ($tenant_id) {
                             // Nếu khách thuê đã tồn tại, kiểm tra và cập nhật room_id nếu cần
@@ -156,15 +156,16 @@ if ($contract_id) {
                 }
             }
 
+
             // Thông báo thành công
-            setFlashData('msg', 'Hợp đồng, khách thuê và dịch vụ đã được cập nhật thành công!');
+            setFlashData('msg', 'Hợp đồng đã được cập nhật thành công!');
             setFlashData('msg_type', 'suc');
             redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
         } else {
             // Thông báo lỗi khi thiếu thông tin
             setFlashData('msg', 'Thiếu thông tin cần thiết để cập nhật hợp đồng.');
             setFlashData('msg_type', 'err');
-            redirect('?module=contract&action=edit'); // Chuyển hướng lại trang thêm hợp đồng
+            redirect('?module=contract&action=liquidation'); // Chuyển hướng lại trang thêm hợp đồng
         }
     }
 }
@@ -405,6 +406,19 @@ layout('navbar', 'admin', $data);
             </div>
             <div class="col-3">
                 <div class="form-group">
+                    <div class="form-group">
+                        <label for="">Trạng thái thanh lý<span style="color: red">*</label>
+                        <select name="trangthaihopdong" class="form-select">
+                            <option value="" disabled <?php echo ($contract['trangthaihopdong'] === null) ? 'selected' : ''; ?>>Chọn trạng thái</option>
+                            <option value="0" <?php echo ($contract['trangthaihopdong'] == 0) ? 'selected' : ''; ?>>Đã thanh lý</option>
+                            <option value="1" <?php echo ($contract['trangthaihopdong'] == 1) ? 'selected' : ''; ?>>Chưa thanh lý</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Lý do thanh lý</label>
+                        <textarea name="lydothanhly" class="form-control"><?php echo $contract['lydothanhly']; ?></textarea>
+                    </div>
+
                     <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>
                     <div class="checkbox-container">
                         <?php foreach ($allServices as $service) { ?>

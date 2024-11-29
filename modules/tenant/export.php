@@ -80,12 +80,12 @@ $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(60);
 $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+
 
 //header Text
 $spreadsheet->getActiveSheet()
@@ -98,11 +98,10 @@ $spreadsheet->getActiveSheet()
             ->setCellValue('G2', 'Nghề nghiệp')
             ->setCellValue('H2', 'CCCD/CMND')
             ->setCellValue('I2', 'Ngày cấp')
-            ->setCellValue('J2', 'Phòng đang ở')
-            ->setCellValue('K2', 'Ngày vào ở');
+            ->setCellValue('J2', 'Phòng ở');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:K2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:J2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -134,14 +133,13 @@ foreach($tenantFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['nghenghiep']);
       $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $item['cmnd']);
       $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['ngaycap']);
-      $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['tenphong']);    
-      $spreadsheet->getActiveSheet()->setCellValue('K'.$row, $item['ngayvao']);    
+      $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['tenphong']);       
 
                // set row style
              if($row % 2 == 0) {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($evenRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($evenRow);
              }else {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($oddRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($oddRow);
              }
 
              $row++;

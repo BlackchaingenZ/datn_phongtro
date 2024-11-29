@@ -69,6 +69,29 @@ if (isPost()) {
     }
 }
 
+$allRoom = getRaw("
+    SELECT room.id, room.tenphong
+    FROM room 
+    WHERE room.id IN (SELECT room_id FROM equipment_room)  
+    ORDER BY room.tenphong
+");
+
+
+$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
+$roomsByArea = [];
+
+foreach ($allRoom as $room) {
+    // Lấy các khu vực của phòng
+    $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
+    foreach ($areaIds as $area) {
+        // Thêm thông tin vào mảng theo khu vực
+        $roomsByArea[$area['area_id']][] = [
+            'id' => $room['id'],
+            'tenphong' => $room['tenphong']
+        ];
+    }
+}
+
 // Lấy danh sách phòng và thiết bị
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC"); // Lấy tất cả phòng
 $listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC"); // Lấy tất cả thiết bị
@@ -93,14 +116,29 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
         <form action="" method="post" class="row">
             <div class="col-5">
                 <div class="form-group">
+                    <label for="">Chọn khu vực <span style="color: red">*</span></label>
+                    <select name="area_id" id="area-select" class="form-select">
+                        <option value="" disabled selected>Chọn khu vực</option>
+                        <?php
+                        if (!empty($allArea)) {
+                            foreach ($allArea as $item) {
+                        ?>
+                                <option value="<?php echo $item['id'] ?>"
+                                    <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>>
+                                    <?php echo $item['tenkhuvuc'] ?></option>
+                        <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php echo form_error('area_id', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+                <div class="form-group">
                     <label for="">Chọn phòng <span style="color: red">*</span></label>
-                    <select name="room_id" class="form-control">
-                        <option value="">Chọn phòng</option>
-                        <?php foreach ($listAllRoom as $room): ?>
-                            <option value="<?php echo $room['id']; ?>" <?php echo old('room_id', $old) == $room['id'] ? 'selected' : ''; ?>>
-                                <?php echo $room['tenphong']; ?>
-                            </option>
-                        <?php endforeach; ?>
+                    <select name="room_id" id="room-select" class="form-select">
+                        <option value="" disabled selected>Chọn phòng</option>
+                        <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
@@ -119,7 +157,7 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
                 </div>
             </div>
             <div class="form-group">
-            <a style="margin-right: 20px " href="<?php echo $linkreturndistribite ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
+                <a style="margin-right: 20px " href="<?php echo $linkreturndistribite ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <button type="submit" class="btn btn-secondary"><i class="fa fa-trash"></i> Gỡ thiết bị</button>
             </div>
         </form>
@@ -127,3 +165,22 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
 </div>
 
 <?php layout('footer', 'admin'); ?>
+<script>
+    const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
+    const areaSelect = document.getElementById('area-select');
+    const roomSelect = document.getElementById('room-select');
+
+    areaSelect.addEventListener('change', function() {
+        const areaId = this.value;
+        roomSelect.innerHTML = '<option value="" disabled selected>Chọn phòng</option>'; // Reset danh sách phòng
+
+        if (areaId && roomsByArea[areaId]) {
+            roomsByArea[areaId].forEach(room => {
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent = room.tenphong; // Hiển thị chỉ tên phòng
+                roomSelect.appendChild(option);
+            });
+        }
+    });
+</script>

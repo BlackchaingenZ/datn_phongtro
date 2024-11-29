@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
@@ -60,7 +60,6 @@ if (isPost()) {
             setFlashData('msg_type', 'err');
             redirect('?module=cost&action=applyroom');
         }
-        
     } else {
         // Nếu có lỗi, xử lý thông báo lỗi
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');

@@ -113,7 +113,7 @@ if (isset($_POST['search'])) {
                 <input type="hidden" name="module" value="cost">
                 <p></p>
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('cost', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                <a href="<?php echo getLinkAdmin('cost', 'addcost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm loại giá mới </a>
+                <a href="<?php echo getLinkAdmin('cost', 'addcost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm bảng giá mới </a>
                 <a href="<?php echo getLinkAdmin('cost', 'costroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
                 <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
