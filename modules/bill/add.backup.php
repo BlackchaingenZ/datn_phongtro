@@ -3,9 +3,8 @@
 if(!defined('_INCODE'))
 die('Access denied...');
 
-
 $data = [
-    'pageTitle' => 'Cập nhật thông tin hóa đơn'
+    'pageTitle' => 'Thêm hóa đơn mới'
 ];
 
 layout('header', 'admin', $data);
@@ -16,95 +15,62 @@ $donGiaNuoc = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền
 $dongiaDien = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền điện'");
 $dongiaRac = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền rác'");
 $dongiaWifi = firstRaw("SELECT giadichvu FROM services WHERE tendichvu = 'Tiền Wifi'");
-$allTenant = getRaw("SELECT tenant.id, tenant.tenkhach, room.tenphong 
-                     FROM tenant 
-                     INNER JOIN contract_tenant ON contract_tenant.tenant_id_1 = tenant.id 
-                     INNER JOIN contract ON contract_tenant.contract_id_1 = contract.id 
-                     INNER JOIN room ON tenant.room_id = room.id 
-                     ORDER BY room.tenphong");
 
+// $allTenant = getRaw("SELECT tenant.id, tenkhach, tenphong FROM tenant INNER JOIN room ON contract.tenant_id = tenant.id INNER JOIN room ON tenant.room_id = room.id ORDER BY tenphong");
+$allRoom = getRaw("SELECT room.id, tenphong, giathue, soluong, chuky, room.ngayvao FROM room INNER JOIN contract ON contract.room_id  = room.id ORDER BY tenphong");
 
-$allRoom = getRaw("
-    SELECT 
-        room.id, 
-        tenphong, 
-        cost.giathue, 
-        soluong, 
-        chuky, 
-        room.ngayvao 
-    FROM room 
-    INNER JOIN contract ON contract.room_id = room.id
-    INNER JOIN cost_room ON cost_room.room_id = room.id
-    INNER JOIN cost ON cost.id = cost_room.cost_id
-    ORDER BY tenphong
-");
-
-// Xử lý hiện dữ liệu cũ của người dùng
-$body = getBody();
-$id = $_GET['id'];
-
-if(!empty($body['id'])) {
-    $billId = $body['id'];   
-    $billDetail  = firstRaw("SELECT * FROM bill WHERE id=$billId");
-    if (!empty($billDetail)) {
-        // Gán giá trị billDetail vào setFalsh
-        setFlashData('billDetail', $billDetail);
-    
-    }else {
-        redirect('?module=bill');
-    }
-}
-
-// Xử lý sửa người dùng
+// Xử lý thêm người dùng
 if(isPost()) {
     // Validate form
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
-      
+
    // Kiểm tra mảng error
   if(empty($errors)) {
     // không có lỗi nào
-    $dataUpdate = [
+    $dataInsert = [
         'room_id' => $body['room_id'],
+        'mahoadon' => generateInvoiceCode(),
+        // 'tenant_id' => $body['tenant_id'],
         'chuky' => $body['chuky'],
         'songayle' => $body['songayle'],
         'tienphong' => $body['tienphong'],
         'sodiencu' => $body['sodiencu'],
         'sodienmoi' => $body['sodienmoi'],
+        'img_sodienmoi' => $body['img_sodienmoi'],
         'tiendien' => $body['tiendien'],
         'sonuoccu' => $body['sonuoccu'],
         'sonuocmoi' => $body['sonuocmoi'],
+        'img_sonuocmoi' => $body['img_sonuocmoi'],
         'tiennuoc' => $body['tiennuoc'],
         'songuoi' => $body['soluong'],
         'tienrac' => $body['tienrac'],
         'tienmang' => $body['tienmang'],
         'nocu' => $body['nocu'],
         'tongtien' => $body['tongtien'],
-        'sotiendatra' => $body['sotiendatra'],
-        'sotienconthieu' => $body['sotienconthieu'],
-        'trangthaihoadon' => $body['trangthaihoadon'],
+        'sotienconthieu' => $body['tongtien'],
+        'create_at' => date('Y-m-d H:i:s'),
     ];
 
-    $condition = "id=$id";
-    $updateStatus = update('bill', $dataUpdate, $condition);
-    if ($updateStatus) {
-        setFlashData('msg', 'Cập nhật thông tin hóa đơn thành công');
+    $insertStatus = insert('bill', $dataInsert);
+    if ($insertStatus) {
+        setFlashData('msg', 'Thêm thông tin hóa đơn thành công');
         setFlashData('msg_type', 'suc');
         redirect('?module=bill');
     }else {
-        setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
-        setFlashData('msg_type', 'err');
-}
+    setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+    setFlashData('msg_type', 'err');
+    redirect('?module=bill&action=add'); 
+    }
 
-  } else {
+  }else {
     // Có lỗi xảy ra
     setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
     setFlashData('msg_type', 'err');
     setFlashData('errors', $errors);
     setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lê khi nhập vào
+    redirect('?module=bill&action=add'); 
   }
-
-  redirect('?module=bill&action=edit&id='.$billId);
 
 }
 $msg =getFlashData('msg');
@@ -112,32 +78,31 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-if (!empty($billDetail) && empty($old)) {
-    $old = $billDetail;
-}
 ?>
 <?php
 layout('navbar', 'admin', $data);
 ?>
 
     <div class="container">
-        <hr/>
-     
+            <div id="MessageFlash">
+                <?php getMsg($msg, $msgType);?> 
+            </div>
 
-        <div class="box-content">
-            <form action="" method="post" class="row">
-                    <!-- hàng 1 -->
+            <div class="box-content2">
+                <form action="" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    
+                <!-- hàng 1 -->
                     <div class="row">
                         <div class="col-5">
                             <div class="form-group">
                                 <label for="">Chọn phòng lập hóa đơn <span style="color: red">*</span></label>
-                                <select required name="room_id" id="room_id" class="form-select" onchange="updateTienPhong(); updateChuky(); updateSoluong()">
+                                <select required name="room_id" id="room_id" class="form-select" onchange="updateTienPhong(); updateChuky(); updateSoluong(); updateCSD();">
                                     <option value="">Chọn phòng</option>
                                     <?php
                                         if(!empty($allRoom)) {
                                             foreach($allRoom as $item) {                                            
                                                     ?>
-                                                        <option data-soluong="<?php echo $item['soluong']; ?>" data-chuky="<?php echo $item['chuky']; ?>" data-giaphong="<?php echo $item['giathue']; ?>" value="<?php echo $item['id'] ?>" <?php  echo (old('room_id', $old) == $item['id'])?'selected':false; ?>><?php echo $item['tenphong'] ?></option> 
+                                                        <option data-ngayvao="<?php echo $item['ngayvao']; ?>"  data-soluong="<?php echo $item['soluong']; ?>" data-chuky="<?php echo $item['chuky']; ?>" data-giaphong="<?php echo $item['giathue']; ?>" value="<?php echo $item['id'] ?>" <?php echo (!empty($roomId) && $roomId == $item['id'])?'selected':'' ?>><?php echo $item['tenphong'] ?></option> 
                                                     <?php                                           
                                             }
                                         }
@@ -146,15 +111,33 @@ layout('navbar', 'admin', $data);
                                 <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                             </div>
                         </div>
+                        
+                        <!-- <div class="col-5">
+                            <div class="form-group">
+                                <label for="">Người đại diện <span style="color: red">*</span></label>
+                                <select required name="tenant_id" id="" class="form-select">
+                                    <option value="">Chọn người đại diện</option>
+                                    <?php
+                                        if(!empty($allTenant)) {
+                                            foreach($allTenant as $item) {                                            
+                                                    ?>
+                                                        <option value="<?php echo $item['id'] ?>" <?php echo (!empty($tenantId) && $tenantId == $item['id'])?'selected':'' ?>><?php echo $item['tenkhach']?> - <?php echo $item['tenphong'] ?></option> 
+                                                    <?php                                           
+                                            }
+                                        }
+                                    ?>
+                                </select>
+                                <?php echo form_error('tenant_id', $errors, '<span class="error">', '</span>'); ?>
+                            </div>
+                        </div> -->
                     </div>
 
                 <!-- Hàng 2 -->
-
                 <div class="row">
                     <div class="col-3">
                         <div class="form-group">
-                            <label for="">Chu kỳ <span style="color: red">*</span></label>
-                            <input value="<?php echo old('chuky', $old); ?>" type="text" name="chuky" id="chuky" class="form-control" > 
+                            <label for="">Số tháng <span style="color: red">*</span></label>
+                            <input type="text" name="chuky" id="chuky" class="form-control" > 
                             <?php echo form_error('chuky', $errors, '<span class="error">', '</span>'); ?>
                         </div>
                     </div>
@@ -162,7 +145,7 @@ layout('navbar', 'admin', $data);
                     <div class="col-3">
                         <div class="form-group">
                             <label for="">Số ngày lẻ <span style="color: red">*</span></label>
-                            <input value="<?php echo old('songayle', $old); ?>" type="text" name="songayle" id="songayle" class="form-control" > 
+                            <input type="text" name="songayle" id="songayle" class="form-control" > 
                             <?php echo form_error('songayle', $errors, '<span class="error">', '</span>'); ?>
                         </div>
                     </div>
@@ -170,7 +153,7 @@ layout('navbar', 'admin', $data);
                    <div class="col-3">
                         <div class="form-group">
                             <label for="tienphong">Tiền Phòng</label>
-                            <input value="<?php echo old('tienphong', $old); ?>" type="text" class="form-control" id="tienphong" name="tienphong" >
+                            <input type="text" class="form-control" id="tienphong" name="tienphong" >
                         </div>
                    </div>
                 </div>
@@ -181,17 +164,29 @@ layout('navbar', 'admin', $data);
                         <div class="water">
                             <div class="form-group">
                                 <label for="sodiencu">Số điện cũ (KWh)</label>
-                                <input value="<?php echo old('sodiencu', $old); ?>" type="number" min="0" id="sodiencu" class="form-control" name="sodiencu" required oninput="calculateTienDien()">
+                                <input type="number" min="0" id="sodiencu" class="form-control" name="sodiencu" required oninput="calculateTienDien()">
                             </div>
 
                             <div class="form-group">
                                 <label for="sodienmoi">Số điện mới (KWh)</label>
-                                <input value="<?php echo old('sodienmoi', $old); ?>" type="number" min="0" id="sodienmoi" class="form-control" name="sodienmoi" required oninput="calculateTienDien()">
+                                <input type="number" min="0" id="sodienmoi" class="form-control" name="sodienmoi" required oninput="calculateTienDien()">
                             </div>
 
                             <div class="form-group">
-                                <label for="tiennuoc">Tiền điện</label>
-                                <input value="<?php echo old('tiendien', $old); ?>" type="text" class="form-control" id="tiendien"  name="tiendien" >
+                                <label for="name">Ảnh <span style="color: red">*</span></label>
+                                <div class="row ckfinder-group">
+                                    <div class="col-10">
+                                        <input type="text" placeholder="Ảnh chỉ số điện mới" name="img_sodienmoi" id="name" class="form-control image-render" value="<?php echo old('img_sodienmoi', $old); ?>">   
+                                    </div>
+                                    <div class="col-1">
+                                        <button type="button" class="btn btn-success btn-sm choose-image"><i class="fa fa-upload"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tiennuoc">Tiền điện (4000đ/1KWh)</label>
+                                <input type="text" class="form-control" id="tiendien"  name="tiendien" >
                              </div>
                         </div>
                     </div>
@@ -200,17 +195,29 @@ layout('navbar', 'admin', $data);
                         <div class="water">
                             <div class="form-group">
                                 <label for="sonuoccu">Số nước cũ (m/3)</label>
-                                <input value="<?php echo old('sonuoccu', $old); ?>" type="number" min="0" id="sonuoccu" class="form-control" name="sonuoccu" required oninput="calculateTienNuoc()">
+                                <input type="number" min="0" id="sonuoccu" class="form-control" name="sonuoccu" required oninput="calculateTienNuoc()">
                             </div>
 
                             <div class="form-group">
                                 <label for="sonuocmoi">Số nước mới (m/3)</label>
-                                <input value="<?php echo old('sonuocmoi', $old); ?>" type="number" min="0" id="sonuocmoi" class="form-control" name="sonuocmoi" required oninput="calculateTienNuoc()">
+                                <input type="number" min="0" id="sonuocmoi" class="form-control" name="sonuocmoi" required oninput="calculateTienNuoc()">
                             </div>
 
                             <div class="form-group">
-                                <label for="tiennuoc">Tiền Nước</label>
-                                <input value="<?php echo old('tiennuoc', $old); ?>" type="text" class="form-control" id="tiennuoc" name="tiennuoc" >
+                                <label for="name">Ảnh <span style="color: red">*</span></label>
+                                <div class="row ckfinder-group">
+                                    <div class="col-10">
+                                        <input type="text" placeholder="Ảnh chỉ số nước mới" name="img_sonuocmoi" id="name" class="form-control image-render" value="<?php echo old('img_sonuocmoi', $old); ?>">   
+                                    </div>
+                                    <div class="col-1">
+                                        <button type="button" class="btn btn-success btn-sm choose-image"><i class="fa fa-upload"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tiennuoc">Tiền Nước (20000đ/1m3)</label>
+                                <input type="text" class="form-control" id="tiennuoc" name="tiennuoc" >
                              </div>
                         </div>
                     </div>
@@ -219,12 +226,12 @@ layout('navbar', 'admin', $data);
                         <div class="water">                      
                             <div class="form-group">
                                 <label for="soluong">Số lượng người</label>
-                                <input value="<?php echo old('songuoi', $old); ?>" type="number" min="0" id="soluongNguoi" class="form-control" name="soluong" required onchange="calculateTienRac()">
+                                <input type="text" min="0" id="soluongNguoi" class="form-control" name="soluong" required onchange="calculateTienRac()">
                             </div>
 
                             <div class="form-group">
-                                <label for="tienrac">Tiền rác</label>
-                                <input value="<?php echo old('tienrac', $old); ?>" type="text" class="form-control" id="tienrac" name="tienrac" >
+                                <label for="tienrac">Tiền rác (10.000đ/1người)</label>
+                                <input type="text" class="form-control" id="tienrac" name="tienrac" >
                              </div>
                         </div>
                     </div>
@@ -232,14 +239,14 @@ layout('navbar', 'admin', $data);
                     <div class="col-3">
                         <div class="water">
                             <div class="form-group">
-                                <label for="tienmang">Tiền Wifi</label>
-                                <input value="<?php echo old('tienmang', $old); ?>" type="text" class="form-control" id="tienmang" name="tienmang" >
+                                <label for="tienmang">Tiền Wifi (50.000đ/1tháng)</label>
+                                <input type="text" class="form-control" id="tienmang" name="tienmang" >
                              </div>
                         </div>
                         <div class="water">
                             <div class="form-group">
-                                <label for="nocu">Nợ cũ</label>
-                                <input value="<?php echo old('nocu', $old); ?>" type="text" class="form-control" id="nocu" name="nocu" >
+                                <label for="nocu">Cộng thêm</label>
+                                <input type="text" class="form-control" id="nocu" name="nocu" >
                              </div>
                         </div>
                     </div>
@@ -248,49 +255,30 @@ layout('navbar', 'admin', $data);
                 
                 <!-- Hàng 4 -->
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-5">
                         <div class="form-group">
                             <label for="tongtien">Tổng tiền</label>
-                            <input value="<?php echo old('tongtien', $old); ?>" type="text" class="form-control" id="tongtien" name="tongtien" >
+                            <input type="text" class="form-control" id="tongtien" name="tongtien" >
                         </div>
                     </div>
 
-                    <div class="col-3">
+                    <!-- <div class="col-5">
                         <div class="form-group">
-                            <label for="tongtien">Đã thanh toán</label>
-                            <input value="<?php echo old('sotiendatra', $old); ?>" type="text" class="form-control" id="sotiendatra" name="sotiendatra" oninput="formatCurrency(this)">
+                            <label for="create_at">Ngày lập hóa đơn</label>
+                            <input type="date" class="form-control" id="create_at" required name="create_at" >
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="col-3">
-                        <div class="form-group">
-                            <label for="tongtien">Còn nợ</label>
-                            <input value="<?php echo old('sotienconthieu', $old); ?>" type="text" class="form-control" id="sotienconthieu" name="sotienconthieu" >
-                        </div>
-                    </div>
-
-                    <div class="col-3">
-                        <div class="form-group">
-                            <label for="">Tình trạng thu tiền</label>
-                            <select name="trangthaihoadon" class="form-select">
-                                <!-- <option value="">Chọn trạng thái</option>                                -->
-                                <option value="0" <?php if($billDetail['trangthaihoadon'] == 0) echo 'selected' ?> >Chưa thanh toán</option>
-                                <option value="1" <?php if($billDetail['trangthaihoadon'] == 1) echo 'selected' ?>>Đã thanh toán</option>
-                                <option value="2" <?php if($billDetail['trangthaihoadon'] == 2) echo 'selected' ?>>Đang nợ tiền</option>
-                            </select>
-                        </div>
-                    </div>
-
-                </div>    
-
-                    <div class="from-group">                    
+                </div>
+                    <div class="from-group" style="margin-top: 20px">                    
                             <div class="btn-row">
-                            <a style="margin-left: 20px " href="<?php echo getLinkAdmin('bill') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                                <button type="submit" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i> Cập nhật</button>
+                                <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-plus"></i> Thêm hóa đơn</button>
+                                <a style="margin-left: 20px " href="<?php echo getLinkAdmin('bill') ?>" class="btn btn-success"><i class="fa fa-forward"></i></a>
                             </div>
                     </div>
-            </form>
-        </div>
+                </form>
+
+            </div>
     </div>
 
 
@@ -312,6 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTienPhong();
         firstMonth();
         updateSoluong();
+        updateCSD();
     }
 
     function updateTienPhong() {
@@ -327,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var tienphong = formattedThang + formattedSongayle;
 
         // Định dạng số tiền với dấu phân cách hàng nghìn
-        document.getElementById('tienphong').value = numberWithCommas(tienphong) ;
+        document.getElementById('tienphong').value = numberWithCommas(tienphong) + ' đ';
         calculateTotal();
     }
     // Nếu là tháng đầu tiên vào ở thì thông báo 
@@ -384,7 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const sonuoccu = parseFloat(document.getElementById('sonuoccu').value) || 0;
         const sonuocmoi = parseFloat(document.getElementById('sonuocmoi').value) || 0;
         const tiennuoc = (sonuocmoi - sonuoccu) * dongiaNuoc;
-        document.getElementById('tiennuoc').value = numberWithCommas(tiennuoc);
+        document.getElementById('tiennuoc').value = numberWithCommas(tiennuoc) + ' đ';
         calculateTotal();
     }
 
@@ -392,7 +381,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const sodiencu = parseFloat(document.getElementById('sodiencu').value) || 0;
         const sodienmoi = parseFloat(document.getElementById('sodienmoi').value) || 0;
         const tiendien = (sodienmoi - sodiencu) * dongiaDien;
-        document.getElementById('tiendien').value = numberWithCommas(tiendien);
+        document.getElementById('tiendien').value = numberWithCommas(tiendien) + ' đ';
         calculateTotal();
     }
 
@@ -400,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const chuky = parseFloat(document.getElementById('chuky').value) || 1; // Chu kỳ mặc định là 1 tháng nếu không có giá trị
         const soluongNguoi = parseFloat(document.getElementById('soluongNguoi').value) || 1;
         const tienrac = soluongNguoi * dongiaRac * chuky;
-        document.getElementById('tienrac').value = numberWithCommas(tienrac) ;
+        document.getElementById('tienrac').value = numberWithCommas(tienrac) + ' đ';
         calculateTotal();
     }
 
@@ -410,9 +399,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const tienmangThang = chuky * dongiaWifi;
         const tienmangNgayle = (dongiaWifi / 30) * songayle;
         let tienmang = Math.ceil(tienmangThang + tienmangNgayle);
-        document.getElementById('tienmang').value = numberWithCommas(tienmang);
+        document.getElementById('tienmang').value = numberWithCommas(tienmang) + ' đ';
         calculateTotal();
     }
+    
 
     function calculateTotal() {
         const tienphong = parseFloat(document.getElementById('tienphong').value.replace(/,/g, '').replace(' đ', '')) || 0;
@@ -423,20 +413,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const nocu = parseFloat(document.getElementById('nocu').value.replace(/,/g, '').replace(' đ', '')) || 0;
 
         const tongtien = tienphong + tiendien + tiennuoc + tienrac + tienmang + nocu;
-        document.getElementById('tongtien').value = numberWithCommas(tongtien);
+        document.getElementById('tongtien').value = numberWithCommas(tongtien) + ' đ';
     }
-
-    document.getElementById('sotiendatra').addEventListener('input', function() {
-    // Lấy giá trị tổng tiền từ ô nhập
-    var tongtien = parseFloat(document.getElementById('tongtien').value.replace(/,/g, '').replace(' đ', '')) || 0;
-    // Lấy giá trị số tiền đã trả từ ô nhập
-    var sotiendatra = parseFloat(document.getElementById('sotiendatra').value.replace(/,/g, '').replace(' đ', '')) || 0;
-    // Tính toán số tiền còn nợ
-    var sotienconthieu = tongtien - sotiendatra;
-    // Hiển thị số tiền còn nợ
-    document.getElementById('sotienconthieu').value = numberWithCommas(sotienconthieu) ;
-});
-
 
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -469,16 +447,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('tienmang').value = removeCommas(document.getElementById('tienmang').value);
         document.getElementById('nocu').value = removeCommas(document.getElementById('nocu').value);
         document.getElementById('tongtien').value = removeCommas(document.getElementById('tongtien').value);
-        document.getElementById('sotiendatra').value = removeCommas(document.getElementById('sotiendatra').value);
-        document.getElementById('sotienconthieu').value = removeCommas(document.getElementById('sotienconthieu').value);
     });
 
     updateRoomDetails();
 });
 
 </script>
-
-
 
 
 
