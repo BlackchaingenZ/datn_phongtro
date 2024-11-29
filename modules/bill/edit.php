@@ -44,7 +44,9 @@ $id = $_GET['id'];
 
 if (!empty($body['id'])) {
     $billId = $body['id'];
+
     $billDetail  = firstRaw("SELECT * FROM bill WHERE id=$billId");
+
     if (!empty($billDetail)) {
         // Gán giá trị billDetail vào setFalsh
         setFlashData('billDetail', $billDetail);
@@ -97,6 +99,8 @@ if (isPost()) {
             'sotiendatra' => !empty($body['sotiendatra']) ? removeCommas($body['sotiendatra']) : null,
             'sotienconthieu' => !empty($body['sotienconthieu']) ? removeCommas($body['sotienconthieu']) : null,
             'trangthaihoadon' => $body['trangthaihoadon'],
+            'thang' => $body['thang'],
+            'create_at' => $body['create_at'],
         ];
 
 
@@ -143,7 +147,7 @@ layout('navbar', 'admin', $data);
         <form action="" method="post" class="row">
             <!-- hàng 1 -->
             <div class="row">
-                <div class="col-5">
+                <div class="col-3">
                     <div class="form-group">
                         <label for="">Chọn phòng lập hóa đơn <span style="color: red">*</span></label>
                         <select required name="room_id" id="room_id" class="form-select" onchange="updateTienPhong(); updateChuky(); updateSoluong()">
@@ -159,6 +163,36 @@ layout('navbar', 'admin', $data);
                             ?>
                         </select>
                         <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="thang">Chọn tháng<span style="color: red">*</span></label>
+                        <select name="thang" id="thang" class="form-select">
+                            <option value="" disabled <?php echo ($billDetail['thang'] === null) ? 'selected' : ''; ?>>Chọn tháng</option>
+                            <option value="1" <?php echo ($billDetail['thang'] == 1) ? 'selected' : ''; ?>>Tháng 1</option>
+                            <option value="2" <?php echo ($billDetail['thang'] == 2) ? 'selected' : ''; ?>>Tháng 2</option>
+                            <option value="3" <?php echo ($billDetail['thang'] == 3) ? 'selected' : ''; ?>>Tháng 3</option>
+                            <option value="4" <?php echo ($billDetail['thang'] == 4) ? 'selected' : ''; ?>>Tháng 4</option>
+                            <option value="5" <?php echo ($billDetail['thang'] == 5) ? 'selected' : ''; ?>>Tháng 5</option>
+                            <option value="6" <?php echo ($billDetail['thang'] == 6) ? 'selected' : ''; ?>>Tháng 6</option>
+                            <option value="7" <?php echo ($billDetail['thang'] == 7) ? 'selected' : ''; ?>>Tháng 7</option>
+                            <option value="8" <?php echo ($billDetail['thang'] == 8) ? 'selected' : ''; ?>>Tháng 8</option>
+                            <option value="9" <?php echo ($billDetail['thang'] == 9) ? 'selected' : ''; ?>>Tháng 9</option>
+                            <option value="10" <?php echo ($billDetail['thang'] == 10) ? 'selected' : ''; ?>>Tháng 10</option>
+                            <option value="11" <?php echo ($billDetail['thang'] == 11) ? 'selected' : ''; ?>>Tháng 11</option>
+                            <option value="12" <?php echo ($billDetail['thang'] == 12) ? 'selected' : ''; ?>>Tháng 12</option>
+                        </select>
+                        <?php echo form_error('thang', $errors, '<span class="error">', '</span>'); ?>
+                    </div>
+
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="">Ngày lập <span style="color: red">*</span></label>
+                        <input type="date" name="create_at" id="" class="form-control"
+                            value="<?php echo old('create_at', $old); ?>">
+                        <?php echo form_error('create_at', $errors, '<span class="error">', '</span>'); ?>
                     </div>
                 </div>
             </div>

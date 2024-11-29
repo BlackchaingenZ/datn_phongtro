@@ -73,7 +73,7 @@ $html = '
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tiền phòng</b></td>
-                <td style="font-size: 12px;">30 ngày x ' . number_format($roomDetail['giathue'], 0, ',', '.') . ' đ</td>
+                <td style="font-size: 12px;">Tính tiền:  ' . number_format($roomDetail['giathue'], 0, ',', '.') . ' đ / tháng</td>
                 <td style="font-size: 12px;"><b>' . number_format($roomDetail['giathue'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>
@@ -93,7 +93,7 @@ $html = '
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tiền Wifi</b></td>
-                <td style="font-size: 12px;">' . $billDetail['chuky'] . ' tháng x 50.000đ</td>
+                <td style="font-size: 12px;">Tính tiền: 50.000đ / tháng</td>
                 <td style="font-size: 12px;"><b>' . number_format($billDetail['tienmang'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>

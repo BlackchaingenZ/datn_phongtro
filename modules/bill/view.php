@@ -52,7 +52,7 @@ $roomtDetail = firstRaw("
             </tr>
             <tr>
                 <td style="font-size: 14px;"><b>Tiền phòng</b></td>
-                <td>Tính tiền: <?php echo number_format($roomtDetail['giathue'], 0, ',', '.') ?> đ </td>
+                <td>Tính tiền: <?php echo number_format($roomtDetail['giathue'], 0, ',', '.') ?> đ / tháng</td>
                 <td style="font-size: 16px;"><b><?php echo number_format($billDetail['tienphong'], 0, ',', '.') ?> đ</b></td>
             </tr>
             <tr>
@@ -74,7 +74,7 @@ $roomtDetail = firstRaw("
 
             <tr>
                 <td style="font-size: 14px;"><b>Tiền Wifi</b></td>
-                <td>Tính tiền: <?php echo $billDetail['chuky'] ?> tháng x 50.000đ</td>
+                <td>Tính tiền: 50.000đ / tháng</td>
                 <td style="font-size: 16px;"><b><?php echo number_format($billDetail['tienmang'], 0, ',', '.') ?> đ</b></td>
             </tr>
             <!-- <tr>

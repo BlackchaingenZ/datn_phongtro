@@ -81,6 +81,9 @@ if (isPost()) {
     if (empty(trim($body['thang']))) {
         $errors['thang']['required'] = 'Bạn chưa chọn tháng!';
     }
+    if (empty(trim($body['create_at']))) {
+        $errors['create_at']['required'] = 'Bạn chưa chọn ngày!';
+    }
     // Kiểm tra mảng error
     if (empty($errors)) {
         // không có lỗi nào
@@ -124,9 +127,10 @@ if (isPost()) {
             'tienmang' => $tienmang,
             'tongtien' => $tongtien,
             'sotienconthieu' => $sotienconthieu,
-            'create_at' => date('Y-m-d H:i:s'),  // Lấy thời gian hiện tại
+            // 'create_at' => date('Y-m-d H:i:s'),  // Lấy thời gian hiện tại
             'trangthaihoadon' => isset($body['trangthaihoadon']) ? $body['trangthaihoadon'] : '',
             'thang' => isset($body['thang']) ? $body['thang'] : '',
+            'create_at' => isset($body['create_at']) ? $body['create_at'] : '',
         ];
 
 
@@ -221,7 +225,14 @@ layout('navbar', 'admin', $data);
                         </select>
                         <?php echo form_error('thang', $errors, '<span class="error">', '</span>'); ?>
                     </div>
-
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="">Ngày lập <span style="color: red">*</span></label>
+                        <input type="date" name="create_at" id="" class="form-control"
+                            value="<?php echo old('create_at', $old); ?>">
+                        <?php echo form_error('create_at', $errors, '<span class="error">', '</span>'); ?>
+                    </div>
                 </div>
                 <div class="col-3">
                     <div class="form-group">
@@ -229,6 +240,7 @@ layout('navbar', 'admin', $data);
                         <input type="text" class="form-control" id="tienphong" name="tienphong">
                     </div>
                 </div>
+
             </div>
 
             <!-- Hàng 3 -->

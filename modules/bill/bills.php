@@ -182,7 +182,7 @@ layout('navbar', 'admin', $data);
                         <th rowspan="2">Còn nợ</th>
                         <th width="6%" rowspan="2">Trạng thái</th>
                         <th width="6%" rowspan="2">Ngày lập</th>
-                        <th rowspan="2">Thao tác</th>
+                        <th width="3%" rowspan="2">Thao tác</th>
                     </tr>
                     <tr>
                         <th>Thành tiền</th>
@@ -255,7 +255,7 @@ layout('navbar', 'admin', $data);
                                     }
                                     ?>
                                 </td>
-                                <td><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
+                                <td style="text-align: center;"><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
 
                                 <td class="" style="text-align: center;">
                                     <div class="action">

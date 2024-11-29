@@ -1,5 +1,5 @@
 <?php
-$listAlltenant = getRaw("SELECT room.tenphong, bill.id, bill.mahoadon, tienphong, tiendien, tiennuoc, tienrac, tienmang, nocu, tongtien, bill.create_at FROM bill INNER JOIN room ON room.id = bill.room_id");
+$listAlltenant = getRaw("SELECT room.tenphong, bill.id, bill.mahoadon, tienphong, tiendien, tiennuoc, tienrac, tienmang, thang, tongtien, bill.create_at FROM bill INNER JOIN room ON room.id = bill.room_id");
 
 // print_r($listAlltenant); die;
 $dataTenant = json_encode($listAlltenant);
@@ -99,7 +99,7 @@ $spreadsheet->getActiveSheet()
             ->setCellValue('F2', 'Tiền nước')
             ->setCellValue('G2', 'Tiền rác')
             ->setCellValue('H2', 'Tiền Wifi')
-            ->setCellValue('I2', 'Nợ cũ')
+            ->setCellValue('I2', 'Tháng')
             ->setCellValue('J2', 'Tổng cộng')
             ->setCellValue('K2', 'Ngày lập hóa đơn');
 
@@ -130,7 +130,7 @@ foreach($tenantFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['tiennuoc']);
       $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['tienrac']);
       $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $item['tienmang']);
-      $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['nocu']);
+      $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['thang']);
       $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['tongtien']);
       $spreadsheet->getActiveSheet()->setCellValue('K'.$row, $item['create_at']);    
 

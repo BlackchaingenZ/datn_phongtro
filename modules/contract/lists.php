@@ -304,7 +304,6 @@ layout('navbar', 'admin', $data);
                         <th style="text-align: center;">Giá thuê</th>
                         <th style="width: 5%; text-align: center;">Giá tiền cọc</th>
                         <th style="width: 6%; text-align: center;">Trạng thái cọc</th>
-                        <th style="width: 4%; text-align: center;">Chu kỳ thu </th>
                         <th style="text-align: center;">Ngày lập</th>
                         <th style="text-align: center;">Ngày vào ở</th>
                         <th style="width: 6%; text-align: center;">Thời hạn hợp đồng</th>
@@ -369,7 +368,6 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['sotiencoc'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['tinhtrangcoc'] == 2 ? '<span class="btn-kyhopdong-err">Chưa thu</span>' : '<span class="btn-kyhopdong-suc">Đã thu</span>' ?></td>
-                                <td style="text-align: center;"><?php echo $item['chuky'] ?> tháng</td>
                                 <td style="text-align: center;"><?php echo $item['ngaylaphopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngaylaphopdong'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center;"><?php echo $item['ngayvaoo'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvaoo'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center;"><?php echo $item['thoihanhopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['thoihanhopdong'], 'd-m-Y'); ?></td>
