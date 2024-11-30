@@ -269,20 +269,23 @@ layout('navbar', 'admin', $data);
             $month = isset($_POST['month']) ? $_POST['month'] : '';
             $year = isset($_POST['year']) ? $_POST['year'] : '';
 
-            // Truy vấn lấy danh sách phòng chưa thu
             $sql_chuathu = "
-    SELECT 
-        room.tenphong AS tenphong,
-        bill.sotienconthieu AS sotienconthieu
-    FROM 
-        room
-    INNER JOIN 
-        bill
-    ON 
-        room.id = bill.room_id
-    WHERE 
-        bill.trangthaihoadon = 2
-";
+            SELECT 
+                room.tenphong AS tenphong,
+                bill.sotienconthieu AS sotienconthieu
+            FROM 
+                room
+            INNER JOIN 
+                bill
+            ON 
+                room.id = bill.room_id
+            LEFT JOIN 
+                receipt
+            ON 
+                bill.id = receipt.bill_id
+            WHERE 
+                 receipt.bill_id IS NULL
+        ";
 
             // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng chưa thu
             if ($month) {
@@ -401,17 +404,17 @@ layout('navbar', 'admin', $data);
             <h3 class="sumary-title">
                 Danh sách phòng chưa thu
             </h3>
+            <p style="color:red"><i>(Phòng đã có hoá đơn nhưng chưa thu gì cả)</i></p>
             <?php if (empty($results_chuathu)): ?>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                            <td colspan="1" style="text-align: center;">Không có dữ liệu.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -420,14 +423,12 @@ layout('navbar', 'admin', $data);
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($results_chuathu as $row): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo number_format($row['sotienconthieu'], 0, ',', '.') ?> đ</td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -437,6 +438,7 @@ layout('navbar', 'admin', $data);
             <h3 class="sumary-title">
                 Danh sách phòng đã thu
             </h3>
+            <p style="color:red"><i>(Phòng đã thu hết và không còn nợ)</i></p>
             <?php if (empty($results_dathu)): ?>
                 <table class="table table-striped">
                     <thead>
@@ -473,12 +475,13 @@ layout('navbar', 'admin', $data);
             <h3 class="sumary-title">
                 Danh sách phòng còn nợ
             </h3>
+            <p style="color:red"><i>(Phòng đã trả trước nhưng vẫn còn nợ)</i></p>
             <?php if (empty($results_conno)): ?>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
+                            <th>Số tiền nợ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -492,7 +495,7 @@ layout('navbar', 'admin', $data);
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
+                            <th>Số tiền nợ</th>
                         </tr>
                     </thead>
                     <tbody>

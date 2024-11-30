@@ -179,7 +179,7 @@ layout('navbar', 'admin', $data);
                         <th colspan="2">Tiền rác</th>
                         <th colspan="1">Tiền Wifi</th>
                         <th rowspan="2">Tổng cộng</th>
-                        <th rowspan="2">Còn nợ</th>
+                        <th rowspan="2">Cần thanh toán</th>
                         <th width="6%" rowspan="2">Trạng thái</th>
                         <th width="6%" rowspan="2">Ngày lập</th>
                         <th width="3%" rowspan="2">Thao tác</th>
