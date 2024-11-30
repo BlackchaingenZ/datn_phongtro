@@ -186,30 +186,29 @@ layout('navbar', 'admin', $data);
                     </div>
 
                 </div>
-
             </form>
             <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <h3 class="sumary-title">THỐNG KÊ DOANH THU</h3>
             <!-- <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p> -->
-            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng khoản thu(đã thu) - tổng khoản chi - tổng tiền cọc ) </i></p>
+            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng khoản thu (đã thu) - tổng khoản chi - tổng tiền cọc ) </i></p>
 
             <div class="report-receipt-spend">
                 <div class="report-receipt">
-                    <p>Tổng khoản thu(dự kiến) </p>
+                    <p>Tổng khoản thu (dự kiến) </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthudukien, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-receipt">
-                    <p>Tổng khoản thu(đã thu) </p>
+                    <p>Tổng khoản thu (đã thu) </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-receipt">
-                    <p>Tổng khoản thu(chưa thu) </p>
+                    <p>Tổng khoản thu (chưa thu) </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthuconthieu, 0, ',', '.') . 'đ'; ?></p>
@@ -218,7 +217,7 @@ layout('navbar', 'admin', $data);
             </div>
             <div class="report-receipt-spend">
                 <div class="report-spend">
-                    <p>Tổng tiền cọc(dự kiến)</p>
+                    <p>Tổng tiền cọc (dự kiến)</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
                         <p style="color: red"><?php echo number_format($tiencocdukien, 0, ',', '.') . 'đ'; ?></p>
@@ -234,7 +233,7 @@ layout('navbar', 'admin', $data);
                 </div>
 
                 <div class="report-spend">
-                    <p>Tổng tiền cọc(chưa thu)</p>
+                    <p>Tổng tiền cọc (chưa thu)</p>
                     <div class="report-ts">
                         <img src="" alt="">
                         <p style="color: red"><?php echo number_format($tiencocconthieu, 0, ',', '.') . 'đ'; ?></p>
@@ -250,20 +249,262 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
                 <div class="report-spend">
-                    <p>Lợi nhuận(dự kiến)</p>
+                    <p>Lợi nhuận (dự kiến)</p>
                     <div class="report-ts">
                         <img src="" alt="">
                         <p><?php echo number_format($loinhuandukien, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-spend">
-                    <p>Lợi nhuận(thực tế)</p>
+                    <p>Lợi nhuận (thực tế)</p>
                     <div class="report-ts">
                         <img src="" alt="">
                         <p><?php echo number_format($loinhuan, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
             </div>
+
+            <?php
+            // Kiểm tra nếu người dùng đã gửi form tìm kiếm
+            $month = isset($_POST['month']) ? $_POST['month'] : '';
+            $year = isset($_POST['year']) ? $_POST['year'] : '';
+
+            // Truy vấn lấy danh sách phòng chưa thu
+            $sql_chuathu = "
+    SELECT 
+        room.tenphong AS tenphong,
+        bill.sotienconthieu AS sotienconthieu
+    FROM 
+        room
+    INNER JOIN 
+        bill
+    ON 
+        room.id = bill.room_id
+    WHERE 
+        bill.trangthaihoadon = 2
+";
+
+            // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng chưa thu
+            if ($month) {
+                $sql_chuathu .= " AND MONTH(bill.create_at) = :month";
+            }
+            if ($year) {
+                $sql_chuathu .= " AND YEAR(bill.create_at) = :year";
+            }
+
+            $sql_chuathu .= " ORDER BY room.tenphong ASC";
+
+            // Truy vấn lấy danh sách phòng đã thu
+            $sql_dathu = "
+    SELECT 
+        room.tenphong AS tenphong,
+        bill.sotiendatra AS sotiendatra
+    FROM 
+        room
+    INNER JOIN 
+        bill
+    ON 
+        room.id = bill.room_id
+    WHERE 
+        bill.trangthaihoadon = 1
+";
+
+            // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng đã thu
+            if ($month) {
+                $sql_dathu .= " AND MONTH(bill.create_at) = :month";
+            }
+            if ($year) {
+                $sql_dathu .= " AND YEAR(bill.create_at) = :year";
+            }
+
+            $sql_dathu .= " ORDER BY room.tenphong ASC";
+
+            // Truy vấn lấy danh sách phòng còn thiếu
+            $sql_conno = "
+    SELECT 
+        room.tenphong AS tenphong,
+        bill.sotienconthieu AS sotienconthieu
+    FROM 
+        room
+    INNER JOIN 
+        bill
+    ON 
+        room.id = bill.room_id
+    WHERE 
+        bill.trangthaihoadon = 3
+";
+
+            // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng còn nợ
+            if ($month) {
+                $sql_conno .= " AND MONTH(bill.create_at) = :month";
+            }
+            if ($year) {
+                $sql_conno .= " AND YEAR(bill.create_at) = :year";
+            }
+
+            $sql_conno .= " ORDER BY room.tenphong ASC";
+            // Chuẩn bị truy vấn và thực thi cho phòng chưa thu
+            $stmt_chuathu = $pdo->prepare($sql_chuathu);
+            if ($month) {
+                $stmt_chuathu->bindParam(':month', $month, PDO::PARAM_INT);
+            }
+            if ($year) {
+                $stmt_chuathu->bindParam(':year', $year, PDO::PARAM_INT);
+            }
+            $stmt_chuathu->execute();
+            $results_chuathu = $stmt_chuathu->fetchAll(PDO::FETCH_ASSOC);
+
+            // Chuẩn bị truy vấn và thực thi cho phòng đã thu
+            $stmt_dathu = $pdo->prepare($sql_dathu);
+            if ($month) {
+                $stmt_dathu->bindParam(':month', $month, PDO::PARAM_INT);
+            }
+            if ($year) {
+                $stmt_dathu->bindParam(':year', $year, PDO::PARAM_INT);
+            }
+            $stmt_dathu->execute();
+            $results_dathu = $stmt_dathu->fetchAll(PDO::FETCH_ASSOC);
+
+            // Chuẩn bị truy vấn và thực thi cho phòng còn nợ
+            $stmt_conno = $pdo->prepare($sql_conno);
+            if ($month) {
+                $stmt_conno->bindParam(':month', $month, PDO::PARAM_INT);
+            }
+            if ($year) {
+                $stmt_conno->bindParam(':year', $year, PDO::PARAM_INT);
+            }
+            $stmt_conno->execute();
+            $results_conno = $stmt_conno->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+
+            <br>
+            <!-- Form tìm kiếm -->
+            <?php
+            // Lấy tháng và năm hiện tại nếu không có giá trị từ form
+            $month = isset($_POST['month']) ? $_POST['month'] : date('m'); // Mặc định là tháng hiện tại
+            $year = isset($_POST['year']) ? $_POST['year'] : date('Y'); // Mặc định là năm hiện tại
+            ?>
+
+            <form method="post" action="" class="form-inline">
+                <div class="form-group mb-2">
+                    <label for="month" class="mr-2">Tháng:</label>
+                    <input type="number" id="month" name="month" class="form-control" min="1" max="12" value="<?php echo htmlspecialchars($month); ?>">
+                </div>
+                <div class="form-group mb-2 ml-3">
+                    <label for="year" class="mr-2">Năm:</label>
+                    <input type="number" id="year" name="year" class="form-control" value="<?php echo htmlspecialchars($year); ?>">
+                </div>
+                <button type="submit" class="btn btn-primary mb-2 ml-3"><i class="fa fa-search"></i></button>
+            </form>
+
+
+            <h3 class="sumary-title">
+                Danh sách phòng chưa thu
+            </h3>
+            <?php if (empty($results_chuathu)): ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($results_chuathu as $row): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row['sotienconthieu'], 0, ',', '.') ?> đ</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+
+            <h3 class="sumary-title">
+                Danh sách phòng đã thu
+            </h3>
+            <?php if (empty($results_dathu)): ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($results_dathu as $row): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row['sotiendatra'], 0, ',', '.') ?> đ</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+
+            <h3 class="sumary-title">
+                Danh sách phòng còn nợ
+            </h3>
+            <?php if (empty($results_conno)): ?>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tên phòng</th>
+                            <th>Số tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($results_conno as $row): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row['sotienconthieu'], 0, ',', '.') ?> đ</td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
 
         </div>
 
