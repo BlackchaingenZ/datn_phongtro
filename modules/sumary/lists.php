@@ -47,9 +47,13 @@ if ($filterType && $dateInput) {
             
             UNION ALL
             
-            SELECT SUM(sotiencoc) AS tong_tien 
-            FROM contract 
-            WHERE YEAR(create_at) = $year AND MONTH(create_at) = $month
+        SELECT SUM(contract.sotiencoc) AS tong_tien
+        FROM contract
+        LEFT JOIN receipt ON receipt.contract_id = contract.id
+        WHERE YEAR(contract.create_at) = $year 
+        AND MONTH(contract.create_at) = $month
+        AND receipt.contract_id IS NULL
+
         ) AS combined
     ");
         $tongthudukien = $sql['tong_tien'];
@@ -61,8 +65,15 @@ if ($filterType && $dateInput) {
         // Truy vấn tổng tiền cọc từ bảng receipt
         $sqlReceipt = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
 
-        // Truy vấn tổng tiền cọc từ bảng contract
-        $sqlContract = firstRaw("SELECT SUM(sotiencoc) as tien_coc_contract FROM contract WHERE YEAR(create_at) = $year AND MONTH(create_at) = $month");
+        $sqlContract = firstRaw("SELECT SUM(contract.sotiencoc) AS tien_coc_contract 
+        FROM contract 
+        WHERE YEAR(contract.create_at) = $year 
+        AND MONTH(contract.create_at) = $month 
+        AND NOT EXISTS (
+          SELECT 1 
+          FROM receipt 
+          WHERE receipt.contract_id = contract.id
+      )");
 
         // Lấy tổng tiền cọc từ cả hai bảng
         $tiencocdukien = ($sqlReceipt['tien_coc'] ?? 0) + ($sqlContract['tien_coc_contract'] ?? 0);
@@ -210,15 +221,15 @@ layout('navbar', 'admin', $data);
                     <p>Tổng tiền cọc (đã thu)</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
-                        <p style="color: #ed6004"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
+                        <p style="color: red"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
 
                 <div class="report-spend">
-                    <p>Tổng Tiền cọc(chưa thu)</p>
+                    <p>Tổng tiền cọc(chưa thu)</p>
                     <div class="report-ts">
                         <img src="" alt="">
-                        <p><?php echo number_format($tiencocconthieu, 0, ',', '.') . 'đ'; ?></p>
+                        <p style="color: red"><?php echo number_format($tiencocconthieu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
             </div>
@@ -227,7 +238,7 @@ layout('navbar', 'admin', $data);
                     <p>Tổng khoản chi (tiền ra)</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
-                        <p style="color: red"><?php echo number_format($tongchi, 0, ',', '.') . 'đ'; ?></p>
+                        <p style="color: orange"><?php echo number_format($tongchi, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-spend">
