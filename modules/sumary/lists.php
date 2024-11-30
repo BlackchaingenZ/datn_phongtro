@@ -88,58 +88,66 @@ if ($filterType && $dateInput) {
         $labels[] = "$month-$year";
         $profits = [$loinhuan];
         $loinhuandukien = $tongthudukien - $tongchi - $tiencocdukien;
-    } elseif ($filterType == 'year') {
-        $year = date('Y', strtotime($dateInput));
+    }
+    $year = date('Y', strtotime($dateInput));
+    // thực hiện việc trích xuất năm từ một chuỗi ngày tháng cụ thể được cung cấp trong biến $dateInput
+    if ($filterType == 'year') {
+        // Doanh thu
+        $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year");
+        $tongthu = $sql['tong_thu'];
 
-        for ($month = 1; $month <= 12; $month++) {
-            // Tính tổng thu từ bảng receipt
-            $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month");
-            $monthly_thu = $sql['tong_thu'] ?: 0;
-
-            // Tính tổng tiền đặt cọc trong receipt
-            $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
-            $monthly_datcoc = $sql['tien_coc'] ?: 0;
-
-            // Tính tổng thu từ bảng bill
-            $sql = firstRaw("SELECT SUM(tongtien) as tong_bill FROM bill WHERE YEAR(create_at) = $year AND MONTH(create_at) = $month");
-            $monthly_bill = $sql['tong_bill'] ?: 0;
-
-            // Tính tổng tiền đặt cọc trong hợp đồng
-            $sql = firstRaw("SELECT SUM(sotiencoc) as tong_coc FROM contract WHERE YEAR(create_at) = $year AND MONTH(create_at) = $month");
-            $monthly_coc = $sql['tong_coc'] ?: 0;
-
-            // Tính tổng thu nhập của tháng
-            $total_income = $monthly_thu + $monthly_bill + $monthly_coc;
-
-            // Tính tổng chi từ bảng payment
-            $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) = $month");
-            $monthly_chi = $sql['tong_chi'] ?: 0;
-
-            // Lợi nhuận của tháng (tổng thu - tổng chi)
-            $monthly_profit = $total_income - $monthly_chi;
-
-            // Lưu lại thông tin cho đồ thị
-            $labels[] = "$month-$year";
-            $profits[] = $monthly_profit;
-        }
-
-
-        $tongthudukien = array_sum(array_map(function ($month) use ($year) {
-            $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month");
-            return $sql['tong_thu'] ?: 0;
-        }, range(1, 12)));
+        $sql = firstRaw("
+        SELECT 
+            SUM(tong_tien) AS tong_tien
+        FROM (
+            SELECT SUM(sotien) AS tong_tien 
+            FROM receipt 
+            WHERE YEAR(ngaythu) = $year
+            
+            UNION ALL
+            
+            SELECT SUM(tongtien) AS tong_tien 
+            FROM bill 
+            WHERE YEAR(create_at) = $year
+            
+            UNION ALL
+            
+            SELECT SUM(contract.sotiencoc) AS tong_tien
+            FROM contract
+            LEFT JOIN receipt ON receipt.contract_id = contract.id
+            WHERE YEAR(contract.create_at) = $year
+            AND receipt.contract_id IS NULL
+        ) AS combined
+        ");
+        $tongthudukien = $sql['tong_tien'];
         $tongthuconthieu = $tongthudukien - $tongthu;
-        $tiencoc = array_sum(array_map(function ($month) use ($year) {
-            $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
-            return $sql['tien_coc'] ?: 0;
-        }, range(1, 12)));
 
-        $tongchi = array_sum(array_map(function ($month) use ($year) {
-            $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) = $month");
-            return $sql['tong_chi'] ?: 0;
-        }, range(1, 12)));
+        // Tiền cọc
+        $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND danhmucthu_id = 2");
+        $tiencoc = $sql['tien_coc'];
+
+        $sqlReceipt = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND danhmucthu_id = 2");
+
+        $sqlContract = firstRaw("SELECT SUM(contract.sotiencoc) AS tien_coc_contract 
+        FROM contract 
+        WHERE YEAR(contract.create_at) = $year 
+        AND NOT EXISTS (
+          SELECT 1 
+          FROM receipt 
+          WHERE receipt.contract_id = contract.id
+        )");
+
+        $tiencocdukien = ($sqlReceipt['tien_coc'] ?? 0) + ($sqlContract['tien_coc_contract'] ?? 0);
+        $tiencocconthieu = $tiencocdukien - $tiencoc;
+
+        // Tiền chi
+        $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year");
+        $tongchi = $sql['tong_chi'];
 
         $loinhuan = $tongthu - $tongchi - $tiencoc;
+        $labels[] = "$year";
+        $profits = [$loinhuan];
+        $loinhuandukien = $tongthudukien - $tongchi - $tiencocdukien;
     }
 }
 
@@ -163,7 +171,7 @@ layout('navbar', 'admin', $data);
                 <div class="row">
                     <div class="col-3">
                         <select name="filter_type" class="form-select" onchange="toggleInputType()">
-                            <option value="">Tổng kết theo</option>
+                            <option value="" disabled selected>Tổng kết theo</option>
                             <option value="month" <?php echo ($filterType == 'month') ? 'selected' : ''; ?>>Theo tháng</option>
                             <option value="year" <?php echo ($filterType == 'year') ? 'selected' : ''; ?>>Theo năm</option>
                         </select>
@@ -181,9 +189,9 @@ layout('navbar', 'admin', $data);
 
             </form>
             <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <h3 class="sumary-title">Thống kê doanh thu theo từng tháng</h3>
-            <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p>
-            <p style="color:red"><i>Lợi nhuận = ( Tổng khoản thu(đã thu) - tổng khoản chi - tổng tiền cọc ) </i></p>
+            <h3 class="sumary-title">THỐNG KÊ DOANH THU</h3>
+            <!-- <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p> -->
+            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng khoản thu(đã thu) - tổng khoản chi - tổng tiền cọc ) </i></p>
 
             <div class="report-receipt-spend">
                 <div class="report-receipt">
@@ -249,7 +257,7 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
                 <div class="report-spend">
-                    <p>Lợi nhuận</p>
+                    <p>Lợi nhuận(thực tế)</p>
                     <div class="report-ts">
                         <img src="" alt="">
                         <p><?php echo number_format($loinhuan, 0, ',', '.') . 'đ'; ?></p>
