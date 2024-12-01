@@ -272,7 +272,7 @@ layout('navbar', 'admin', $data);
             $sql_chuathu = "
             SELECT 
                 room.tenphong AS tenphong,
-                bill.sotienconthieu AS sotienconthieu
+                bill.tongtien AS tongtien
             FROM 
                 room
             INNER JOIN 
@@ -383,9 +383,17 @@ layout('navbar', 'admin', $data);
             <br>
             <!-- Form tìm kiếm -->
             <?php
-            // Lấy tháng và năm hiện tại nếu không có giá trị từ form
-            $month = isset($_POST['month']) ? $_POST['month'] : date('m'); // Mặc định là tháng hiện tại
-            $year = isset($_POST['year']) ? $_POST['year'] : date('Y'); // Mặc định là năm hiện tại
+            // Khởi tạo các biến cho tháng và năm
+            $month = isset($_POST['month']) ? $_POST['month'] : '';
+            $year = isset($_POST['year']) ? $_POST['year'] : '';
+
+            // Kiểm tra xem có tháng và năm được chọn từ form không
+            if ($month && $year) {
+                // In ra kết quả tháng và năm đã chọn
+                echo "<h3>Kết quả cho tháng " . htmlspecialchars($month) . " năm " . htmlspecialchars($year) . "</h3>";
+            } else {
+                echo "<p>Vui lòng chọn tháng và năm để xem kết quả.</p>";
+            }
             ?>
 
             <form method="post" action="" class="form-inline">
@@ -399,7 +407,8 @@ layout('navbar', 'admin', $data);
                 </div>
                 <button type="submit" class="btn btn-primary mb-2 ml-3"><i class="fa fa-search"></i></button>
             </form>
-
+            <p></p>
+            <a href="<?php echo getLinkAdmin('sumary', 'print.all'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất </a>
 
             <h3 class="sumary-title">
                 Danh sách phòng chưa thu
@@ -410,11 +419,12 @@ layout('navbar', 'admin', $data);
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
+                            <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="1" style="text-align: center;">Không có dữ liệu.</td>
+                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -423,12 +433,14 @@ layout('navbar', 'admin', $data);
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
+                            <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($results_chuathu as $row): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo number_format($row['tongtien'], 0, ',', '.') ?> đ</td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

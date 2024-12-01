@@ -1,15 +1,8 @@
-<?php 
+<?php
 require 'vendor/autoload.php'; // Tải thư viện PhpSpreadsheet
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-
-
-
-// Tạo file Excel
-$spreadsheet = new Spreadsheet();
-$sheet = $spreadsheet->getActiveSheet();
 
 // Hàm thêm dữ liệu vào bảng
 function addDataToSheet($sheet, $header, $data, $startRow) {
@@ -20,79 +13,91 @@ function addDataToSheet($sheet, $header, $data, $startRow) {
     // Thêm dữ liệu
     $currentRow = $startRow + 1;
     foreach ($data as $row) {
+        foreach ($row as $key => $value) {
+            // Kiểm tra nếu cột chứa số tiền
+            if (is_numeric($value)) {
+                $row[$key] = number_format($value, 0, ',', '.') . ' VNĐ';
+            }
+        }
         $sheet->fromArray($row, null, 'A' . $currentRow);
         $currentRow++;
     }
 
     // Trả về hàng cuối cùng đã ghi
-    return $currentRow + 1; // Dòng trống
+    return $currentRow;
 }
 
-// Truy vấn và thêm dữ liệu thống kê khoản thu
-$sql = "SELECT 
-            category_collect.tendanhmuc AS 'Khoản thu',
-            SUM(receipt.sotien) AS 'Tổng thu (VNĐ)'
-        FROM 
-            receipt
-        INNER JOIN 
-            category_collect 
-        ON 
-            receipt.danhmucthu_id = category_collect.id
-        GROUP BY 
-            category_collect.tendanhmuc
-        ORDER BY 'Tổng thu (VNĐ)' DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$currentRow = addDataToSheet($sheet, ['Khoản thu', 'Tổng thu (VNĐ)'], $results, 1);
+// Khởi tạo file Excel
+$spreadsheet = new Spreadsheet();
+$sheet = $spreadsheet->getActiveSheet();
 
-// Truy vấn và thêm dữ liệu thống kê khoản chi
-$sql = "SELECT 
-            category_spend.tendanhmuc AS 'Khoản chi',
-            SUM(payment.sotien) AS 'Tổng chi (VNĐ)'
-        FROM 
-            payment
-        INNER JOIN 
-            category_spend 
-        ON 
-            payment.danhmucchi_id = category_spend.id
-        GROUP BY 
-            category_spend.tendanhmuc
-        ORDER BY 'Tổng chi (VNĐ)' DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Truy vấn dữ liệu và thêm vào bảng
+function queryAndAddData($pdo, $sheet, $sql, $params, $header, $startRow, $title) {
+    $stmt = $pdo->prepare($sql);
+    foreach ($params as $key => $value) {
+        $stmt->bindValue($key, $value, PDO::PARAM_INT);
+    }
+    $stmt->execute();
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$currentRow = addDataToSheet($sheet, ['Khoản chi', 'Tổng chi (VNĐ)'], $results, $currentRow);
+    // Thêm tiêu đề bảng
+    $sheet->setCellValue('A' . $startRow, $title);
+    $sheet->mergeCells('A' . $startRow . ':B' . $startRow);
+    $sheet->getStyle('A' . $startRow)->getFont()->setBold(true);
+    $sheet->getStyle('A' . $startRow)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-// Truy vấn và thêm dữ liệu doanh thu theo khu vực
-$sql = "SELECT tenkhuvuc AS 'Khu vực', SUM(receipt.sotien) AS 'Doanh thu (VNĐ)'
-        FROM area
-        JOIN area_room ON area.id = area_room.area_id
-        JOIN room ON area_room.room_id = room.id
-        JOIN receipt ON room.id = receipt.room_id
-        WHERE receipt.ngaythu IS NOT NULL
-        GROUP BY tenkhuvuc
-        ORDER BY 'Doanh thu (VNĐ)' DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // Thêm dữ liệu
+    return addDataToSheet($sheet, $header, $results, $startRow + 1);
+}
 
-$currentRow = addDataToSheet($sheet, ['Khu vực', 'Doanh thu (VNĐ)'], $results, $currentRow);
+// Biến lưu tham số tìm kiếm
+$params = [];
+if (!empty($month)) $params[':month'] = $month;
+if (!empty($year)) $params[':year'] = $year;
 
-// Truy vấn và thêm dữ liệu doanh thu theo phòng
-$sql = "SELECT tenphong AS 'Tên Phòng', SUM(receipt.sotien) AS 'Doanh thu (VNĐ)'
-        FROM room
-        JOIN receipt ON room.id = receipt.room_id
-        WHERE receipt.ngaythu IS NOT NULL
-        GROUP BY tenphong
-        ORDER BY 'Doanh thu (VNĐ)' DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Truy vấn và thêm dữ liệu
+$currentRow = 1;
 
-addDataToSheet($sheet, ['Tên Phòng', 'Doanh thu (VNĐ)'], $results, $currentRow);
+// Phòng chưa thu
+$sql_chuathu = "
+    SELECT room.tenphong AS 'Tên phòng', bill.tongtien AS 'Tổng tiền'
+    FROM room
+    INNER JOIN bill ON room.id = bill.room_id
+    LEFT JOIN receipt ON bill.id = receipt.bill_id
+    WHERE receipt.bill_id IS NULL
+";
+if (!empty($month)) $sql_chuathu .= " AND MONTH(bill.create_at) = :month";
+if (!empty($year)) $sql_chuathu .= " AND YEAR(bill.create_at) = :year";
+$sql_chuathu .= " ORDER BY room.tenphong ASC";
+
+$currentRow = queryAndAddData($pdo, $sheet, $sql_chuathu, $params, ['Tên phòng', 'Tổng tiền'], $currentRow, 'Danh sách phòng chưa thu');
+
+// Phòng đã thu
+$sql_dathu = "
+    SELECT room.tenphong AS 'Tên phòng', bill.sotiendatra AS 'Số tiền đã trả'
+    FROM room
+    INNER JOIN bill ON room.id = bill.room_id
+    WHERE bill.trangthaihoadon = 1
+";
+if (!empty($month)) $sql_dathu .= " AND MONTH(bill.create_at) = :month";
+if (!empty($year)) $sql_dathu .= " AND YEAR(bill.create_at) = :year";
+$sql_dathu .= " ORDER BY room.tenphong ASC";
+
+$currentRow = queryAndAddData($pdo, $sheet, $sql_dathu, $params, ['Tên phòng', 'Số tiền đã trả'], $currentRow, 'Danh sách phòng đã thu');
+
+// Phòng còn nợ
+$sql_conno = "
+    SELECT room.tenphong AS 'Tên phòng', bill.sotienconthieu AS 'Số tiền còn thiếu'
+    FROM room
+    INNER JOIN bill ON room.id = bill.room_id
+    WHERE bill.trangthaihoadon = 3
+";
+if (!empty($month)) $sql_conno .= " AND MONTH(bill.create_at) = :month";
+if (!empty($year)) $sql_conno .= " AND YEAR(bill.create_at) = :year";
+$sql_conno .= " ORDER BY room.tenphong ASC";
+
+$currentRow = queryAndAddData($pdo, $sheet, $sql_conno, $params, ['Tên phòng', 'Số tiền còn thiếu'], $currentRow, 'Danh sách phòng còn nợ');
 
 // Định dạng cột tự động
 foreach (range('A', $sheet->getHighestColumn()) as $columnID) {
@@ -101,7 +106,7 @@ foreach (range('A', $sheet->getHighestColumn()) as $columnID) {
 
 // Tạo file Excel và tải về
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="bao_cao_chi_tiet.xlsx"');
+header('Content-Disposition: attachment;filename="bao_cao_thu_chi.xlsx"');
 header('Cache-Control: max-age=0');
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
