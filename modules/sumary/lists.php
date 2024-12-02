@@ -269,10 +269,12 @@ layout('navbar', 'admin', $data);
             $month = isset($_POST['month']) ? $_POST['month'] : '';
             $year = isset($_POST['year']) ? $_POST['year'] : '';
 
+            // Truy vấn lấy danh sách phòng chưa thu
             $sql_chuathu = "
             SELECT 
                 room.tenphong AS tenphong,
-                bill.tongtien AS tongtien
+                bill.tongtien AS tongtien,
+                area.tenkhuvuc AS tenkhuvuc
             FROM 
                 room
             INNER JOIN 
@@ -283,6 +285,14 @@ layout('navbar', 'admin', $data);
                 receipt
             ON 
                 bill.id = receipt.bill_id
+                LEFT JOIN
+                area_room
+                ON
+                room.id = area_room.room_id
+                LEFT JOIN
+                area
+                ON
+                area_room.area_id = area.id
             WHERE 
                  receipt.bill_id IS NULL
         ";
@@ -301,13 +311,22 @@ layout('navbar', 'admin', $data);
             $sql_dathu = "
     SELECT 
         room.tenphong AS tenphong,
-        bill.sotiendatra AS sotiendatra
+        bill.sotiendatra AS sotiendatra,
+        area.tenkhuvuc AS tenkhuvuc
     FROM 
         room
     INNER JOIN 
         bill
     ON 
         room.id = bill.room_id
+        LEFT JOIN
+        area_room
+        ON
+        room.id =area_room.room_id
+        LEFT JOIN
+        area
+        ON
+        area_room.area_id = area.id
     WHERE 
         bill.trangthaihoadon = 1
 ";
@@ -326,13 +345,22 @@ layout('navbar', 'admin', $data);
             $sql_conno = "
     SELECT 
         room.tenphong AS tenphong,
-        bill.sotienconthieu AS sotienconthieu
+        bill.sotienconthieu AS sotienconthieu,
+        area.tenkhuvuc AS tenkhuvuc
     FROM 
         room
     INNER JOIN 
         bill
     ON 
         room.id = bill.room_id
+        LEFT JOIN
+        area_room
+        ON
+        room.id = area_room.room_id
+        LEFT JOIN
+        area
+        ON 
+        area_room.area_id = area.id
     WHERE 
         bill.trangthaihoadon = 3
 ";
@@ -383,18 +411,22 @@ layout('navbar', 'admin', $data);
             <br>
             <!-- Form tìm kiếm -->
             <?php
-            // Khởi tạo các biến cho tháng và năm
-            $month = isset($_POST['month']) ? $_POST['month'] : '';
-            $year = isset($_POST['year']) ? $_POST['year'] : '';
+            // Lấy tháng và năm hiện tại
+            $currentMonth = date('m');
+            $currentYear = date('Y');
+
+            // Khởi tạo các biến cho tháng và năm, với giá trị mặc định là tháng và năm hiện tại
+            $month = isset($_POST['month']) && $_POST['month'] ? $_POST['month'] : $currentMonth;
+            $year = isset($_POST['year']) && $_POST['year'] ? $_POST['year'] : $currentYear;
 
             // Kiểm tra xem có tháng và năm được chọn từ form không
-            if ($month && $year) {
-                // In ra kết quả tháng và năm đã chọn
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "<h3>Kết quả cho tháng " . htmlspecialchars($month) . " năm " . htmlspecialchars($year) . "</h3>";
             } else {
-                echo "<p>Vui lòng chọn tháng và năm để xem kết quả.</p>";
+                echo "<p></p>";
             }
             ?>
+
 
             <form method="post" action="" class="form-inline">
                 <div class="form-group mb-2">
@@ -408,7 +440,7 @@ layout('navbar', 'admin', $data);
                 <button type="submit" class="btn btn-primary mb-2 ml-3"><i class="fa fa-search"></i></button>
             </form>
             <p></p>
-            <a href="<?php echo getLinkAdmin('sumary', 'print.all'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất </a>
+            <a href="<?php echo getLinkAdmin('sumary', 'print_details'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất </a>
 
             <h3 class="sumary-title">
                 Danh sách phòng chưa thu
@@ -418,13 +450,14 @@ layout('navbar', 'admin', $data);
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>Tên khu vực</th>
                             <th>Tên phòng</th>
                             <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -432,6 +465,7 @@ layout('navbar', 'admin', $data);
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
+                            <th>Tên khu vực</th>
                             <th>Tên phòng</th>
                             <th>Số tiền</th>
                         </tr>
@@ -439,6 +473,7 @@ layout('navbar', 'admin', $data);
                     <tbody>
                         <?php foreach ($results_chuathu as $row): ?>
                             <tr>
+                                <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo number_format($row['tongtien'], 0, ',', '.') ?> đ</td>
                             </tr>
@@ -455,13 +490,14 @@ layout('navbar', 'admin', $data);
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>Tên khu vực</th>
                             <th>Tên phòng</th>
                             <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -469,6 +505,7 @@ layout('navbar', 'admin', $data);
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
+                            <th>Tên khu vực</th>
                             <th>Tên phòng</th>
                             <th>Số tiền</th>
                         </tr>
@@ -476,6 +513,7 @@ layout('navbar', 'admin', $data);
                     <tbody>
                         <?php foreach ($results_dathu as $row): ?>
                             <tr>
+                                <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo number_format($row['sotiendatra'], 0, ',', '.') ?> đ</td>
                             </tr>
@@ -492,13 +530,14 @@ layout('navbar', 'admin', $data);
                 <table class="table table-striped">
                     <thead>
                         <tr>
+                            <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền nợ</th>
+                            <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="2" style="text-align: center;">Không có dữ liệu.</td>
+                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -506,13 +545,15 @@ layout('navbar', 'admin', $data);
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
+                            <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền nợ</th>
+                            <th>Số tiền</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($results_conno as $row): ?>
                             <tr>
+                                <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo number_format($row['sotienconthieu'], 0, ',', '.') ?> đ</td>
                             </tr>

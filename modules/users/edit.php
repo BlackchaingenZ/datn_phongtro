@@ -148,7 +148,7 @@ layout('navbar', 'admin', $data);
                                 <?php
                                     if(!empty($allRoom)) {
                                         foreach($allRoom as $item) {
-                                            if($item['soluong'] < 2 ) {
+                                            if($item['soluong'] < 10 ) {
                                                 ?>
                                                     <option value="<?php echo $item['id'] ?>" <?php echo (old('room_id', $old) == $item['id'])?'selected':'' ?>><?php echo $item['tenphong'] ?></option> 
                                                 <?php
