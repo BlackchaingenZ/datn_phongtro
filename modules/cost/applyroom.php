@@ -30,7 +30,7 @@ function getRoomAndCostList()
         LEFT JOIN cost e ON er.cost_id = e.id
         GROUP BY r.id
          -- HAVING tengia IS NOT NULL  -- Chỉ hiển thị phòng có giá thuê
-        ORDER BY r.id ASC
+        ORDER BY r.id DESC
     ";
     return getRaw($sql);
 }

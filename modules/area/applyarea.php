@@ -32,7 +32,7 @@ function getRoomAndAreaList()
         LEFT JOIN area_room er ON r.id = er.room_id
         LEFT JOIN area e ON er.area_id = e.id
         GROUP BY r.id
-        ORDER BY r.id ASC
+        ORDER BY r.id DESC
     ";
     return getRaw($sql);
 }

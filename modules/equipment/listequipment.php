@@ -157,7 +157,7 @@ $msgType = getFlashData('msg_type');
                         <th>Giá thiết bị</th>
                         <th>Số lượng nhập </th>
                         <th>Số lượng tồn kho</th>
-                        <th>Ngày nhập</th>
+                        <th>Ngày tạo</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>

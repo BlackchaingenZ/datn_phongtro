@@ -119,7 +119,7 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
                     }
                 </script>
                 <div class="form-group">
-                    <label for="">Ngày nhập <span style="color: red">*</span></label>
+                    <label for="">Ngày tạo <span style="color: red">*</span></label>
                     <input type="date" name="ngaynhap" class="form-control" value="<?php echo old('ngaynhap', $old); ?>">
                     <?php echo form_error('ngaynhap', $errors, '<span class="error">', '</span>'); ?>
                 </div>

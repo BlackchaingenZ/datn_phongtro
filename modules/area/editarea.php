@@ -121,7 +121,7 @@ layout('navbar', 'admin', $data);
                 <a style="margin-right: 20px" href="<?php echo getLinkAdmin('area', 'listarea') ?>" class="btn btn-secondary">
                     <i class="fa fa-arrow-circle-left"></i> Quay lại
                 </a>
-                <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Chỉnh sửa khu vực</button>
+                <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Cập nhật</button>
             </div>
         </form>
     </div>

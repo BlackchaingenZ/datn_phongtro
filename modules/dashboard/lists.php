@@ -20,9 +20,6 @@ if ($userDetail['group_id'] == 7) {
     layout('sidebar', 'admin', $data);
 }
 
-
-
-
 ?>
 
 <?php

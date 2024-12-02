@@ -25,7 +25,7 @@ $currentMonthYear = date('Y-m');
 $filter = "WHERE bill.room_id = $roomId";
 
 // Lấy danh sách tất cả hóa đơn mà không áp dụng phân trang
-$listAllBill = getRaw("SELECT *, bill.id, bill.chuky, room.tenphong 
+$listAllBill = getRaw("SELECT *, bill.id, room.tenphong 
 FROM bill 
 INNER JOIN room ON bill.room_id = room.id 
 LEFT JOIN tenant ON bill.tenant_id = tenant.id 
@@ -51,27 +51,26 @@ $old = getFlashData('old');
             <div>
                 <h3>Lịch sử hóa đơn tiền phòng</h3>
             </div>
+
             <table class="table table-bordered mt-3" style="overflow-x: auto;">
                 <thead>
                     <tr>
-                        <th width="3%" rowspan="2">STT</th>
-                        <th  rowspan="2">Mã hoá đơn</th>
+                        <th width="3%" rowspan="2"> STT</th>
+                        <th rowspan="2">Mã hoá đơn</th>
                         <th rowspan="2">Tên phòng</th>
-                        <th colspan="3">Tiền phòng</th>
+                        <th rowspan="2">Tháng</th>
+                        <th colspan="1">Tiền phòng</th>
                         <th colspan="3">Tiền điện</th>
                         <th colspan="3">Tiền nước</th>
                         <th colspan="2">Tiền rác</th>
-                        <th colspan="2">Tiền Wifi</th>
-                        <th width="3%" rowspan="2">Cộng thêm</th>
+                        <th colspan="1">Tiền Wifi</th>
                         <th rowspan="2">Tổng cộng</th>
-                        <th rowspan="2">Còn nợ</th>
-                        <th width="6%"s rowspan="2">Ngày lập</th>
+                        <th rowspan="2">Cần thanh toán</th>
                         <th width="6%" rowspan="2">Trạng thái</th>
+                        <th width="6%" rowspan="2">Ngày lập</th>
                     </tr>
                     <tr>
-                        <th width="3%">Số tháng</th>
-                        <th width="4%">Ngày lẻ</th>
-                        <th>Tiền phòng</th>
+                        <th>Thành tiền</th>
                         <th>Số cũ</th>
                         <th>Số mới</th>
                         <th>Thành tiền</th>
@@ -80,25 +79,23 @@ $old = getFlashData('old');
                         <th>Thành tiền</th>
                         <th>Người</th>
                         <th>Thành tiền</th>
-                        <th>Tháng</th>
                         <th>Thành tiền</th>
                     </tr>
                 </thead>
                 <tbody id="roomData">
+
                     <?php
                     if (!empty($listAllBill)):
-                        $count = 0; // Hiển thị số thứ tự
+                        $count = 0; // Hiển thi số thứ tự
                         foreach ($listAllBill as $item):
                             $count++;
+
                     ?>
                             <tr>
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center; color: red"><?php echo $item['mahoadon']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['tenphong']; ?></td>
-                                <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
-                                <td style="text-align: center;">
-                                    <?php echo !empty($item['songayle']) ? $item['songayle'] : "0"; ?>
-                                </td>
+                                <td style="text-align: center;"><?php echo $item['thang']; ?></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienphong'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['sodiencu']; ?></td>
                                 <td style="text-align: center;">
@@ -114,31 +111,42 @@ $old = getFlashData('old');
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['songuoi']; ?></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienrac'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center;"><?php echo $item['chuky']; ?></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tienmang'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center;"><b><?php echo number_format($item['nocu'], 0, ',', '.') ?> đ</b></td>
-                                <td style="text-align: center; color: #ed6004">
-                                    <b><?php echo number_format($item['tongtien'], 0, ',', '.') ?> đ</b> <br />
-                                    <i style="color: #000">Số tiền đã trả</i><br />
-                                    <b style="color: #15a05c"><?php echo number_format($item['sotiendatra'], 0, ',', '.') ?> đ</b>
+                                <td style="text-align: center; color: #ed6004;">
+                                    <b><?php echo number_format($item['tongtien'], 0, ',', '.'); ?> đ</b> <br />
+                                    <i style="color: #000;">Số tiền đã trả</i><br />
+                                    <b style="color: #15a05c;">
+                                        <?php
+                                        // Kiểm tra nếu sotienconthieu = 0 thì hiển thị tongtien
+                                        if ($item['sotienconthieu'] == 0) {
+                                            echo number_format($item['tongtien'], 0, ',', '.');
+                                        } else {
+                                            echo number_format($item['sotiendatra'], 0, ',', '.');
+                                        }
+                                        ?> đ
+                                    </b>
                                 </td>
+
                                 <td style="text-align: center; color: #db2828"><b><?php echo number_format($item['sotienconthieu'], 0, ',', '.') ?> đ</b></td>
-                                <td><?php echo getDateFormat($item['ngayvao'], 'd-m-Y') ?></td>
                                 <td style="text-align: center;">
+
                                     <?php
                                     if ($item['trangthaihoadon'] == 1) {
-                                        echo '<span class="btn-kyhopdong-suc">Đã thu</span>';
+                                        echo '<span class="btn-kyhopdong-suc">Đã thu hết</span>';
                                     } elseif ($item['trangthaihoadon'] == 2) {
                                         echo '<span class="btn-kyhopdong-warning">Chưa thu</span>';
                                     } else {
-                                        echo '<span class="btn-kyhopdong-err">Đang nợ</span>';
+                                        echo '<span class="btn-kyhopdong-err">Còn nợ</span>';
                                     }
                                     ?>
                                 </td>
+                                <td style="text-align: center;"><?php echo getDateFormat($item['create_at'], 'd-m-Y') ?></td>
                             </tr>
-                    <?php endforeach; else: ?>
+
+                        <?php endforeach;
+                    else: ?>
                         <tr>
-                            <td colspan="21">
+                            <td colspan="22">
                                 <div class="alert alert-danger text-center">Không có dữ liệu hóa đơn</div>
                             </td>
                         </tr>
