@@ -131,7 +131,7 @@ if ($userDetail['group_id'] == 7) {
                             <div class="content-left-icon">
                                 <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
                             </div>
-                            <p class="total-desc">Tổng số loại thiết bị + Số lượng từng loại</p>
+                            <p class="total-desc">Danh sách thiết bị</p>
                         </div>
 
                         <?php
@@ -159,7 +159,6 @@ if ($userDetail['group_id'] == 7) {
                             $details1[] = $equipment['tenthietbi'] . ' (' . $equipment['total1'] . ')';
                         }
                         ?>
-
                         <!-- Button to trigger the popup -->
                         <button id="showEquipmentPopupBtn">Xem chi tiết</button>
                     </div>

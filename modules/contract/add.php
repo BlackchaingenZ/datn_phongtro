@@ -375,7 +375,7 @@ layout('navbar', 'admin', $data);
                         <i class="fa fa-arrow-circle-left"></i> Quay lại
                     </a>
                     <button type="button" class="btn btn-secondary" onclick="submitFormWithTempCustomers()">
-                        <i class="fa fa-plus"></i> Thêm hợp đồng
+                        <i class="fa fa-plus"></i> Thêm mới
                     </button>
                 </form>
             </div>

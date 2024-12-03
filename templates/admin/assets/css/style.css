@@ -163,6 +163,7 @@ th {
     background-color: #dcdbdb;
     width: 160px;
     text-align: center;
+    /* margin: 10px;   khoảng cách giữa các mục               */
 }
 
 /* danh sách menu*/
@@ -653,6 +654,7 @@ th {
 .collect-item {
     display: flex;
     justify-content: space-between;
+    /* flex: 1 1 50%; */ /* Chia đều không gian */
     margin-top: 10px;
     border: 1px solid #ccc;
     padding: 20px 20px;
