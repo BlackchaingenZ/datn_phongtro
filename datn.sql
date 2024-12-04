@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 04, 2024 lúc 07:15 PM
+-- Thời gian đã tạo: Th12 04, 2024 lúc 08:08 PM
 -- Phiên bản máy phục vụ: 8.0.29
 -- Phiên bản PHP: 8.2.12
 
@@ -655,7 +655,6 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (415, 30, '227bb25690f37578813cb11fb10bbcf2f1fb0b8b', '2024-10-31 12:40:43'),
 (416, 30, 'b30d3004465fb1275fa8d1b8315a1e295d04abe8', '2024-10-31 14:25:42'),
 (417, 30, 'e73804f570477fac8f0ae7002b44e7b0112015fa', '2024-10-31 22:17:51'),
-(418, 32, '1e0ed33352222239cfe7326cd55432bbd80cf5f8', '2024-11-02 09:08:19'),
 (419, 30, 'aad665521c4940bb71abaff901e0685cda47a9c4', '2024-11-02 21:26:18'),
 (420, 30, '2b37a9c6a0720bc64c8592f4cdc357d93b880c2a', '2024-11-03 09:07:56'),
 (421, 30, 'e314e9af4cb50a2d427211c8d6922bfc1ccc55c5', '2024-11-03 14:28:08'),
@@ -693,7 +692,7 @@ INSERT INTO `login_token` (`id`, `user_id`, `token`, `create_at`) VALUES
 (511, 30, '7efdae6bf4849cdec2c3a593cf9e6f187eeeb40a', '2024-11-30 16:31:40'),
 (512, 30, 'a6f594f751a6d2ed9ec5580c4ac42611642bce09', '2024-11-30 23:31:48'),
 (513, 30, '265c2fd36f6e01e12ee43c0e7fde5b727dcefd20', '2024-12-04 11:45:46'),
-(514, 30, '5cc4d396bd0b4ab62b98ad3df334bf6cbe573bf1', '2024-12-05 00:32:32');
+(519, 30, '526e2dc2fc16669c5d31b2584bdbeae8f801855f', '2024-12-05 01:37:55');
 
 -- --------------------------------------------------------
 
@@ -921,8 +920,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `group_id`, `status`, `last_activity`, `forget_token`, `room_id`, `create_at`) VALUES
 (30, 'Nguyễn Ngọc Nguyên', 'ngocnguyen2k02@gmail.com', '$2y$10$uo.k.ZWqDtho4Xtgp1GWBuqbARMWjji5zr0LMaTTHAmOKc0/PybcW', 7, 1, '2024-09-03 13:01:36', NULL, NULL, '2024-10-01'),
-(32, 'Trần Thị B', 'tranthib@gmail.com', '$2y$10$tswPy9zKC.oSCKeZinUfl./iySYFG0.4jpRooCj.rrjcA3m.ql28.', 9, 1, NULL, NULL, 87, '2024-10-30'),
-(33, 'Nguyễn Văn A', 'nguyenvana@gmail.com', '$2y$10$W9m0CZhfPepgyNRr3u6OtObUkq5KEq31boGgkRb1vY2hfw7k.a.Uq', 9, 1, NULL, NULL, 103, '2024-11-21');
+(35, 'Nguyễn Văn A', 'nguyenvana@gmail.com', '$2y$10$UxhniRn.B0oFI5XgMnAB8.f/ianhCqB8lbapThKUuJbNx7QE6l1Ty', 9, 1, NULL, NULL, 103, '2024-12-05');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -1156,7 +1154,7 @@ ALTER TABLE `groups`
 -- AUTO_INCREMENT cho bảng `login_token`
 --
 ALTER TABLE `login_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=515;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=520;
 
 --
 -- AUTO_INCREMENT cho bảng `payment`
@@ -1192,7 +1190,7 @@ ALTER TABLE `tenant`
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- Các ràng buộc cho các bảng đã đổ
