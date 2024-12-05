@@ -6,6 +6,10 @@ $id = $_GET['id'];
 // Lấy chi tiết phiếu thu từ bảng receipt
 $receiptDetail = firstRaw("
     SELECT 
+        bill.thang AS thang,
+        tenant.sdt AS sdt,
+        tenant.diachi AS diachi,
+        area.tenkhuvuc AS tenkhuvuc,
         receipt.id, 
         receipt.room_id, 
         room.tenphong AS tenphong, 
@@ -32,6 +36,18 @@ $receiptDetail = firstRaw("
         tenant 
     ON 
         room.id = tenant.room_id
+        LEFT JOIN 
+        area_room 
+    ON 
+        room.id = area_room.room_id
+    LEFT JOIN 
+        area 
+    ON 
+        area_room.area_id = area.id
+    LEFT JOIN
+        bill
+    ON 
+        receipt.bill_id = bill.id
     WHERE 
         receipt.id = $id
 ");
@@ -50,59 +66,59 @@ $receiptDetail = firstRaw("
 </head>
 
 <body style="display: flex; justify-content: center; margin-top: 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7fafc;">
-    <div class="receipt-content" style="width: 60%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
+    <div class="receipt-content" style="width: 40%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
         <img style="width: 150px;" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logomain.png" alt="Logo">
-        <h2 style="font-size: 28px; margin: 10px 0;">Phiếu Thu Phòng Trọ Thảo Nguyên</h2>
+        <h2 style="font-size: 28px; margin: 10px 0;">Phòng Trọ Thảo Nguyên</h2>
         <p style="font-size: 14px;">Địa chỉ: 56 - Nam Pháp, Ngô Quyền, Hải Phòng</p>
-        <p>Loại phiếu: <b style="color: red; font-size: 18px;"><?php echo htmlspecialchars($receiptDetail['tendanhmuc'], ENT_QUOTES, 'UTF-8'); ?></b></p>
-        <div class="rowTwo" style="display: flex; justify-content: space-around; margin-top: 10px;">
-            <p style="font-size: 14px;"><b><?php echo htmlspecialchars($receiptDetail['tenphong'], ENT_QUOTES, 'UTF-8'); ?> - Khách hàng: <?php echo htmlspecialchars($receiptDetail['tenkhach'], ENT_QUOTES, 'UTF-8'); ?></b></p>
+        <p style="font-size: 18px;">Phiếu <?php echo $receiptDetail['tendanhmuc']; ?> <?php echo $receiptDetail['thang']; ?></p>
+        <div style="margin-top: 20px; text-align: start;">
+        <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;">Tên KH: <b><?php echo htmlspecialchars($receiptDetail['tenkhach'], ENT_QUOTES, 'UTF-8'); ?></b></p>
+            </div>
 
+            <div style="margin-bottom: 10px;">
+            <p style="font-size: 14px; font-weight: normal;">Phòng: <?php echo htmlspecialchars($receiptDetail['tenphong'], ENT_QUOTES, 'UTF-8'); ?> - Khu vực: <?php echo htmlspecialchars($receiptDetail['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></p>
+
+            </div>
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;font-weight: normal;">Số điện thoại: <?php echo htmlspecialchars($receiptDetail['sdt'], ENT_QUOTES, 'UTF-8'); ?></p>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;font-weight: normal;">Địa chỉ: <?php echo htmlspecialchars($receiptDetail['diachi'], ENT_QUOTES, 'UTF-8'); ?></p>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;font-weight: normal;">Số tiền thu: <?php echo number_format($receiptDetail['sotien'], 0, ',', '.'); ?> đ</p>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;font-weight: normal;">Ghi chú: <?php echo htmlspecialchars($receiptDetail['ghichu'], ENT_QUOTES, 'UTF-8'); ?></p>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;font-weight: normal;">Ngày thu: <?php echo htmlspecialchars(getDateFormat($receiptDetail['ngaythu'], 'd-m-Y'), ENT_QUOTES, 'UTF-8'); ?></p>
+            </div>
+            <div style="margin-bottom: 10px;">
+                <p style="font-size: 14px;font-weight: normal;">Phương thức thanh toán: <?php
+                                                                            if ($receiptDetail['phuongthuc'] == 1) {
+                                                                                echo "Chuyển khoản";
+                                                                            } else {
+                                                                                echo "Tiền mặt";
+                                                                            }
+                                                                            ?></p>
+            </div>
         </div>
 
-        <table border="1" cellspacing="0" width="100%" cellpadding="10" style="text-align: start; margin-top: 20px;">
-            <tr>
-                <th style="width: 50px;">STT</th>
-                <th style="width: 150px;">Thông tin</th>
-                <th style="width: auto;">Chi tiết</th>
-            </tr>
-            <tr>
-                <td style="font-size: 14px;"><b>1</b></td>
-                <td><b>Số tiền thu</b></td>
-                <td style="font-size: 16px;"><b><?php echo number_format($receiptDetail['sotien'], 0, ',', '.') ?> đ</b></td>
-            </tr>
-            <tr>
-                <td style="font-size: 14px;"><b>2</b></td>
-                <td><b>Ghi chú</b></td>
-                <td style="font-size: 16px;"><b><?php echo htmlspecialchars($receiptDetail['ghichu'], ENT_QUOTES, 'UTF-8'); ?></b></td>
-            </tr>
-            <tr>
-                <td style="font-size: 14px;"><b>3</b></td>
-                <td><b>Ngày thu</b></td>
-                <td style="font-size: 16px;"><b><?php echo htmlspecialchars(getDateFormat($receiptDetail['ngaythu'], 'd-m-Y'), ENT_QUOTES, 'UTF-8'); ?></b></td>
-            </tr>
-            <tr>
-                <td style="font-size: 14px;"><b>4</b></td>
-                <td><b>Phương thức thanh toán</b></td>
-                <td style="font-size: 16px;">
-                    <b>
-                        <?php
-                        if ($receiptDetail['phuongthuc'] == 1) {
-                            echo "Chuyển khoản";
-                        } else {
-                            echo "Tiền mặt"; // Hoặc giá trị thay thế khác
-                        }
-                        ?>
-                    </b>
-                </td>
-            </tr>
-        </table>
         <div style="font-size: 12pt; margin: 40px 0">
             <p style="text-align: right;"><i>........, Ngày...... Tháng...... năm 20.........</i></p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
                 <!-- BÊN xác nhận -->
                 <div>
-                    <strong>Xác nhận </strong><br>
+                    <strong>Xác nhận của người thu tiền </strong><br>
+                    <i>Ký và ghi rõ họ tên</i>
+                    <div style="padding: 10px; height: 150px; overflow: hidden;">
+                        <span></span>
+                    </div>
+                </div>
+                <div>
+                    <strong>Xác nhận của người nộp tiền </strong><br>
                     <i>Ký và ghi rõ họ tên</i>
                     <div style="padding: 10px; height: 150px; overflow: hidden;">
                         <span></span>
