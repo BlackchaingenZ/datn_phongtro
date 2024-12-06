@@ -243,14 +243,14 @@ layout('navbar', 'admin', $data);
             </div> -->
             <div class="report-receipt-spend">
                 <div class="report-spend">
-                    <p>Tổng tiền cọc (đã thu)</p>
+                    <p>Tổng tiền cọc</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: red"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-spend">
-                    <p>Tổng chi (tiền ra)</p>
+                    <p>Tổng chi</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
                         <p style="color: orange"><?php echo number_format($tongchi, 0, ',', '.') . 'đ'; ?></p>

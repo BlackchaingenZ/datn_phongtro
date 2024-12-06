@@ -209,40 +209,59 @@ layout('navbar', 'admin', $data);
             }
 
             $sql_chuathu .= " ORDER BY room.tenphong ASC";
-
             // Truy vấn lấy danh sách phòng đã thu
             $sql_dathu = "
-    SELECT 
+    SELECT
         room.tenphong AS tenphong,
         bill.sotiendatra AS sotiendatra,
-        area.tenkhuvuc AS tenkhuvuc
+        area.tenkhuvuc AS tenkhuvuc,
+        SUM(CASE
+            WHEN MONTH(receipt.ngaythu) = :month AND YEAR(receipt.ngaythu) = :year THEN receipt.sotien
+            ELSE 0
+        END) AS sotien
     FROM 
         room
     INNER JOIN 
         bill
     ON 
         room.id = bill.room_id
-        LEFT JOIN
+    LEFT JOIN
         area_room
-        ON
-        room.id =area_room.room_id
-        LEFT JOIN
+    ON
+        room.id = area_room.room_id
+    LEFT JOIN
         area
-        ON
+    ON
         area_room.area_id = area.id
+    LEFT JOIN
+        receipt
+    ON
+        room.id = receipt.room_id
     WHERE 
-        bill.trangthaihoadon = 1
+        (bill.trangthaihoadon = 1 OR receipt.sotien IS NOT NULL)
 ";
 
             // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng đã thu
             if ($month) {
-                $sql_dathu .= " AND MONTH(bill.create_at) = :month";
+                $sql_dathu .= " AND (MONTH(bill.create_at) = :month OR MONTH(receipt.ngaythu) = :month)";
             }
             if ($year) {
-                $sql_dathu .= " AND YEAR(bill.create_at) = :year";
+                $sql_dathu .= " AND (YEAR(bill.create_at) = :year OR YEAR(receipt.ngaythu) = :year)";
             }
 
-            $sql_dathu .= " ORDER BY room.tenphong ASC";
+            $sql_dathu .= " GROUP BY room.tenphong, area.tenkhuvuc ORDER BY room.tenphong ASC";
+
+            // Chuẩn bị truy vấn và thực thi cho phòng đã thu
+            $stmt_dathu = $pdo->prepare($sql_dathu);
+            if ($month) {
+                $stmt_dathu->bindParam(':month', $month, PDO::PARAM_INT);
+            }
+            if ($year) {
+                $stmt_dathu->bindParam(':year', $year, PDO::PARAM_INT);
+            }
+            $stmt_dathu->execute();
+            $results_dathu = $stmt_dathu->fetchAll(PDO::FETCH_ASSOC);
+
 
             // Truy vấn lấy danh sách phòng còn thiếu
             $sql_conno = "
@@ -288,16 +307,6 @@ layout('navbar', 'admin', $data);
             $stmt_chuathu->execute();
             $results_chuathu = $stmt_chuathu->fetchAll(PDO::FETCH_ASSOC);
 
-            // Chuẩn bị truy vấn và thực thi cho phòng đã thu
-            $stmt_dathu = $pdo->prepare($sql_dathu);
-            if ($month) {
-                $stmt_dathu->bindParam(':month', $month, PDO::PARAM_INT);
-            }
-            if ($year) {
-                $stmt_dathu->bindParam(':year', $year, PDO::PARAM_INT);
-            }
-            $stmt_dathu->execute();
-            $results_dathu = $stmt_dathu->fetchAll(PDO::FETCH_ASSOC);
 
             // Chuẩn bị truy vấn và thực thi cho phòng còn nợ
             $stmt_conno = $pdo->prepare($sql_conno);
@@ -329,8 +338,6 @@ layout('navbar', 'admin', $data);
                 // echo "<p></p>";
             }
             ?>
-
-
             <form method="post" action="" class="form-inline">
                 <div class="form-group mb-2">
                     <label for="month" class="mr-2">Tháng:</label>
@@ -396,11 +403,12 @@ layout('navbar', 'admin', $data);
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
                             <th>Số tiền</th>
+                            <th>Số tiền cọc</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
+                            <td colspan="4" style="text-align: center;">Không có dữ liệu.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -411,6 +419,7 @@ layout('navbar', 'admin', $data);
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
                             <th>Số tiền</th>
+                            <th>Số tiền cọc</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -419,6 +428,7 @@ layout('navbar', 'admin', $data);
                                 <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo number_format($row['sotiendatra'], 0, ',', '.') ?> đ</td>
+                                <td><?php echo number_format($row['sotien'], 0, ',', '.') ?> đ</td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
