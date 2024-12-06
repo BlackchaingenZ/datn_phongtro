@@ -159,9 +159,6 @@ if ($userDetail['group_id'] == 7) {
                             }
                         </script>
                     </div>
-
-
-
                 </div>
 
 
@@ -176,13 +173,8 @@ if ($userDetail['group_id'] == 7) {
                         <?php $contractTotal = getRows("SELECT id From contract") ?>
                         <?php $contractPass = getRows("SELECT id From contract where trangthaihopdong = 1") ?>
                         <?php // Kiểm tra nếu tổng số hợp đồng không bằng 0
-                        if ($contractTotal > 0) {
-                            $ratioContract1 = ($contractPass / $contractTotal) * 100;
-                        } else {
-                            $ratioContract1 = 0; // Gán giá trị 0 hoặc giá trị mặc định
-                        } ?>
-                        <?php $ratioContract1 = number_format($ratioContract1, 2) ?>
-                        <p class="total-count"><?php echo $contractPass ?> <span style="font-size: 16px">(<?php echo $ratioContract1 ?>%)</span></p>
+                        ?>
+                        <p class="total-count"><?php echo $contractPass ?> <span style="font-size: 16px"></span></p>
                         <!--<a href=""><div class="dashboard-link"></div></a>-->
                     </div>
 
