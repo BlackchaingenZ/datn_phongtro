@@ -211,42 +211,47 @@ layout('navbar', 'admin', $data);
             $sql_chuathu .= " ORDER BY room.tenphong ASC";
             // Truy vấn lấy danh sách phòng đã thu
             $sql_dathu = "
-    SELECT
-        room.tenphong AS tenphong,
-        bill.sotiendatra AS sotiendatra,
-        area.tenkhuvuc AS tenkhuvuc,
-        SUM(CASE
-            WHEN MONTH(receipt.ngaythu) = :month AND YEAR(receipt.ngaythu) = :year THEN receipt.sotien
-            ELSE 0
-        END) AS sotien
-    FROM 
-        room
-    INNER JOIN 
-        bill
-    ON 
-        room.id = bill.room_id
-    LEFT JOIN
-        area_room
-    ON
-        room.id = area_room.room_id
-    LEFT JOIN
-        area
-    ON
-        area_room.area_id = area.id
-    LEFT JOIN
-        receipt
-    ON
-        room.id = receipt.room_id
-    WHERE 
-        (bill.trangthaihoadon = 1 OR receipt.sotien IS NOT NULL)
+SELECT
+    room.tenphong AS tenphong,
+    bill.sotiendatra AS sotiendatra,
+    area.tenkhuvuc AS tenkhuvuc,
+    SUM(CASE
+        WHEN receipt.ngaythu IS NOT NULL AND receipt.danhmucthu_id = 2 THEN receipt.sotien
+        ELSE 0
+    END) AS sotien
+FROM 
+    room
+INNER JOIN 
+    bill
+ON 
+    room.id = bill.room_id
+LEFT JOIN
+    area_room
+ON
+    room.id = area_room.room_id
+LEFT JOIN
+    area
+ON
+    area_room.area_id = area.id
+LEFT JOIN
+    receipt
+ON
+    room.id = receipt.room_id
+WHERE 
+    (bill.trangthaihoadon = 1 OR receipt.sotien IS NOT NULL)
 ";
 
             // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng đã thu
+            $whereConditions = [];
             if ($month) {
-                $sql_dathu .= " AND (MONTH(bill.create_at) = :month OR MONTH(receipt.ngaythu) = :month)";
+                $whereConditions[] = "(MONTH(bill.create_at) = :month OR MONTH(receipt.ngaythu) = :month)";
             }
             if ($year) {
-                $sql_dathu .= " AND (YEAR(bill.create_at) = :year OR YEAR(receipt.ngaythu) = :year)";
+                $whereConditions[] = "(YEAR(bill.create_at) = :year OR YEAR(receipt.ngaythu) = :year)";
+            }
+
+            if (count($whereConditions) > 0) {
+                $sql_dathu .= " AND " . implode(" AND ", $whereConditions);
             }
 
             $sql_dathu .= " GROUP BY room.tenphong, area.tenkhuvuc ORDER BY room.tenphong ASC";
