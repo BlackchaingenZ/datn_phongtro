@@ -187,35 +187,36 @@ layout('navbar', 'admin', $data);
 
                 </div>
             </form>
+            <a href="<?php echo getLinkAdmin('sumary', 'search') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Tra cứu</a>
             <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <h3 class="sumary-title">THỐNG KÊ DOANH THU</h3>
             <!-- <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p> -->
-            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng khoản thu (đã thu) - tổng khoản chi - tổng tiền cọc ) </i></p>
+            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng thu (đã thu) - tổng chi - tổng tiền cọc ) </i></p>
 
             <div class="report-receipt-spend">
                 <div class="report-receipt">
-                    <p>Tổng khoản thu (dự kiến) </p>
+                    <p>Tổng thu (dự kiến) </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthudukien, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-receipt">
-                    <p>Tổng khoản thu (đã thu) </p>
+                    <p>Tổng thu (đã thu) </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-receipt">
-                    <p>Tổng khoản thu (chưa thu) </p>
+                    <p>Tổng thu (chưa thu) </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthuconthieu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
             </div>
-            <div class="report-receipt-spend">
+            <!-- <div class="report-receipt-spend">
                 <div class="report-spend">
                     <p>Tổng tiền cọc (dự kiến)</p>
                     <div class="report-ts">
@@ -239,10 +240,17 @@ layout('navbar', 'admin', $data);
                         <p style="color: red"><?php echo number_format($tiencocconthieu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="report-receipt-spend">
                 <div class="report-spend">
-                    <p>Tổng khoản chi (tiền ra)</p>
+                    <p>Tổng tiền cọc (đã thu)</p>
+                    <div class="report-ts">
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
+                        <p style="color: red"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+                <div class="report-spend">
+                    <p>Tổng chi (tiền ra)</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
                         <p style="color: orange"><?php echo number_format($tongchi, 0, ',', '.') . 'đ'; ?></p>
@@ -263,374 +271,10 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
             </div>
-
-            <?php
-            // Kiểm tra nếu người dùng đã gửi form tìm kiếm
-            $month = isset($_POST['month']) ? $_POST['month'] : '';
-            $year = isset($_POST['year']) ? $_POST['year'] : '';
-
-            // Truy vấn lấy danh sách phòng chưa thu
-            $sql_chuathu = "
-            SELECT 
-                room.tenphong AS tenphong,
-                bill.tongtien AS tongtien,
-                area.tenkhuvuc AS tenkhuvuc
-            FROM 
-                room
-            INNER JOIN 
-                bill
-            ON 
-                room.id = bill.room_id
-            LEFT JOIN 
-                receipt
-            ON 
-                bill.id = receipt.bill_id
-                LEFT JOIN
-                area_room
-                ON
-                room.id = area_room.room_id
-                LEFT JOIN
-                area
-                ON
-                area_room.area_id = area.id
-            WHERE 
-                 receipt.bill_id IS NULL
-        ";
-
-            // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng chưa thu
-            if ($month) {
-                $sql_chuathu .= " AND MONTH(bill.create_at) = :month";
-            }
-            if ($year) {
-                $sql_chuathu .= " AND YEAR(bill.create_at) = :year";
-            }
-
-            $sql_chuathu .= " ORDER BY room.tenphong ASC";
-
-            // Truy vấn lấy danh sách phòng đã thu
-            $sql_dathu = "
-    SELECT 
-        room.tenphong AS tenphong,
-        bill.sotiendatra AS sotiendatra,
-        area.tenkhuvuc AS tenkhuvuc
-    FROM 
-        room
-    INNER JOIN 
-        bill
-    ON 
-        room.id = bill.room_id
-        LEFT JOIN
-        area_room
-        ON
-        room.id =area_room.room_id
-        LEFT JOIN
-        area
-        ON
-        area_room.area_id = area.id
-    WHERE 
-        bill.trangthaihoadon = 1
-";
-
-            // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng đã thu
-            if ($month) {
-                $sql_dathu .= " AND MONTH(bill.create_at) = :month";
-            }
-            if ($year) {
-                $sql_dathu .= " AND YEAR(bill.create_at) = :year";
-            }
-
-            $sql_dathu .= " ORDER BY room.tenphong ASC";
-
-            // Truy vấn lấy danh sách phòng còn thiếu
-            $sql_conno = "
-    SELECT 
-        room.tenphong AS tenphong,
-        bill.sotienconthieu AS sotienconthieu,
-        area.tenkhuvuc AS tenkhuvuc
-    FROM 
-        room
-    INNER JOIN 
-        bill
-    ON 
-        room.id = bill.room_id
-        LEFT JOIN
-        area_room
-        ON
-        room.id = area_room.room_id
-        LEFT JOIN
-        area
-        ON 
-        area_room.area_id = area.id
-    WHERE 
-        bill.trangthaihoadon = 3
-";
-
-            // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng còn nợ
-            if ($month) {
-                $sql_conno .= " AND MONTH(bill.create_at) = :month";
-            }
-            if ($year) {
-                $sql_conno .= " AND YEAR(bill.create_at) = :year";
-            }
-
-            $sql_conno .= " ORDER BY room.tenphong ASC";
-            // Chuẩn bị truy vấn và thực thi cho phòng chưa thu
-            $stmt_chuathu = $pdo->prepare($sql_chuathu);
-            if ($month) {
-                $stmt_chuathu->bindParam(':month', $month, PDO::PARAM_INT);
-            }
-            if ($year) {
-                $stmt_chuathu->bindParam(':year', $year, PDO::PARAM_INT);
-            }
-            $stmt_chuathu->execute();
-            $results_chuathu = $stmt_chuathu->fetchAll(PDO::FETCH_ASSOC);
-
-            // Chuẩn bị truy vấn và thực thi cho phòng đã thu
-            $stmt_dathu = $pdo->prepare($sql_dathu);
-            if ($month) {
-                $stmt_dathu->bindParam(':month', $month, PDO::PARAM_INT);
-            }
-            if ($year) {
-                $stmt_dathu->bindParam(':year', $year, PDO::PARAM_INT);
-            }
-            $stmt_dathu->execute();
-            $results_dathu = $stmt_dathu->fetchAll(PDO::FETCH_ASSOC);
-
-            // Chuẩn bị truy vấn và thực thi cho phòng còn nợ
-            $stmt_conno = $pdo->prepare($sql_conno);
-            if ($month) {
-                $stmt_conno->bindParam(':month', $month, PDO::PARAM_INT);
-            }
-            if ($year) {
-                $stmt_conno->bindParam(':year', $year, PDO::PARAM_INT);
-            }
-            $stmt_conno->execute();
-            $results_conno = $stmt_conno->fetchAll(PDO::FETCH_ASSOC);
-            ?>
-
-            <br>
-            <!-- Form tìm kiếm -->
-            <?php
-            // Lấy tháng và năm hiện tại
-            $currentMonth = date('m');
-            $currentYear = date('Y');
-
-            // Khởi tạo các biến cho tháng và năm, với giá trị mặc định là tháng và năm hiện tại
-            $month = isset($_POST['month']) && $_POST['month'] ? $_POST['month'] : $currentMonth;
-            $year = isset($_POST['year']) && $_POST['year'] ? $_POST['year'] : $currentYear;
-
-            // Kiểm tra xem có tháng và năm được chọn từ form không
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                echo "<h3>Kết quả cho tháng " . htmlspecialchars($month) . " năm " . htmlspecialchars($year) . "</h3>";
-            } else {
-                echo "<p></p>";
-            }
-            ?>
-
-
-            <form method="post" action="" class="form-inline">
-                <div class="form-group mb-2">
-                    <label for="month" class="mr-2">Tháng:</label>
-                    <input type="number" id="month" name="month" class="form-control" min="1" max="12" value="<?php echo htmlspecialchars($month); ?>">
-                </div>
-                <div class="form-group mb-2 ml-3">
-                    <label for="year" class="mr-2">Năm:</label>
-                    <input type="number" id="year" name="year" class="form-control" value="<?php echo htmlspecialchars($year); ?>">
-                </div>
-                <button type="submit" class="btn btn-primary mb-2 ml-3"><i class="fa fa-search"></i></button>
-            </form>
-            <p></p>
-            <a href="<?php echo getLinkAdmin('sumary', 'print_details'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất </a>
-
-            <h3 class="sumary-title">
-                Danh sách phòng chưa thu
-            </h3>
-            <p style="color:red"><i>(Phòng đã có hoá đơn nhưng chưa thu gì cả)</i></p>
-            <?php if (empty($results_chuathu)): ?>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Tên khu vực</th>
-                            <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Tên khu vực</th>
-                            <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($results_chuathu as $row): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo number_format($row['tongtien'], 0, ',', '.') ?> đ</td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-
-            <h3 class="sumary-title">
-                Danh sách phòng đã thu
-            </h3>
-            <p style="color:red"><i>(Phòng đã thu hết và không còn nợ)</i></p>
-            <?php if (empty($results_dathu)): ?>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Tên khu vực</th>
-                            <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Tên khu vực</th>
-                            <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($results_dathu as $row): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo number_format($row['sotiendatra'], 0, ',', '.') ?> đ</td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-
-            <h3 class="sumary-title">
-                Danh sách phòng còn nợ
-            </h3>
-            <p style="color:red"><i>(Phòng đã trả trước nhưng vẫn còn nợ)</i></p>
-            <?php if (empty($results_conno)): ?>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Tên khu vực</th>
-                            <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="3" style="text-align: center;">Không có dữ liệu.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Tên khu vực</th>
-                            <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($results_conno as $row): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo number_format($row['sotienconthieu'], 0, ',', '.') ?> đ</td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-
         </div>
-
-        <div class="sumary-right">
-            <h3 class="" style="text-align:center">Biểu đồ lợi nhuận</h3>
-            <canvas id="profitChart" width="400" height="200"></canvas>
-
-        </div>
-
     </div>
 </div>
 
 <?php
 layout('footer', 'admin');
 ?>
-<!-- Thêm thư viện Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-    // Hàm toggleInputType điều chỉnh trạng thái của input và nút submit
-    function toggleInputType() {
-        const filterType = document.querySelector('select[name="filter_type"]').value;
-        const dateInput = document.querySelector('input[name="date_input"]');
-        const submitButton = document.querySelector('button[type="submit"]');
-
-        if (!filterType) {
-            dateInput.disabled = true;
-            submitButton.disabled = true;
-        } else {
-            dateInput.disabled = false;
-            submitButton.disabled = false;
-        }
-
-        if (filterType === 'year') {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'year');
-        } else if (filterType === 'quarter') {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'quarter');
-        } else {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'month');
-        }
-    }
-
-    // Chạy toggleInputType khi tài liệu đã sẵn sàng
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleInputType();
-    });
-
-    // Dữ liệu lợi nhuận và vẽ biểu đồ Bar
-    const ctxProfit = document.getElementById('profitChart').getContext('2d');
-    const profitChart = new Chart(ctxProfit, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($labels); ?>,
-            datasets: [{
-                label: 'Lợi nhuận',
-                data: <?php echo json_encode($profits); ?>,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>

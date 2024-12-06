@@ -53,7 +53,7 @@ $paymentDetail = firstRaw("
 </head>
 
 <body style="display: flex; justify-content: center; margin-top: 30px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f7fafc;">
-    <div class="receipt-content" style="width: 40%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
+    <div class="receipt-content" style="width: 30%; height: auto; background: #fff; box-shadow: 1px 1px 10px #ccc; text-align: center; padding: 50px 20px; line-height: 1.2;">
         <img style="width: 150px;" src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/logomain.png" alt="Logo">
         <h2 style="font-size: 28px; margin: 10px 0;">Phòng Trọ Thảo Nguyên</h2>
         <!-- <h3 style="margin-top: 10px;">Ngày <?php echo date('d/m/Y'); ?></h3> -->
@@ -62,7 +62,7 @@ $paymentDetail = firstRaw("
 
         <div style="margin-top: 20px; text-align: start;">
             <div style="margin-bottom: 10px;">
-                <p style="font-size: 14px; font-weight: normal;">Họ tên: KH / Cơ sở: ..........................................................................</p>
+                <p style="font-size: 14px; font-weight: normal;">Họ tên: Người nhận / Cơ sở: ..........................................................................</p>
             </div>
             <div style="margin-bottom: 10px;">
                 <p style="font-size: 14px; font-weight: normal;">Số điện thoại:: .....................................................................</p>

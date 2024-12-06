@@ -56,7 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ngayvao = $_POST['ngayvao'] ?? null;
     $ngayra = $_POST['ngayra'] ?? null;
     $tinhtrangcoc = $_POST['tinhtrangcoc'] ?? null;
-    $create_at = date("Y-m-d H:i:s") ?? null;
+    // Gán create_at = ngaylaphopdong
+    $create_at = $ngaylaphopdong ?? date("Y-m-d H:i:s");
     $ghichu = $_POST['ghichu'] ?? Null;
     $trangthaihopdong = $_POST['trangthaihopdong'] ?? null; // chưa thanh lý
     if (empty(trim($ghichu))) {

@@ -82,7 +82,6 @@ if (isPost()) {
         if (!empty($body['nghenghiep'])) $dataUpdate['nghenghiep'] = $body['nghenghiep'];
         if (!empty($body['cmnd'])) $dataUpdate['cmnd'] = $body['cmnd'];
         if (!empty($body['ngaycap'])) $dataUpdate['ngaycap'] = $body['ngaycap'];
-        if (!empty($body['ngayvao'])) $dataUpdate['ngayvao'] = $body['ngayvao'];
         if (!empty($body['anhmattruoc'])) $dataUpdate['anhmattruoc'] = $body['anhmattruoc'];
         if (!empty($body['anhmatsau'])) $dataUpdate['anhmatsau'] = $body['anhmatsau'];
         $dataUpdate['room_id'] = $room_id; // Có thể NULL nếu không chọn phòng
@@ -229,12 +228,6 @@ layout('navbar', 'admin', $data);
                         }
                         ?>
                     </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Ngày vào ở <span style="color: red">*</span></label>
-                    <input type="date" name="ngayvao" id="" class="form-control" value="<?php echo old('ngayvao', $old); ?>">
-                    <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
             </div>
