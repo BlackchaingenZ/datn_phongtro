@@ -1317,7 +1317,60 @@ th {
 }
 
 
+/* Căn giữa nút trong trang */
+#showPopupBtnOne {
+    display: block; /* Đặt nút thành block để có thể căn giữa */
+    margin: 0 auto ; /* Căn giữa theo chiều ngang */
+    background-color: #4fb953; /* Màu nền của nút */
+    color: white; /* Màu chữ */
+    border: 2px solid #4CAF50; /* Màu khung của nút */
+    padding: 10px 20px; /* Khoảng cách bên trong nút */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    border-radius: 10px; /* Bo tròn các góc */
+    cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+    text-align: center; /* Căn giữa chữ trong nút */
+}
 
+/* Hiệu ứng khi di chuột qua nút */
+#showPopupBtnOne:hover {
+    background-color: #45a049; /* Màu nền thay đổi khi hover */
+    border-color: #45a049; /* Màu khung thay đổi khi hover */
+}
+
+/* Hiệu ứng khi nhấn vào nút */
+#showPopupBtnOne:active {
+    background-color: #3e8e41; /* Màu nền khi nút được nhấn */
+    border-color: #3e8e41; /* Màu khung khi nút được nhấn */
+}
+
+
+/* Căn giữa nút trong trang */
+#showPopupBtnTwo {
+    display: block; /* Đặt nút thành block để có thể căn giữa */
+    margin: 0 auto ; /* Căn giữa theo chiều ngang */
+    background-color: #4fb953; /* Màu nền của nút */
+    color: white; /* Màu chữ */
+    border: 2px solid #4CAF50; /* Màu khung của nút */
+    padding: 10px 20px; /* Khoảng cách bên trong nút */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    border-radius: 10px; /* Bo tròn các góc */
+    cursor: pointer; /* Hiển thị con trỏ khi di chuột */
+    text-align: center; /* Căn giữa chữ trong nút */
+}
+
+/* Hiệu ứng khi di chuột qua nút */
+#showPopupBtnTwo:hover {
+    background-color: #45a049; /* Màu nền thay đổi khi hover */
+    border-color: #45a049; /* Màu khung thay đổi khi hover */
+}
+
+/* Hiệu ứng khi nhấn vào nút */
+#showPopupBtnTwo:active {
+    background-color: #3e8e41; /* Màu nền khi nút được nhấn */
+    border-color: #3e8e41; /* Màu khung khi nút được nhấn */
+}
 
 /* Căn giữa nút trong trang */
 #showEquipmentPopupBtn {
