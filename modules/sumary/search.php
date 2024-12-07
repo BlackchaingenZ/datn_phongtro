@@ -107,8 +107,10 @@ ON
     room.id = receipt.room_id
 WHERE 
     (bill.trangthaihoadon = 1 OR receipt.sotien IS NOT NULL)
-";
+    AND (MONTH(bill.create_at) = :month OR MONTH(receipt.ngaythu) = :month)
+    AND (YEAR(bill.create_at) = :year OR YEAR(receipt.ngaythu) = :year)
 
+";
             // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng đã thu
             $whereConditions = [];
             if ($month) {
@@ -123,19 +125,12 @@ WHERE
             }
 
             $sql_dathu .= " GROUP BY room.tenphong, area.tenkhuvuc ORDER BY room.tenphong ASC";
-
             // Chuẩn bị truy vấn và thực thi cho phòng đã thu
             $stmt_dathu = $pdo->prepare($sql_dathu);
-            if ($month) {
-                $stmt_dathu->bindParam(':month', $month, PDO::PARAM_INT);
-            }
-            if ($year) {
-                $stmt_dathu->bindParam(':year', $year, PDO::PARAM_INT);
-            }
+            $stmt_dathu->bindParam(':month', $month, PDO::PARAM_INT);
+            $stmt_dathu->bindParam(':year', $year, PDO::PARAM_INT);
             $stmt_dathu->execute();
             $results_dathu = $stmt_dathu->fetchAll(PDO::FETCH_ASSOC);
-
-
             // Truy vấn lấy danh sách phòng còn thiếu
             $sql_conno = "
     SELECT 
