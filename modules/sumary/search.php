@@ -80,9 +80,13 @@ SELECT
     bill.sotiendatra AS sotiendatra,
     area.tenkhuvuc AS tenkhuvuc,
     SUM(CASE
-        WHEN receipt.ngaythu IS NOT NULL AND receipt.danhmucthu_id = 2 THEN receipt.sotien
+        WHEN receipt.ngaythu IS NOT NULL AND receipt.danhmucthu_id = 2 AND MONTH(receipt.ngaythu) = :month AND YEAR(receipt.ngaythu) = :year THEN receipt.sotien
         ELSE 0
-    END) AS sotien
+    END) AS sotien,
+    SUM(CASE
+        WHEN receipt.ngaythu IS NOT NULL AND receipt.danhmucthu_id = 1 AND MONTH(receipt.ngaythu) = :month AND YEAR(receipt.ngaythu) = :year THEN receipt.sotien
+        ELSE 0
+    END) AS sotienphong
 FROM 
     room
 LEFT JOIN 
@@ -231,7 +235,7 @@ WHERE
                         <tr>
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
+                            <th>Tiền phòng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -246,7 +250,7 @@ WHERE
                         <tr>
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
+                            <th>Tiền phòng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -264,15 +268,15 @@ WHERE
             <h3 class="sumary-title">
                 Danh sách phòng đã thu
             </h3>
-            <p style="color:red"><i>(Phòng đã thu hết và không còn nợ)</i></p>
+            <p style="color:red"></p>
             <?php if (empty($results_dathu)): ?>
                 <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                            <th>Số tiền cọc</th>
+                            <th>Tiền phòng</th>
+                            <th>Tiền cọc</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -287,8 +291,8 @@ WHERE
                         <tr>
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
-                            <th>Số tiền cọc</th>
+                            <th>Tiền phòng</th>
+                            <th>Tiền cọc</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -296,7 +300,7 @@ WHERE
                             <tr>
                                 <td><?php echo htmlspecialchars($row['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td><?php echo htmlspecialchars($row['tenphong'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo number_format($row['sotiendatra'], 0, ',', '.') ?> đ</td>
+                                <td><?php echo number_format($row['sotienphong'], 0, ',', '.') ?> đ</td>
                                 <td><?php echo number_format($row['sotien'], 0, ',', '.') ?> đ</td>
                             </tr>
                         <?php endforeach; ?>
@@ -314,7 +318,7 @@ WHERE
                         <tr>
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
+                            <th>Tiền phòng</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -329,7 +333,7 @@ WHERE
                         <tr>
                             <th>Tên khu vực</th>
                             <th>Tên phòng</th>
-                            <th>Số tiền</th>
+                            <th>Tiền phòng</th>
                         </tr>
                     </thead>
                     <tbody>

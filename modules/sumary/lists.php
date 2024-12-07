@@ -35,27 +35,42 @@ if ($filterType && $dateInput) {
         SELECT 
             SUM(tong_tien) AS tong_tien
         FROM (
+            -- Tổng tiền từ bảng receipt
             SELECT SUM(sotien) AS tong_tien 
             FROM receipt 
-            WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month
+            WHERE YEAR(ngaythu) = $year 
+              AND MONTH(ngaythu) = $month
+            
+ UNION ALL
+        
+        -- Tổng tiền đã thu từ bảng bill với trangthaihoadon = 1
+        SELECT SUM(sotienconthieu) AS tong_tien 
+        FROM bill 
+        WHERE YEAR(create_at) = $year 
+          AND MONTH(create_at) = $month 
+          AND trangthaihoadon = 1
+        
+        UNION ALL
+        
+        -- Tổng tiền còn nợ từ bảng bill với trangthaihoadon = 2 hoặc 3
+        SELECT SUM(sotienconthieu) AS tong_tien 
+        FROM bill 
+        WHERE YEAR(create_at) = $year 
+          AND MONTH(create_at) = $month 
+          AND trangthaihoadon IN (2, 3)
             
             UNION ALL
             
-            SELECT SUM(tongtien) AS tong_tien 
-            FROM bill 
-            WHERE YEAR(create_at) = $year AND MONTH(create_at) = $month
-            
-            UNION ALL
-            
-        SELECT SUM(contract.sotiencoc) AS tong_tien
-        FROM contract
-        LEFT JOIN receipt ON receipt.contract_id = contract.id
-        WHERE YEAR(contract.create_at) = $year 
-        AND MONTH(contract.create_at) = $month
-        AND receipt.contract_id IS NULL
-
+            -- Tổng tiền từ bảng contract khi không có receipt liên quan
+            SELECT SUM(contract.sotiencoc) AS tong_tien
+            FROM contract
+            LEFT JOIN receipt ON receipt.contract_id = contract.id
+            WHERE YEAR(contract.create_at) = $year 
+              AND MONTH(contract.create_at) = $month
+              AND receipt.contract_id IS NULL
         ) AS combined
     ");
+    
         $tongthudukien = $sql['tong_tien'];
         $tongthuconthieu = $tongthudukien - $tongthu;
         // Tiền cọcS
@@ -156,7 +171,6 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 ?>
-
 <?php
 layout('navbar', 'admin', $data);
 ?>
@@ -191,25 +205,25 @@ layout('navbar', 'admin', $data);
             <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <h3 class="sumary-title">THỐNG KÊ DOANH THU</h3>
             <!-- <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p> -->
-            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng thu (đã thu) - tổng chi - tổng tiền cọc ) </i></p>
+            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng đã thu - tổng chi - tổng tiền cọc ) </i></p>
 
             <div class="report-receipt-spend">
                 <div class="report-receipt">
-                    <p>Tổng thu (dự kiến) </p>
+                    <p>Tổng thu dự kiến </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthudukien, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-receipt">
-                    <p>Tổng thu (đã thu) </p>
+                    <p>Tổng đã thu </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
                 <div class="report-receipt">
-                    <p>Tổng thu (chưa thu) </p>
+                    <p>Tổng chưa thu </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
                         <p style="color: blue"><?php echo number_format($tongthuconthieu, 0, ',', '.') . 'đ'; ?></p>

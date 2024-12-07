@@ -263,7 +263,7 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
 
-                <div class="col-2"> <!-- Cột chứa box chọn tìm kiếm theo tình trạng cọc -->
+                <!-- <div class="col-2"> 
                     <div class="dropdown">
                         <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
                             <option value="">Chọn trạng thái cọc</option>
@@ -272,7 +272,7 @@ layout('navbar', 'admin', $data);
                         </select>
                         <span class="fa fa-chevron-down" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></span>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-4"> <!-- Cột chứa ô tìm kiếm tên phòng, tên khách hoặc cmnd -->
                     <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
                 </div>
