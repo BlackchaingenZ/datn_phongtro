@@ -175,7 +175,6 @@ if ($userDetail['group_id'] == 7) {
                         <?php // Kiểm tra nếu tổng số hợp đồng không bằng 0
                         ?>
                         <p class="total-count"><?php echo $contractPass ?> <span style="font-size: 16px"></span></p>
-                        <!--<a href=""><div class="dashboard-link"></div></a>-->
                     </div>
 
                     <div class="child-equipment">
@@ -261,7 +260,9 @@ if ($userDetail['group_id'] == 7) {
                             }
                         }
                     </script>
+                    
                 </div>
+                
 
             </div>
 
@@ -287,7 +288,80 @@ if ($userDetail['group_id'] == 7) {
                     <?php $allUsers = getRows("SELECT id FROM users") ?>
                     <p class="total-count"><?php echo $allUsers ?></p>
                 </div>
+                <div class="child-seven">
+                <div class="content-left-title">
+                            <div class="content-left-icon">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
+                            </div>
+                            <p class="total-desc">Danh sách thiết bị theo từng phòng</p>
+                        </div>
+                        <?php
+                        // Truy vấn danh sách phòng và thiết bị
+                        $roomsWithEquipments = getRaw("
+        SELECT 
+            tenphong AS tenphong, 
+            equipment.tenthietbi AS equipment_name, 
+            COUNT(equipment_room.equipment_id) AS total 
+        FROM 
+            room
+        LEFT JOIN equipment_room ON room.id = equipment_room.room_id
+        LEFT JOIN equipment ON equipment.id = equipment_room.equipment_id
+        GROUP BY tenphong, equipment.tenthietbi
+        ORDER BY tenphong
+    ");
+
+                        // Xử lý dữ liệu để nhóm theo phòng
+                        $roomDetails = [];
+                        foreach ($roomsWithEquipments as $row) {
+                            if (!isset($roomDetails[$row['tenphong']])) {
+                                $roomDetails[$row['tenphong']] = [];
+                            }
+                            $roomDetails[$row['tenphong']][] = "{$row['equipment_name']}: {$row['total']} cái";
+                        }
+                        ?>
+                        <!-- Button to trigger the popup -->
+                        <button id="showPopupBtn">Xem chi tiết</button>
+
+                        <!-- Popup Modal -->
+                        <div id="popupModal" class="popup-modal">
+                            <div class="popup-content">
+                                <span class="close-btn" id="closePopupBtn">&times;</span>
+                                <div class="room-details">
+                                    <h3> Danh sách phòng và thiết bị đang có</h3>
+                                    <?php foreach ($roomDetails as $roomName => $equipmentList): ?>
+                                        <p class="room-name"><b><?php echo $roomName; ?></b>: <?php echo implode(', ', $equipmentList); ?></p>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            // Get the modal, button and close button elements
+                            var modal = document.getElementById("popupModal");
+                            var btn = document.getElementById("showPopupBtn");
+                            var closeBtn = document.getElementById("closePopupBtn");
+
+                            // Show the modal when button is clicked
+                            btn.onclick = function() {
+                                modal.style.display = "block";
+                            }
+
+                            // Close the modal when the close button is clicked
+                            closeBtn.onclick = function() {
+                                modal.style.display = "none";
+                            }
+
+                            // Close the modal if the user clicks outside of the modal content
+                            window.onclick = function(event) {
+                                if (event.target === modal) {
+                                    modal.style.display = "none";
+                                }
+                            }
+                        </script>
+                    </div>
+                </div>
             </div>
+            
         </div>
     </div>
 <?php
