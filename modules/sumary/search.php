@@ -85,7 +85,7 @@ SELECT
     END) AS sotien
 FROM 
     room
-INNER JOIN 
+LEFT JOIN 
     bill
 ON 
     room.id = bill.room_id
