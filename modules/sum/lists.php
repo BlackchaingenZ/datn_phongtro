@@ -260,10 +260,54 @@ if ($userDetail['group_id'] == 7) {
                             }
                         }
                     </script>
-                    
-                </div>
-                
 
+                </div>
+                <div class="content-left-child">
+                    <div class="child-three">
+                        <div class="content-left-title">
+                            <div class="content-left-icon background-icon">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
+                            </div>
+                            <?php
+                            $listAllcontract = getRaw("SELECT *, contract.id, tenphong, tenkhach,  cost.giathue, tiencoc, contract.ngayvao as ngayvaoo, contract.ngayra as thoihanhopdong FROM contract 
+                                    INNER JOIN room ON contract.room_id = room.id
+                                    INNER JOIN cost_room ON room.id = cost_room.room_id
+                                     INNER JOIN cost ON cost_room.cost_id = cost.id
+                                    INNER JOIN contract_tenant ON contract.id = contract_tenant.contract_id_1
+                                    INNER JOIN tenant ON contract_tenant.tenant_id_1 = tenant.id");
+
+
+                            // Danh sách các hợp đồng sắp hết hạn
+                            $expiringContracts = [];
+
+                            // Thêm các hợp đồng sắp hết hạn vào danh sách
+                            $countContract = 0;
+                            foreach ($listAllcontract as $contract) {
+                                $daysUntilExpiration = getContractStatus($contract['thoihanhopdong']);
+                                if ($daysUntilExpiration == "Sắp hết hạn") {
+                                    $expiringContracts[] = $contract;
+                                    $countContract++;
+                                }
+                            }
+                            ?>
+                            <p class="total-desc">Số phòng sắp hết hạn hợp đồng</p>
+                        </div>
+                        <p class="total-count"><?php echo $countContract; ?></p>
+                    </div>
+                    <div class="child-three">
+                        <div class="content-left-title">
+                            <div class="content-left-icon">
+                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
+                            </div>
+                            <p class="total-desc">Số phòng đã hết hạn hợp đồng</p>
+                        </div>
+                        <?php $contractTotal = getRows("SELECT id From contract") ?>
+                        <?php $contractPass = getRows("SELECT id From contract where trangthaihopdong = 0") ?>
+                        <?php // Kiểm tra nếu tổng số hợp đồng không bằng 0
+                        ?>
+                        <p class="total-count"><?php echo $contractPass ?> <span style="font-size: 16px"></span></p>
+                    </div>
+                </div>
             </div>
 
             <div class="content-right">
@@ -289,15 +333,15 @@ if ($userDetail['group_id'] == 7) {
                     <p class="total-count"><?php echo $allUsers ?></p>
                 </div>
                 <div class="child-seven">
-                <div class="content-left-title">
-                            <div class="content-left-icon">
-                                <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
-                            </div>
-                            <p class="total-desc">Danh sách thiết bị theo từng phòng</p>
+                    <div class="content-left-title">
+                        <div class="content-left-icon">
+                            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/tasks.svg" alt="">
                         </div>
-                        <?php
-                        // Truy vấn danh sách phòng và thiết bị
-                        $roomsWithEquipments = getRaw("
+                        <p class="total-desc">Danh sách thiết bị theo từng phòng</p>
+                    </div>
+                    <?php
+                    // Truy vấn danh sách phòng và thiết bị
+                    $roomsWithEquipments = getRaw("
         SELECT 
             tenphong AS tenphong, 
             equipment.tenthietbi AS equipment_name, 
@@ -310,59 +354,60 @@ if ($userDetail['group_id'] == 7) {
         ORDER BY tenphong
     ");
 
-                        // Xử lý dữ liệu để nhóm theo phòng
-                        $roomDetails = [];
-                        foreach ($roomsWithEquipments as $row) {
-                            if (!isset($roomDetails[$row['tenphong']])) {
-                                $roomDetails[$row['tenphong']] = [];
-                            }
-                            $roomDetails[$row['tenphong']][] = "{$row['equipment_name']}: {$row['total']} cái";
+                    // Xử lý dữ liệu để nhóm theo phòng
+                    $roomDetails = [];
+                    foreach ($roomsWithEquipments as $row) {
+                        if (!isset($roomDetails[$row['tenphong']])) {
+                            $roomDetails[$row['tenphong']] = [];
                         }
-                        ?>
-                        <!-- Button to trigger the popup -->
-                        <button id="showPopupBtn">Xem chi tiết</button>
+                        $roomDetails[$row['tenphong']][] = "{$row['equipment_name']}: {$row['total']} cái";
+                    }
+                    ?>
+                    <!-- Button to trigger the popup -->
+                    <button id="showPopupBtn">Xem chi tiết</button>
 
-                        <!-- Popup Modal -->
-                        <div id="popupModal" class="popup-modal">
-                            <div class="popup-content">
-                                <span class="close-btn" id="closePopupBtn">&times;</span>
-                                <div class="room-details">
-                                    <h3> Danh sách phòng và thiết bị đang có</h3>
-                                    <?php foreach ($roomDetails as $roomName => $equipmentList): ?>
-                                        <p class="room-name"><b><?php echo $roomName; ?></b>: <?php echo implode(', ', $equipmentList); ?></p>
-                                    <?php endforeach; ?>
-                                </div>
+                    <!-- Popup Modal -->
+                    <div id="popupModal" class="popup-modal">
+                        <div class="popup-content">
+                            <span class="close-btn" id="closePopupBtn">&times;</span>
+                            <div class="room-details">
+                                <h3> Danh sách phòng và thiết bị đang có</h3>
+                                <?php foreach ($roomDetails as $roomName => $equipmentList): ?>
+                                    <p class="room-name"><b><?php echo $roomName; ?></b>: <?php echo implode(', ', $equipmentList); ?></p>
+                                <?php endforeach; ?>
                             </div>
                         </div>
+                    </div>
 
-                        <script>
-                            // Get the modal, button and close button elements
-                            var modal = document.getElementById("popupModal");
-                            var btn = document.getElementById("showPopupBtn");
-                            var closeBtn = document.getElementById("closePopupBtn");
+                    <script>
+                        // Get the modal, button and close button elements
+                        var modal = document.getElementById("popupModal");
+                        var btn = document.getElementById("showPopupBtn");
+                        var closeBtn = document.getElementById("closePopupBtn");
 
-                            // Show the modal when button is clicked
-                            btn.onclick = function() {
-                                modal.style.display = "block";
-                            }
+                        // Show the modal when button is clicked
+                        btn.onclick = function() {
+                            modal.style.display = "block";
+                        }
 
-                            // Close the modal when the close button is clicked
-                            closeBtn.onclick = function() {
+                        // Close the modal when the close button is clicked
+                        closeBtn.onclick = function() {
+                            modal.style.display = "none";
+                        }
+
+                        // Close the modal if the user clicks outside of the modal content
+                        window.onclick = function(event) {
+                            if (event.target === modal) {
                                 modal.style.display = "none";
                             }
-
-                            // Close the modal if the user clicks outside of the modal content
-                            window.onclick = function(event) {
-                                if (event.target === modal) {
-                                    modal.style.display = "none";
-                                }
-                            }
-                        </script>
-                    </div>
+                        }
+                    </script>
                 </div>
             </div>
-            
+
         </div>
+    </div>
+
     </div>
 <?php
 }

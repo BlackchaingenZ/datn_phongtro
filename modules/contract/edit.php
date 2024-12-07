@@ -379,7 +379,7 @@ layout('navbar', 'admin', $data);
                     <label for="">Tình trạng cọc<span style="color: red">*</span></label>
                     <select name="tinhtrangcoc" class="form-select">
                         <option value="" disabled <?php echo ($contract['tinhtrangcoc'] === null) ? 'selected' : ''; ?>>Chọn trạng thái</option>
-                        <option value="2" <?php echo ($contract['tinhtrangcoc'] == 2) ? 'selected' : ''; ?>>Chưa thu</option>
+                        <!-- <option value="2" <?php echo ($contract['tinhtrangcoc'] == 2) ? 'selected' : ''; ?>>Chưa thu</option> -->
                         <option value="1" <?php echo ($contract['tinhtrangcoc'] == 1) ? 'selected' : ''; ?>>Đã thu</option>
                     </select>
                 </div>
