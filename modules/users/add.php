@@ -43,6 +43,7 @@ if (isPost()) {
     if (empty(trim($body['password']))) {
         $errors['password']['required'] = '** Bạn chưa nhập mật khẩu';
     }
+    
 
     // Validate confirm password
     if (empty(trim($body['confirm_password']))) {
