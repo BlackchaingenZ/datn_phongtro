@@ -53,12 +53,21 @@ if ($userDetail['group_id'] == 7) {
                             <p class="total-desc">Danh sách phòng đang cho thuê</p>
                         </div>
                         <?php
-                        $rooms = getRaw("SELECT tenphong FROM room WHERE soluong > 0 ORDER BY tenphong");
+                        // Truy vấn danh sách phòng theo khu vực, không sử dụng bí danh
+                        $query = "
+        SELECT area.tenkhuvuc AS tenkhuvuc, room.tenphong AS tenphong
+        FROM area
+        INNER JOIN area_room ON area.id = area_room.area_id
+        INNER JOIN room ON area_room.room_id = room.id
+        WHERE room.soluong > 0
+        ORDER BY area.tenkhuvuc, room.tenphong
+    ";
+                        $rooms = getRaw($query);
 
-                        // Xử lý dữ liệu để nhóm theo phòng (ở đây không cần nhóm theo thiết bị nữa)
-                        $roomNames = [];
+                        // Xử lý dữ liệu để nhóm theo khu vực
+                        $groupedRooms = [];
                         foreach ($rooms as $row) {
-                            $roomNames[] = $row['tenphong'];
+                            $groupedRooms[$row['tenkhuvuc']][] = $row['tenphong'];
                         }
                         ?>
                         <!-- Button to trigger the popup -->
@@ -70,8 +79,11 @@ if ($userDetail['group_id'] == 7) {
                                 <span class="close-btn" id="closePopupBtnOne">&times;</span>
                                 <div class="room-details">
                                     <h3>Danh sách phòng</h3>
-                                    <?php foreach ($roomNames as $roomName): ?>
-                                        <p class="room-name"><b><?php echo $roomName; ?></b></p>
+                                    <?php foreach ($groupedRooms as $areaName => $roomNames): ?>
+                                        <h4><?php echo htmlspecialchars($areaName, ENT_QUOTES, 'UTF-8'); ?></h4>
+                                        <?php foreach ($roomNames as $roomName): ?>
+                                            <p class="room-name"><b><?php echo htmlspecialchars($roomName, ENT_QUOTES, 'UTF-8'); ?></b></p>
+                                        <?php endforeach; ?>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -102,6 +114,7 @@ if ($userDetail['group_id'] == 7) {
                         </script>
                     </div>
 
+
                     <div class="child-two">
                         <div class="content-left-title">
                             <div class="content-left-icon">
@@ -110,13 +123,19 @@ if ($userDetail['group_id'] == 7) {
                             <p class="total-desc">Danh sách phòng đang trống</p>
                         </div>
                         <?php
-                        // Truy vấn danh sách phòng mà không cần thiết bị
-                        $rooms = getRaw("SELECT tenphong FROM room WHERE soluong = 0 ORDER BY tenphong");
-
-                        // Xử lý dữ liệu để nhóm theo phòng (ở đây không cần nhóm theo thiết bị nữa)
-                        $roomNames = [];
+                        $query = "
+                        SELECT area.tenkhuvuc AS tenkhuvuc, room.tenphong AS tenphong
+                        FROM area
+                        INNER JOIN area_room ON area.id = area_room.area_id
+                        INNER JOIN room ON area_room.room_id = room.id
+                        WHERE room.soluong = 0
+                        ORDER BY area.tenkhuvuc, room.tenphong
+                    ";
+                        $rooms = getRaw($query);
+                        // Xử lý dữ liệu để nhóm theo khu vực
+                        $groupedRooms = [];
                         foreach ($rooms as $row) {
-                            $roomNames[] = $row['tenphong'];
+                            $groupedRooms[$row['tenkhuvuc']][] = $row['tenphong'];
                         }
                         ?>
                         <!-- Button to trigger the popup -->
@@ -124,12 +143,15 @@ if ($userDetail['group_id'] == 7) {
 
                         <!-- Popup Modal -->
                         <div id="popupModalTwo" class="popup-modal">
-                            <div class="popup-content">
+                        <div class="popup-content">
                                 <span class="close-btn" id="closePopupBtnTwo">&times;</span>
                                 <div class="room-details">
                                     <h3>Danh sách phòng</h3>
-                                    <?php foreach ($roomNames as $roomName): ?>
-                                        <p class="room-name"><b><?php echo $roomName; ?></b></p>
+                                    <?php foreach ($groupedRooms as $areaName => $roomNames): ?>
+                                        <h4><?php echo htmlspecialchars($areaName, ENT_QUOTES, 'UTF-8'); ?></h4>
+                                        <?php foreach ($roomNames as $roomName): ?>
+                                            <p class="room-name"><b><?php echo htmlspecialchars($roomName, ENT_QUOTES, 'UTF-8'); ?></b></p>
+                                        <?php endforeach; ?>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
