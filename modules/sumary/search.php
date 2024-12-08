@@ -63,7 +63,6 @@ layout('navbar', 'admin', $data);
             WHERE 
                  receipt.bill_id IS NULL
         ";
-
             // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng chưa thu
             if ($month) {
                 $sql_chuathu .= " AND MONTH(bill.create_at) = :month";
@@ -72,7 +71,7 @@ layout('navbar', 'admin', $data);
                 $sql_chuathu .= " AND YEAR(bill.create_at) = :year";
             }
 
-            $sql_chuathu .= " ORDER BY room.tenphong ASC";
+            $sql_chuathu .= " GROUP BY room.tenphong, area.tenkhuvuc ORDER BY room.tenphong ASC";;
             // Truy vấn lấy danh sách phòng đã thu
             $sql_dathu = "
 SELECT
@@ -109,7 +108,6 @@ WHERE
     (bill.trangthaihoadon = 1 OR receipt.sotien IS NOT NULL)
     AND (MONTH(bill.create_at) = :month OR MONTH(receipt.ngaythu) = :month)
     AND (YEAR(bill.create_at) = :year OR YEAR(receipt.ngaythu) = :year)
-
 ";
             // Thêm điều kiện tìm kiếm theo tháng/năm cho phòng đã thu
             $whereConditions = [];
