@@ -70,6 +70,7 @@ if ($contract_id) {
         $dieukhoan3 = $_POST['dieukhoan3'] ?? $contract['dieukhoan3'];
         $trangthaihopdong = $_POST['trangthaihopdong'] ?? $contract['trangthaihopdong'];
         $lydothanhly = $_POST['lydothanhly'] ?? $contract['lydothanhly'];
+        $thoigianthanhly = $_POST['thoigianthanhly'] ?? $contract['thoigianthanhly'];
         $services = $_POST['services'] ?? []; // Danh sách dịch vụ được chọn từ form
         $tempCustomersData = $_POST['tempCustomersData'] ?? '[]';
         $tempCustomers = json_decode($tempCustomersData, true);
@@ -79,7 +80,7 @@ if ($contract_id) {
             // Nếu hợp đồng đã có, thực hiện cập nhật
             if (isset($contract_id)) {
                 // Kiểm tra trạng thái hợp đồng
-                if ($trangthaihopdong == 0 ) {
+                if ($trangthaihopdong == 0) {
                     // Lấy danh sách khách thuê liên quan đến hợp đồng
                     $query = "SELECT tenant_id_1 FROM contract_tenant WHERE contract_id_1 = ?";
                     $stmt = $pdo->prepare($query);
@@ -95,7 +96,6 @@ if ($contract_id) {
                     // Cập nhật số người trong phòng về 0
                     $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
                     $stmt_update_room->execute([$room_id]);
-                    
                 }
 
                 // Cập nhật thông tin hợp đồng trong cơ sở dữ liệu
@@ -111,7 +111,8 @@ if ($contract_id) {
                     'dieukhoan2' => $dieukhoan2,
                     'dieukhoan3' => $dieukhoan3,
                     'trangthaihopdong' => $trangthaihopdong,
-                    'lydothanhly' => $lydothanhly
+                    'lydothanhly' => $lydothanhly,
+                    'thoigianthanhly' => $thoigianthanhly
                 ], "id = $contract_id");
 
                 // Xóa tất cả các dịch vụ đã liên kết với hợp đồng hiện tại
@@ -417,6 +418,11 @@ layout('navbar', 'admin', $data);
                     <div class="form-group">
                         <label for="">Lý do thanh lý</label>
                         <textarea name="lydothanhly" class="form-control"><?php echo $contract['lydothanhly']; ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Ngày thanh lý</label>
+                        <input type="date" name="thoigianthanhly" class="form-control"
+                            value="<?php echo $contract['thoigianthanhly']; ?>">
                     </div>
 
                     <label for="">Dịch vụ sử dụng <span style="color: red">*</span></label>

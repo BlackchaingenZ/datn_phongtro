@@ -317,7 +317,6 @@ layout('navbar', 'admin', $data);
                         <th style="width: 3%; text-align: center;">Thao tác</th>
                     </tr>
                 </thead>
-
                 <tbody id="contractData">
 
                     <?php

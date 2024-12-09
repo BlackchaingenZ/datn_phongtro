@@ -194,7 +194,6 @@ layout('navbar', 'admin', $data);
         <form action="" method="get">
             <div class="row">
                 <div class="col-2">
-
                 </div>
                 <div class="col-3">
                     <div class="form-group">
@@ -276,7 +275,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <?php
                                     if (!empty($item['ngayvao'])) {
-                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        // Giả sử $item['ngayvao'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
                                         $date = DateTime::createFromFormat('Y-m-d', $item['ngayvao']);
 
                                         // Kiểm tra nếu chuyển đổi thành công

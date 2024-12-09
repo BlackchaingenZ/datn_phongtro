@@ -20,3 +20,16 @@ if (empty(trim($body['tenphong']))) {
             $errors['tenphong']['max'] = '** Tên phòng đối đa 10 ký tự';
     }
 }
+
+<div class="form-group">
+                <label for="">Mật khẩu</label><br />            
+                <input 
+        type="password" 
+        name="password" 
+        class="" 
+        placeholder="Mật khẩu" 
+        maxlength="6" 
+        oninput="validatePasswordLength(this)"
+    >
+    <small id="passwordHelp" style="color: red; display: none;">Mật khẩu phải đủ 6 ký tự!</small>
+            </div>
