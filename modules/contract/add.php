@@ -409,9 +409,9 @@ layout('navbar', 'admin', $data);
             submitFormWithTempCustomers;
     });
 </script>
- 
+
 <script>
-                                   // lọc phòng theo khu vực
+    // lọc phòng theo khu vực
     const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
     const areaSelect = document.getElementById('area-select');
     const roomSelect = document.getElementById('room-select');
@@ -476,13 +476,24 @@ layout('navbar', 'admin', $data);
                         document.querySelector('[name="diachi"]').value = diachi;
                         document.querySelector('[name="ngaysinh"]').value = ngaysinh;
                         document.querySelector('[name="customer_id"]').value = id;
+                        // Thiết lập các trường làm readonly để không thể chỉnh sửa
+                        document.querySelector('[name="tenkhach"]').setAttribute('readonly', true);
+                        document.querySelector('[name="gioitinh"]').setAttribute('disabled', true);
+                        document.querySelector('[name="diachi"]').setAttribute('readonly', true);
+                        document.querySelector('[name="ngaysinh"]').setAttribute('readonly', true);
                     } else {
+
                         // Nếu CMND/CCCD không tồn tại trong cơ sở dữ liệu, làm sạch form
                         document.querySelector('[name="tenkhach"]').value = '';
                         document.querySelector('[name="gioitinh"]').value = '';
                         document.querySelector('[name="diachi"]').value = '';
                         document.querySelector('[name="ngaysinh"]').value = '';
                         document.querySelector('[name="customer_id"]').value = '';
+                        // Loại bỏ readonly để người dùng có thể nhập lại
+                        document.querySelector('[name="tenkhach"]').removeAttribute('readonly');
+                        document.querySelector('[name="gioitinh"]').removeAttribute('disabled');
+                        document.querySelector('[name="diachi"]').removeAttribute('readonly');
+                        document.querySelector('[name="ngaysinh"]').removeAttribute('readonly');
                     }
                 })
                 .catch(error => {
