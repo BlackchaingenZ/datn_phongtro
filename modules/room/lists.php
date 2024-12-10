@@ -40,7 +40,6 @@ if (isGet()) {
 
         $filter .= " $operator tenphong LIKE '%$keyword%'";
     }
-
     //Xử lý lọc Status
     if (!empty($body['status'])) {
         $status = $body['status'];

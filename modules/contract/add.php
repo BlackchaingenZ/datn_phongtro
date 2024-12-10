@@ -282,6 +282,7 @@ layout('navbar', 'admin', $data);
                             value="<?php echo old('ngayvao', $old); ?>">
                         <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
                     </div>
+
                     <div class="form-group">
                         <label for="">Ngày hết hạn hợp đồng <span style="color: red">*</span></label>
                         <input type="date" name="ngayra" id="" class="form-control"
@@ -408,7 +409,9 @@ layout('navbar', 'admin', $data);
             submitFormWithTempCustomers;
     });
 </script>
+ 
 <script>
+                                   // lọc phòng theo khu vực
     const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
     const areaSelect = document.getElementById('area-select');
     const roomSelect = document.getElementById('room-select');
@@ -428,6 +431,8 @@ layout('navbar', 'admin', $data);
         }
     });
 </script>
+
+
 <script>
     function addTempCustomersToForm() {
         document.getElementById('customers_data').value = JSON.stringify(tempCustomers);

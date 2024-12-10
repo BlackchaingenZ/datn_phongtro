@@ -390,18 +390,22 @@ layout('navbar', 'admin', $data);
             <div class="col-3">
                 <div class="form-group">
                     <label for=""> Điều khoản 1<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 152px;"><?php echo $contract['dieukhoan1']; ?></textarea>
+                    <textarea name="dieukhoan1" class="form-control" rows="4" style="width: 100%; height: 115px;"><?php echo $contract['dieukhoan1']; ?></textarea>
                     <?php echo form_error('dieukhoan1', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 2<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 152px;"><?php echo $contract['dieukhoan2']; ?></textarea>
+                    <textarea name="dieukhoan2" class="form-control" rows="4" style="width: 100%; height: 115px;"><?php echo $contract['dieukhoan2']; ?></textarea>
                     <?php echo form_error('dieukhoan2', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="form-group">
                     <label for=""> Điều khoản 3<span style="color: red">*</span></label>
-                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 152px;"><?php echo $contract['dieukhoan3']; ?></textarea>
+                    <textarea name="dieukhoan3" class="form-control" rows="4" style="width: 100%; height: 115px;"><?php echo $contract['dieukhoan3']; ?></textarea>
                     <?php echo form_error('dieukhoan3', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <div class="form-group">
+                    <label for="">Lý do thanh lý</label>
+                    <textarea name="lydothanhly" class="form-control"><?php echo $contract['lydothanhly']; ?></textarea>
                 </div>
 
             </div>
@@ -414,10 +418,6 @@ layout('navbar', 'admin', $data);
                             <option value="0" <?php echo ($contract['trangthaihopdong'] == 0) ? 'selected' : ''; ?>>Đã thanh lý</option>
                             <option value="1" <?php echo ($contract['trangthaihopdong'] == 1) ? 'selected' : ''; ?>>Chưa thanh lý</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Lý do thanh lý</label>
-                        <textarea name="lydothanhly" class="form-control"><?php echo $contract['lydothanhly']; ?></textarea>
                     </div>
                     <div class="form-group">
                         <label for="">Ngày thanh lý</label>

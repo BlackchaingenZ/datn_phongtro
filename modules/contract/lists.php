@@ -262,6 +262,7 @@ layout('navbar', 'admin', $data);
                         <span class="fa fa-chevron-down" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></span>
                     </div>
                 </div>
+                
 
                 <!-- <div class="col-2"> 
                     <div class="dropdown">

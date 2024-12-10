@@ -360,6 +360,8 @@ th {
     padding: 20px 20px;
 }
 
+
+
 .box-content2 {
     margin-top: 15px;
     width: auto;
@@ -654,7 +656,8 @@ th {
 .collect-item {
     display: flex;
     justify-content: space-between;
-    /* flex: 1 1 50%; */ /* Chia đều không gian */
+    /* flex: 1 1 50%; */ 
+    /* Chia đều không gian */
     margin-top: 10px;
     border: 1px solid #ccc;
     padding: 20px 20px;
@@ -1414,4 +1417,19 @@ th {
     transition-delay: 1s;
     /* Đợi 1 giây trước khi phóng to */
 }
+.custom {
+    background-color: green;  /* Màu xanh lá cây */
+    border-color: blue;       /* Màu viền xanh dương */
+}
 
+.custom-size {
+    width: 300px;    /* Chiều rộng của trường input */
+    height: 1000px;    /* Chiều cao của trường input */
+    font-size: 16px; /* Kích thước chữ */
+}
+
+.page-item.active .page-link {
+    background-color: #0d6efd; /* Màu nền */
+    border-color: #0d6efd; /* Viền */
+    color: white; /* Màu chữ */
+}

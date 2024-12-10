@@ -96,7 +96,7 @@ layout('navbar', 'admin', $data);
     <?php getMsg($msg, $msgType); ?>
 </div>
 <div class="container">
-    <hr />
+    <!-- <hr /> -->
 
     <div class="box-content">
         <!-- <h3>Chỉnh sửa thiết bị : <?php echo $equipmentData['tenthietbi']; ?></h3> -->

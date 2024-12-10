@@ -78,11 +78,13 @@ if (!empty(getBody()['page'])) {
     $page = 1;
 }
 $offset = ($page - 1) * $perPage;
-$listAllUser = getRaw("SELECT users.*, groups.name, room.tenphong 
+$listAllUser = getRaw("SELECT users.*, groups.name, room.tenphong
 FROM users 
 LEFT JOIN `groups` ON users.group_id = groups.id 
 LEFT JOIN room ON users.room_id = room.id 
-$filter LIMIT $offset, $perPage");
+$filter
+ORDER BY users.id DESC 
+LIMIT $offset, $perPage");
 
 // Xử lý query string tìm kiếm với phân trang
 $queryString = null;

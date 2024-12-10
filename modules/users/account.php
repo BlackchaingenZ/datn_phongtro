@@ -64,6 +64,7 @@ $errors = getFlashData('errors');
             <div class="account-top">
                 <div class="account-top__info">
                     <img src="https://img.freepik.com/premium-photo/simple-smile-happy-man-digital-portrait-bright-red-background_96461-13322.jpg?w=740" alt="" class="account-avt">
+                    <!-- <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/avatar3.png" class="account-avt"> -->
                     <div class="account-name">
                         <div class="account-fullname"><?php echo $userDetail['fullname'] ?></div>
                         <p class="account-active"><i class="fa-regular fa-circle-check"></i>Đang hoạt động</p>

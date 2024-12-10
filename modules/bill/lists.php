@@ -95,6 +95,7 @@ layout('navbar', 'admin', $data);
                         </a>
                     </div>
                 </div>
+                
             </div>
         </div>
     </div>
