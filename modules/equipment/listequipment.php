@@ -54,6 +54,8 @@ $sqlSearchRooms = "
            e.mathietbi,
            e.soluongnhap,
            e.soluongtonkho,
+           e.thoihanbaohanh,
+           e.ngaybaotri,
            e.ngaynhap
     FROM room r
     JOIN equipment_room er ON r.id = er.room_id
@@ -253,7 +255,7 @@ $msgType = getFlashData('msg_type');
                         <?php endforeach;
                     else: ?>
                         <tr>
-                            <td colspan="9">
+                            <td colspan="13">
                                 <div class="alert alert-danger text-center">Không tìm thấy kết quả nào</div>
                             </td>
                         </tr>

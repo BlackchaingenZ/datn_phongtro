@@ -78,8 +78,10 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-if (!empty($costDetail) && empty($old)) {
-    $old = $costDetail;
+// Nếu không có dữ liệu cũ thì lấy từ cơ sở dữ liệu
+if (empty($old)) {
+    $costDetail = firstRaw("SELECT * FROM cost_room WHERE room_id = $roomId");
+    $old = $costDetail;  // Lưu thông tin cũ vào biến $old
 }
 ?>
 

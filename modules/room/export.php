@@ -139,7 +139,8 @@ foreach ($roomFinal as $room) {
    ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
    $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $room['tenkhuvuc']);
    $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $room['tenphong']);
-   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']. 'm2');
+   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']);
+   // $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']. 'm2');
    $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $room['giathue']);
    $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $room['tiencoc']);
    $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $room['soluong']);
