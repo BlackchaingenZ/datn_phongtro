@@ -238,11 +238,11 @@ $msgType = getFlashData('msg_type');
                                     } else {
                                         $getNgaybaotriStatus = getNgaybaotriStatus($item['ngaybaotri']);
                                         if ($getNgaybaotriStatus == "Đã đến ngày") {
-                                            echo '<span class = "btn-dahethan-err">' . $getNgaybaotriStatus . '</span>';
+                                            echo '<span class = "btn-dadenngay-err">' . $getNgaybaotriStatus . '</span>';
                                         } elseif ($getNgaybaotriStatus == "Sắp đến ngày") {
-                                            echo '<span class = "btn-saphethan-err">' . $getNgaybaotriStatus . '</span>';
+                                            echo '<span class = "btn-saphetngay-err">' . $getNgaybaotriStatus . '</span>';
                                         } elseif ($getNgaybaotriStatus == "Chưa đến ngày") {
-                                            echo '<span class = "btn-saphethan-err">' . $getNgaybaotriStatus . '</span>';
+                                            echo '<span class = "btn-chuadenngay-err">' . $getNgaybaotriStatus . '</span>';
                                         }
                                     }
                                     ?>

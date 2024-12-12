@@ -429,6 +429,8 @@ th {
     background-color: #dc3545;
     border-radius: 8px;
 }
+
+
 .btn-dahethan-err {
     font-size: 10px;
     padding: 6px 8px;
@@ -451,6 +453,27 @@ th {
     border-radius: 8px;
 }
 
+.btn-dadenngay-err {
+    font-size: 10px;
+    padding: 6px 8px;
+    color: #fff;
+    background-color: #dc3545;
+    border-radius: 8px;
+}
+.btn-saphetngay-err {
+    font-size: 10px;
+    padding: 6px 8px;
+    color: #fff;
+    background-color: #ff7b00;
+    border-radius: 8px;
+}
+.btn-chuadenngay-err {
+    font-size: 10px;
+    padding: 6px 8px;
+    color: #fff;
+    background-color: #10c0c0;
+    border-radius: 8px;
+}
 .btn-kyhopdong-second {
     font-size: 10px;
     padding: 6px 8px;

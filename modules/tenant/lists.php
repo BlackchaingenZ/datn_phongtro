@@ -254,6 +254,20 @@ layout('navbar', 'admin', $data);
                                     }
                                     ?>
                                 </td>
+                                <!-- <td style="text-align: center;">
+                                    <?php
+                                    if (empty($item['sdt'])) {
+                                        echo "Trống";
+                                    } else {
+                                        // Kiểm tra nếu số điện thoại bắt đầu bằng "0"
+                                        $phone = $item['sdt'];
+                                        if (substr($phone, 0, 1) == '0') {
+                                            $phone = '+84' . substr($phone, 1); // Loại bỏ "0" và thay bằng "+84"
+                                        }
+                                        echo $phone;
+                                    }
+                                    ?>
+                                </td> -->
 
                                 <td style="text-align: center;">
                                     <?php

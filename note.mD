@@ -104,3 +104,5 @@ if (empty(trim($body['tenphong']))) {
                          input.value = input.value.replace(/[^a-zA-Z\s]/g, ''); // Loại bỏ ký tự không phải chữ cái
                     }
                 </script>
+
+                echo '<span style = "color: red">'. "Trống".'</span>';

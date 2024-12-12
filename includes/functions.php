@@ -406,7 +406,7 @@ function getNgaybaotriStatus($endDate)
     if ($daysLeft <= 0) {
         return "Đã đến ngày";
     } elseif ($daysLeft > 0 && $daysLeft <= 10) {
-        return "Sắp hết ngày";
+        return "Sắp đến ngày";
     } else {
         return "Chưa đến ngày";
     }
