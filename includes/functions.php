@@ -379,6 +379,39 @@ function getContractStatus($endDate)
         return "Trong thời hạn";
     }
 }
+// check trang thái bảo hành
+function getThoihanbaohanhStatus($endDate)
+{
+    $currentDate = new DateTime(); //
+    $EquipmentEndDate = new DateTime($endDate);
+    $interval = $currentDate->diff($EquipmentEndDate); // Tính khoảng cách giữa 2 ngày
+    $daysLeft = (int)$interval->format('%R%a'); // chuyển khoảng cách ngày thành số ngày
+
+    if ($daysLeft < 0) {
+        return "Đã hết hạn bảo hành";
+    } elseif ($daysLeft > 0 && $daysLeft <= 30) {
+        return "Sắp hết hạn bảo hành";
+    } else {
+        return "Trong thời hạn bảo hành";
+    }
+}
+// check trang thái ngày bảo trì
+function getNgaybaotriStatus($endDate)
+{
+    $currentDate = new DateTime(); //
+    $EquipmentEndDate = new DateTime($endDate);
+    $interval = $currentDate->diff($EquipmentEndDate); // Tính khoảng cách giữa 2 ngày
+    $daysLeft = (int)$interval->format('%R%a'); // chuyển khoảng cách ngày thành số ngày
+
+    if ($daysLeft <= 0) {
+        return "Đã đến ngày";
+    } elseif ($daysLeft > 0 && $daysLeft <= 10) {
+        return "Sắp hết ngày";
+    } else {
+        return "Chưa đến ngày";
+    }
+}
+
 
 // truy vấn lấy dữ liệu của equipment xem có đang liên lết với room nào không
 function getRow($sql)
@@ -598,14 +631,16 @@ function linkContractService($contract_id, $services_id)
         ':services_id' => $services_id
     ]);
 }
-function getAll($query, $params = []) {
+function getAll($query, $params = [])
+{
     global $pdo; // Giả sử bạn đang dùng PDO để kết nối CSDL
     $stmt = $pdo->prepare($query); // Chuẩn bị câu lệnh SQL
     $stmt->execute($params); // Truyền tham số vào execute
     return $stmt->fetchAll(PDO::FETCH_ASSOC); // Trả về kết quả
 }
 
-function getTenantIdByCmnd($cmnd) {
+function getTenantIdByCmnd($cmnd)
+{
     // Kết nối cơ sở dữ liệu, giả sử bạn đang sử dụng PDO
     global $pdo;
 
@@ -621,7 +656,8 @@ function getTenantIdByCmnd($cmnd) {
     return $result ? $result['id'] : null;
 }
 
-function getTenantRoomById($tenant_id) {
+function getTenantRoomById($tenant_id)
+{
     // Kết nối cơ sở dữ liệu, giả sử sử dụng PDO
     global $pdo;
 
@@ -631,12 +667,13 @@ function getTenantRoomById($tenant_id) {
 
     // Lấy kết quả
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     // Trả về room_id hoặc null nếu không tìm thấy
     return $result ? $result['room_id'] : null;
 }
 
-function updateTenantRoom($tenant_id, $room_id) {
+function updateTenantRoom($tenant_id, $room_id)
+{
     // Kết nối cơ sở dữ liệu, giả sử sử dụng PDO
     global $pdo;
 
@@ -645,7 +682,8 @@ function updateTenantRoom($tenant_id, $room_id) {
     $stmt->execute(['room_id' => $room_id, 'tenant_id' => $tenant_id]);
 }
 
-function checkSoluongtoida($room_id) {
+function checkSoluongtoida($room_id)
+{
     global $pdo;
     $query = "SELECT soluong, soluongtoida FROM room WHERE id = :room_id";
     $stmt = $pdo->prepare($query);

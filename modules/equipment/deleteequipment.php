@@ -10,6 +10,9 @@ if (!empty($body['id'])) {
     $countUsage = getRows("SELECT id FROM equipment_room WHERE equipment_id = $equipmentId");
 
     if ($countUsage > 0) {
+        // $countIds = array_column($countUsage, 'id');
+        // $countIdList = implode(', ', $countIds); // Nối danh sách ID hợp đồng
+        // setFlashData('msg', "Thiết bị này đang sử dụng trong phòng có (ID: $countIdList), không thể xóa!");
         setFlashData('msg', 'Thiết bị này đang được sử dụng trong phòng nên không thể xoá');
         setFlashData('msg_type', 'err');
         redirect('?module=equipment&action=listequipment');

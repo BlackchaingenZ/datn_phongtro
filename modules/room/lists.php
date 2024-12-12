@@ -249,9 +249,11 @@ layout('navbar', 'admin', $data);
                 <tbody id="roomData">
 
                     <?php
+                    
                     if (!empty($listAllroom)):
                         $count = 0; // Hiển thi số thứ tự
                         foreach ($listAllroom as $item):
+                            
                             $count++;
 
                     ?>
@@ -318,6 +320,7 @@ layout('navbar', 'admin', $data);
                                             <?php
                                             // Kiểm tra nếu 'tenthietbi' trống hoặc NULL thì hiển thị 'Trống'
                                             echo !empty($item['tenthietbi']) ? $item['tenthietbi'] : 'Trống';
+                                            // echo nl2br ($item['tenthietbi']);
                                             ?>
                                         </span>
                                     </span>

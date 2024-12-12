@@ -109,13 +109,29 @@ layout('navbar', 'admin', $data);
                     <label for="name">Ảnh <span style="color: red">*</span></label>
                     <div class="row ckfinder-group">
                         <div class="col-10">
-                            <input type="text" placeholder="Ảnh phòng" name="image" id="name" class="form-control image-render" value="<?php echo old('image', $old); ?>">
+                            <input type="text"
+                                placeholder="Ảnh phòng"
+                                name="image"
+                                id="name"
+                                class="form-control image-render"
+                                value="<?php echo old('image', $old); ?>"
+                                oninput="updateImagePreview(this)">
                         </div>
                         <div class="col-1">
-                            <button type="button" class="btn btn-secondary btn choose-image"><i class="fa fa-upload"></i></button>
+                            <button type="button" class="btn btn-secondary btn choose-image">
+                                <i class="fa fa-upload"></i>
+                            </button>
                         </div>
                     </div>
+                    <!-- <div class="image-preview mt-2">
+                        <img id="image-preview"
+                            src="<?php echo old('image', $old); ?>"
+                            alt="Ảnh phòng"
+                            style="width: 140px; height: 150px; display: <?php echo old('image', $old) ? 'block' : 'none'; ?>; object-fit: cover;">
+                    </div> -->
+
                 </div>
+
                 <div class="form-group">
                     <label for="">Tên phòng <span style="color: red">*</span></label>
                     <input type="text" placeholder="Tên phòng" name="tenphong" id="" class="form-control" value="<?php echo old('tenphong', $old); ?>">
@@ -136,7 +152,7 @@ layout('navbar', 'admin', $data);
             </div>
 
             <div class="col-5">
-            <div class="form-group">
+                <div class="form-group">
                     <label for="">Số lượng người tối đa</label>
                     <input type="text" placeholder="Số lượng người tối đa" name="soluongtoida" id="" class="form-control" value="<?php echo old('soluongtoida', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('soluongtoida', $errors, '<span class="error">', '</span>'); ?>
@@ -147,7 +163,7 @@ layout('navbar', 'admin', $data);
                         input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
                     }
                 </script>
-                
+
                 <div class="form-group">
                     <label for="">Giá tiền cọc <span style="color: red">*</span></label>
                     <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>" oninput="validateNumber(this)">

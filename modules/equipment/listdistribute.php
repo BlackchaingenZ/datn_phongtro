@@ -27,7 +27,7 @@ function getRoomAndEquipmentList()
             CASE 
                 WHEN er.soluongcap > 0 THEN CONCAT(e.tenthietbi, ' (', er.soluongcap, ')')
                 ELSE NULL 
-            END SEPARATOR ', ') AS tenthietbi,
+            END SEPARATOR '\n ') AS tenthietbi,
         GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
         FROM room r
         LEFT JOIN equipment_room er ON r.id = er.room_id
@@ -38,7 +38,6 @@ function getRoomAndEquipmentList()
     ";
     return getRaw($sql);
 }
-
 
 
 
@@ -55,7 +54,7 @@ $sqlSearchRooms = "
             CASE 
                 WHEN er.soluongcap > 0 THEN CONCAT(e.tenthietbi, ' (', er.soluongcap, ')')
                 ELSE NULL 
-            END SEPARATOR ', ') AS tenthietbi,
+            END SEPARATOR '\n ') AS tenthietbi,
         GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
     FROM room r
     LEFT JOIN equipment_room er ON r.id = er.room_id
@@ -132,10 +131,12 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                                     if (empty($item['tenthietbi'])) {
                                         echo "Trống";
                                     } else {
-                                        echo "" . $item['tenthietbi'];
+                                        // echo nl2br($item['tenthietbi']); 
+                                        echo $item['tenthietbi']; 
                                     }
                                     ?>
                                 </td>
+
                                 <td>
                                     <?php
                                     if (!empty($item['thoigiancap'])) {

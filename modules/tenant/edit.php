@@ -194,12 +194,18 @@ layout('navbar', 'admin', $data);
                     <label for="name">Ảnh mặt trước </label>
                     <div class="row ckfinder-group">
                         <div class="col-11">
-                            <input type="text" placeholder="Ảnh mặt trước" name="anhmattruoc" id="name" class="form-control image-render" value="<?php echo old('anhmattruoc', $old); ?>">
+                            <input type="text" placeholder="Ảnh mặt trước" name="anhmattruoc" id="name" class="form-control image-render" value="<?php echo old('anhmattruoc', $old); ?>" oninput="updateImagePreview(this)">
                         </div>
                         <div class="col-1">
                             <button type="button" class="btn btn-secondary choose-image"><i class="fa fa-upload"></i></button>
                         </div>
                     </div>
+                    <!-- <div class="image-preview mt-2">
+                        <img id="image-preview"
+                            src="<?php echo old('anhmattruoc', $old); ?>"
+                            alt="Ảnh phòng"
+                            style="width: 140px; height: 150px; display: <?php echo old('anhmattruoc', $old) ? 'block' : 'none'; ?>; object-fit: cover;">
+                    </div> -->
                 </div>
 
                 <div class="form-group">

@@ -109,7 +109,7 @@ if (!empty($searchContract) || !empty($tinhtrangcoc) || $trangthaihopdong != nul
             contract.ghichu,
             contract.trangthaihopdong,
             tinhtrangcoc, 
-            GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '\n') AS tenant_id_1,  
+            GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY tenant.tenkhach DESC SEPARATOR '.') AS tenant_id_1,  
             GROUP_CONCAT(DISTINCT services.tendichvu ORDER BY services.tendichvu ASC SEPARATOR ', ') AS tendichvu 
         FROM contract 
         INNER JOIN room ON contract.room_id = room.id
@@ -233,20 +233,7 @@ layout('navbar', 'admin', $data);
     </div>
 
     <div class="box-content">
-        <?php if (!empty($expiringContracts)) { ?>
-            <!--thông báo  trên màn hình -->
-            <div class="alert alert-danger alert-dismissible fade show shadow rounded alert-hover" role="alert">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                Các phòng sắp hết hạn hợp đồng: <strong>
-                    <?php foreach ($expiringContracts as $item) {
-                        echo $item['tenphong'] . ', ';
-                    } ?>
-                </strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        <?php } ?>
+
         <form action="" method="POST" class="mt-3">
             <div class="row">
                 <div class = "col-2">
@@ -308,7 +295,7 @@ layout('navbar', 'admin', $data);
                         <th style="text-align: center;">Ngày lập</th>
                         <th style="text-align: center;">Ngày vào ở</th>
                         <th style="width: 6%; text-align: center;">Thời hạn hợp đồng</th>
-                        <th style="width: 7%;text-align: center;">Tình trạng</th>
+                        <!-- <th style="width: 7%;text-align: center;">Tình trạng</th> -->
                         <th style="text-align: center;">Dịch vụ</th>
                         <th style="text-align: center;">Ghi chú</th>
                         <th style="text-align: center;">Thanh lý</th>
@@ -371,7 +358,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><?php echo $item['ngaylaphopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngaylaphopdong'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center;"><?php echo $item['ngayvaoo'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['ngayvaoo'], 'd-m-Y'); ?></td>
                                 <td style="text-align: center;"><?php echo $item['thoihanhopdong'] == '0000-00-00' ? 'Không xác định' : getDateFormat($item['thoihanhopdong'], 'd-m-Y'); ?></td>
-                                <td style="text-align: center;">
+                                <!-- <td style="text-align: center;">
                                     <?php
                                     $contractStatus = getContractStatus($item['thoihanhopdong']);
 
@@ -383,13 +370,13 @@ layout('navbar', 'admin', $data);
                                         echo '<span class="btn-kyhopdong-warning">' . $contractStatus . '</span>';
                                     }
                                     ?>
-                                </td>
+                                </td> -->
                                 <td style="text-align: center;">
                                     <?php
                                     if (empty($item['tendichvu'])) {
                                         echo "Trống";
                                     } else {
-                                        echo "" . $item['tendichvu'];
+                                        echo  "" . $item['tendichvu'];
                                     }
                                     ?>
                                 </td>

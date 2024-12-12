@@ -57,7 +57,9 @@ if (isPost()) {
         $dataUpdate = [
             'tenthietbi' => $body['tenthietbi'],
             'giathietbi' => $body['giathietbi'],
-            'ngaynhap' => $body['ngaynhap']
+            'ngaynhap' => $body['ngaynhap'],
+            'thoihanbaohanh' => $body['thoihanbaohanh'],
+            'ngaybaotri' => $body['ngaybaotri']
         ];
 
         $condition = "id=$equipmentId";
@@ -99,11 +101,8 @@ layout('navbar', 'admin', $data);
     <!-- <hr /> -->
 
     <div class="box-content">
-        <!-- <h3>Chỉnh sửa thiết bị : <?php echo $equipmentData['tenthietbi']; ?></h3> -->
         <form action="" method="post" class="row">
             <div class="col-5">
-                <label for="">Thông tin thiết bị:</label>
-                <p><?php echo $equipmentData['tenthietbi']; ?></p>
                 <div class="form-group">
                     <label for="">Tên thiết bị <span style="color: red">*</span></label>
                     <input type="text" name="tenthietbi" class="form-control" value="<?php echo old('tenthietbi', $old); ?>">
@@ -112,7 +111,7 @@ layout('navbar', 'admin', $data);
 
                 <div class="form-group">
                     <label for="">Giá thiết bị <span style="color: red">*</span></label>
-                    <input type="text" name="giathietbi" class="form-control" value="<?php echo old('giathietbi', $old); ?>"oninput="validateNumber(this)">
+                    <input type="text" name="giathietbi" class="form-control" value="<?php echo old('giathietbi', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('giathietbi', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
@@ -126,6 +125,18 @@ layout('navbar', 'admin', $data);
                     <label for="">Ngày nhập <span style="color: red">*</span></label>
                     <input type="date" name="ngaynhap" class="form-control" value="<?php echo old('ngaynhap', $old); ?>">
                     <?php echo form_error('ngaynhap', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-group">
+                    <label for="">Thời hạn bảo hành <span style="color: red">*</span></label>
+                    <input type="date" name="thoihanbaohanh" class="form-control" value="<?php echo old('thoihanbaohanh', $old); ?>">
+                    <?php echo form_error('thoihanbaohanh', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <div class="form-group">
+                    <label for="">Ngày bảo trì <span style="color: red">*</span></label>
+                    <input type="date" name="ngaybaotri" class="form-control" value="<?php echo old('ngaybaotri', $old); ?>">
+                    <?php echo form_error('ngaybaotri', $errors, '<span class="error">', '</span>'); ?>
                 </div>
             </div>
 

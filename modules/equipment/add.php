@@ -47,7 +47,9 @@ if (isPost()) {
             'giathietbi' => $body['giathietbi'],
             'ngaynhap' => $body['ngaynhap'],
             'soluongnhap' => $body['soluongnhap'],
-            'soluongtonkho' => $body['soluongnhap']  // Gán soluongtonkho bằng soluongnhap
+            'soluongtonkho' => $body['soluongnhap'],  // Gán soluongtonkho bằng soluongnhap
+            'thoihanbaohanh' => $body['thoihanbaohanh'],
+            'ngaybaotri' => $body['ngaybaotri']
         ];
 
         $insertStatus = insert('equipment', $dataInsert);
@@ -119,13 +121,22 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
                     }
                 </script>
                 <div class="form-group">
-                    <label for="">Ngày tạo <span style="color: red">*</span></label>
+                    <label for="">Ngày nhập <span style="color: red">*</span></label>
                     <input type="date" name="ngaynhap" class="form-control" value="<?php echo old('ngaynhap', $old); ?>">
                     <?php echo form_error('ngaynhap', $errors, '<span class="error">', '</span>'); ?>
                 </div>
             </div>
-
             <div class="col-5">
+                <div class="form-group">
+                    <label for="">Thời hạn bảo hành <span style="color: red">*</span></label>
+                    <input type="date" name="thoihanbaohanh" class="form-control" value="<?php echo old('thoihanbaohanh', $old); ?>">
+                    <?php echo form_error('thoihanbaohanh', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+                <div class="form-group">
+                    <label for="">Ngày bảo trì <span style="color: red">*</span></label>
+                    <input type="date" name="ngaybaotri" class="form-control" value="<?php echo old('ngaybaotri', $old); ?>">
+                    <?php echo form_error('ngaybaotri', $errors, '<span class="error">', '</span>'); ?>
+                </div>
             </div>
             <div class="form-group">
                 <a style="margin-right: 20px " href="<?php echo $linkreturnlistequipment ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>

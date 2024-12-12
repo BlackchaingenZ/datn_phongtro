@@ -101,10 +101,10 @@ $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(50);
 
 //header Text
 $spreadsheet->getActiveSheet()
-   ->setCellValue('A2', 'ID')
+   ->setCellValue('A2', 'Mã Phòng')
    ->setCellValue('B2', 'Khu vực')
    ->setCellValue('C2', 'Tên phòng')
-   ->setCellValue('D2', 'Diện tích')
+   ->setCellValue('D2', 'Diện tích : m2')
    ->setCellValue('E2', 'Giá thuê')
    ->setCellValue('F2', 'Giá tiền cọc')
    ->setCellValue('G2', 'Số lượng')
@@ -133,9 +133,13 @@ $date = time();
 $row = 3;
 foreach ($roomFinal as $room) {
    $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $room['id']);
+   $spreadsheet->getActiveSheet()
+   ->getStyle('A' . $row)
+   ->getAlignment()
+   ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
    $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $room['tenkhuvuc']);
    $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $room['tenphong']);
-   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']);
+   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']. 'm2');
    $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $room['giathue']);
    $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $room['tiencoc']);
    $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $room['soluong']);

@@ -70,7 +70,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 
 
 // Lấy danh sách thiết bị từ cơ sở dữ liệu
-$listAllEquipment = getRaw("SELECT id AS equipment_id, tenthietbi, mathietbi, giathietbi, soluongnhap, soluongtonkho, ngaynhap FROM equipment ORDER BY tenthietbi ASC");
+$listAllEquipment = getRaw("SELECT id AS equipment_id, tenthietbi, mathietbi, giathietbi, soluongnhap, soluongtonkho,thoihanbaohanh,ngaybaotri, ngaynhap FROM equipment ORDER BY tenthietbi ASC");
 
 
 if (isset($_POST['deleteMultip'])) {
@@ -157,7 +157,12 @@ $msgType = getFlashData('msg_type');
                         <th>Giá thiết bị</th>
                         <th>Số lượng nhập </th>
                         <th>Số lượng tồn kho</th>
-                        <th>Ngày tạo</th>
+                        <!-- <th>Bảo hành</th> -->
+                        <th>Ngày nhập</th>
+                        <th>Thời hạn bảo hành</th>
+                        <th>Tình trạng bảo hành</th>
+                        <th>Ngày bảo trì</th>
+                        <th>Tình trạng bảo trì</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -173,15 +178,73 @@ $msgType = getFlashData('msg_type');
                             $count++;
                     ?>
                             <tr>
-                                <td><input type="checkbox" name="records[]" value="<?php echo $item['equipment_id']; ?>"></td>
-
+                                <td style="text-align:center;"> <input type="checkbox" name="records[]" value="<?php echo $item['equipment_id']; ?>"></td>
                                 <td><?php echo $count; ?></td>
                                 <td style="color:red"><?php echo $item['mathietbi']; ?></td>
                                 <td><b><?php echo $item['tenthietbi']; ?></b></td>
                                 <td><?php echo number_format($item['giathietbi'], 0, ',', '.'); ?> VND</td>
                                 <td><?php echo $item['soluongnhap']; ?></td>
                                 <td><?php echo $item['soluongtonkho']; ?></td>
+                                <!-- <td><?php
+                                            if (empty($item['thoihanbaohanh'])) {
+                                                echo "Trống";
+                                            } else {
+                                                // Tính số tháng giữa ngaynhap và thoihanbaohanh
+                                                $ngayNhap = strtotime($item['ngaynhap']);
+                                                $thoiHanBaoHanh = strtotime($item['thoihanbaohanh']);
+
+                                                $thang = (date('Y', $thoiHanBaoHanh) - date('Y', $ngayNhap)) * 12 + (date('m', $thoiHanBaoHanh) - date('m', $ngayNhap));
+
+                                                // Hiển thị số tháng
+                                                echo "" . $thang . " tháng";
+                                            }
+                                            ?>
+                                </td> -->
                                 <td><?php echo getDateFormat($item['ngaynhap'], 'd-m-Y'); ?></td>
+                                <td><?php
+                                    if (empty($item['thoihanbaohanh'])) {
+                                        echo "Trống";
+                                    } else {
+                                        echo getDateFormat($item['thoihanbaohanh'], 'd-m-Y');
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    $getEquipmentStatus = getThoihanbaohanhStatus($item['thoihanbaohanh']);
+                                    if ($getEquipmentStatus == "Đã hết hạn bảo hành") {
+                                        echo '<span class = "btn-dahethan-err">' . $getEquipmentStatus . '</span>';
+                                    } elseif ($getEquipmentStatus == "Sắp hết hạn bảo hành") {
+                                        echo '<span class = "btn-saphethan-err">' . $getEquipmentStatus . '</span>';
+                                    } elseif ($getEquipmentStatus == "Trong thời hạn bảo hành") {
+                                        echo '<span class = "btn-trongthoihan-err">' . $getEquipmentStatus . '</span>';
+                                    }
+
+                                    ?>
+                                </td>
+                                <td><?php
+                                    if (empty($item['ngaybaotri'])) {
+                                        echo "Trống";
+                                    } else {
+                                        echo "" . getDateFormat($item['ngaybaotri'], 'd-m-Y' . ' ');
+                                    }
+                                    ?>
+                                </td>
+                                <td><?php
+                                    if (empty($item['ngaybaotri'])) {
+                                        echo "Trống";
+                                    } else {
+                                        $getNgaybaotriStatus = getNgaybaotriStatus($item['ngaybaotri']);
+                                        if ($getNgaybaotriStatus == "Đã đến ngày") {
+                                            echo '<span class = "btn-dahethan-err">' . $getNgaybaotriStatus . '</span>';
+                                        } elseif ($getNgaybaotriStatus == "Sắp đến ngày") {
+                                            echo '<span class = "btn-saphethan-err">' . $getNgaybaotriStatus . '</span>';
+                                        } elseif ($getNgaybaotriStatus == "Chưa đến ngày") {
+                                            echo '<span class = "btn-saphethan-err">' . $getNgaybaotriStatus . '</span>';
+                                        }
+                                    }
+                                    ?>
+                                </td>
                                 <td class="" style="width: 100px; height: 50px; text-align:center">
                                     <a href="<?php echo getLinkAdmin('equipment', 'editequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('equipment', 'deleteequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>

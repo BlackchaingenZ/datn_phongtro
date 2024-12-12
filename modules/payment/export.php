@@ -117,6 +117,11 @@ $date = time();
 $row = 3;
 foreach ($receiptFinal as $item) {
    $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $item['id']);
+   $spreadsheet->getActiveSheet()
+       ->getStyle('A' . $row)
+       ->getAlignment()
+       ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+   
    $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $item['tendanhmuc']);
    $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $item['tenphong']);
    $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $item['sotien']);

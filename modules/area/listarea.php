@@ -114,7 +114,7 @@ if (isset($_POST['search'])) {
                 <p></p>
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('area', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('area', 'addarea') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm khu vực </a>
-                <a href="<?php echo getLinkAdmin('area', 'listarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+                <a href="<?php echo getLinkAdmin('area', 'listarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Làm mới</a>
                 <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
                     <tr>
@@ -136,7 +136,7 @@ if (isset($_POST['search'])) {
                     ?>
                             <tr>
                                 <td><input type="checkbox" name="records[]" value="<?php echo $item['id']; ?>"></td>
-                                <td><?php echo $count; ?></td>
+                                <td class="" style =text-align:end ><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
                                 <td><b><?php echo $item['mota']; ?></b></td>
                                 <td><?php echo getDateFormat($item['ngaytao'], 'd-m-Y'); ?></td>
