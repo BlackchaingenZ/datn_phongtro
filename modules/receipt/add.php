@@ -10,7 +10,17 @@ $data = [
 
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
-$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
+$allArea = getRaw("SELECT DISTINCT area.id, area.tenkhuvuc
+FROM area
+ORDER BY area.tenkhuvuc;
+");
+// $allArea = getRaw("SELECT DISTINCT area.id, area.tenkhuvuc
+// FROM area
+// INNER JOIN area_room ON area_room.area_id = area.id
+// INNER JOIN room ON area_room.room_id = room.id
+// INNER JOIN contract ON contract.room_id = room.id
+// ORDER BY area.tenkhuvuc;
+// ");
 $allCollect = getRaw("SELECT * FROM category_collect");
 $allRoom = getRaw("
     SELECT room.id, room.tenphong, room.soluong 
