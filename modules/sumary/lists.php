@@ -105,65 +105,6 @@ if ($filterType && $dateInput) {
         $loinhuandukien = $tongthudukien - $tongchi - $tiencocdukien;
     }
     $year = date('Y', strtotime($dateInput));
-    // thực hiện việc trích xuất năm từ một chuỗi ngày tháng cụ thể được cung cấp trong biến $dateInput
-    if ($filterType == 'year') {
-        // Doanh thu
-        $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year");
-        $tongthu = $sql['tong_thu'];
-
-        $sql = firstRaw("
-        SELECT 
-            SUM(tong_tien) AS tong_tien
-        FROM (
-            SELECT SUM(sotien) AS tong_tien 
-            FROM receipt 
-            WHERE YEAR(ngaythu) = $year
-            
-            UNION ALL
-            
-            SELECT SUM(tongtien) AS tong_tien 
-            FROM bill 
-            WHERE YEAR(create_at) = $year
-            
-            UNION ALL
-            
-            SELECT SUM(contract.sotiencoc) AS tong_tien
-            FROM contract
-            LEFT JOIN receipt ON receipt.contract_id = contract.id
-            WHERE YEAR(contract.create_at) = $year
-            AND receipt.contract_id IS NULL
-        ) AS combined
-        ");
-        $tongthudukien = $sql['tong_tien'];
-        $tongthuconthieu = $tongthudukien - $tongthu;
-
-        // Tiền cọc
-        $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND danhmucthu_id = 2");
-        $tiencoc = $sql['tien_coc'];
-
-        $sqlReceipt = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND danhmucthu_id = 2");
-
-        $sqlContract = firstRaw("SELECT SUM(contract.sotiencoc) AS tien_coc_contract 
-        FROM contract 
-        WHERE YEAR(contract.create_at) = $year 
-        AND NOT EXISTS (
-          SELECT 1 
-          FROM receipt 
-          WHERE receipt.contract_id = contract.id
-        )");
-
-        $tiencocdukien = ($sqlReceipt['tien_coc'] ?? 0) + ($sqlContract['tien_coc_contract'] ?? 0);
-        $tiencocconthieu = $tiencocdukien - $tiencoc;
-
-        // Tiền chi
-        $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year");
-        $tongchi = $sql['tong_chi'];
-
-        $loinhuan = $tongthu - $tongchi - $tiencoc;
-        $labels[] = "$year";
-        $profits = [$loinhuan];
-        $loinhuandukien = $tongthudukien - $tongchi - $tiencocdukien;
-    }
 }
 
 $msg = getFlashData('msg');
@@ -187,7 +128,6 @@ layout('navbar', 'admin', $data);
                         <select name="filter_type" class="form-select" onchange="toggleInputType()">
                             <option value="" disabled selected>Tổng kết theo</option>
                             <option value="month" <?php echo ($filterType == 'month') ? 'selected' : ''; ?>>Theo tháng</option>
-                            <option value="year" <?php echo ($filterType == 'year') ? 'selected' : ''; ?>>Theo năm</option>
                         </select>
                     </div>
 

@@ -71,12 +71,11 @@ if (isPost()) {
     }
 }
 
-
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
+
 $areaDetail = firstRaw("SELECT *, tenkhuvuc FROM area WHERE id = $id");
 if (!empty($areaDetail) && empty($old)) {
     $old = $areaDetail;

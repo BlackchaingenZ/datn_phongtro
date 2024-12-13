@@ -22,18 +22,20 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndCostList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-        GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
-        FROM room r
-        LEFT JOIN cost_room er ON r.id = er.room_id
-        LEFT JOIN cost e ON er.cost_id = e.id
-        GROUP BY r.id
-         -- HAVING tengia IS NOT NULL  -- Chỉ hiển thị phòng có giá thuê
-        ORDER BY r.id DESC
+        SELECT room.id AS room_id, room.tenphong, 
+               GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
+               GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+        FROM room
+        LEFT JOIN cost_room ON room.id = cost_room.room_id
+        LEFT JOIN cost ON cost_room.cost_id = cost.id
+        GROUP BY room.id
+        HAVING tengia IS NOT NULL  
+        -- Chỉ hiển thị phòng có giá thuê
+        ORDER BY room.id DESC
     ";
     return getRaw($sql);
 }
+
 
 $searchTerm = '';
 if (!empty($_POST['search_term'])) {
@@ -42,17 +44,18 @@ if (!empty($_POST['search_term'])) {
 
 // Truy vấn để tìm tên phòng và cost theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, 
-           r.tenphong, 
-           GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-           GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
-    FROM room r
-    LEFT JOIN cost_room er ON r.id = er.room_id
-    LEFT JOIN cost e ON er.cost_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tengia LIKE '%$searchTerm%'
-    GROUP BY r.id, r.tenphong
-    ORDER BY r.tenphong ASC
+    SELECT room.id AS room_id, 
+           room.tenphong, 
+           GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
+           GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+    FROM room
+    LEFT JOIN cost_room ON room.id = cost_room.room_id
+    LEFT JOIN cost ON cost_room.cost_id = cost.id
+    WHERE room.tenphong LIKE '%$searchTerm%' OR cost.tengia LIKE '%$searchTerm%'
+    GROUP BY room.id, room.tenphong
+    ORDER BY room.tenphong ASC
 ";
+
 
 $searchResults = getRaw($sqlSearchRooms);
 $listRoomAndCost = getRoomAndCostList();
@@ -85,7 +88,7 @@ $listRoomAndCost = getRoomAndCostList();
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('cost', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('cost', 'removecost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
+                <a href="<?php echo getLinkAdmin('cost', 'historycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử áp dụng</a>
             </div>
         </form>
 

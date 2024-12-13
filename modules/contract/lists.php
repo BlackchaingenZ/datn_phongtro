@@ -151,72 +151,6 @@ GROUP_CONCAT(DISTINCT CONCAT(tenant.tenkhach, ' (ID: ', tenant.id, ')') ORDER BY
     ");
 }
 
-
-if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records'];
-
-    if (empty($numberCheckbox)) {
-        setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-        setFlashData('msg_type', 'err');
-    } else {
-        $extract_id = implode(',', $numberCheckbox);
-
-        // Kiểm tra có tenant nào liên kết với hợp đồng qua bảng contract_tenant
-        $checkTenants = get('contract_tenant', "contract_id_1 IN($extract_id)");
-
-        if (!empty($checkTenants)) {
-            // Xóa liên kết tenant trước khi xóa hợp đồng
-            $deleteTenants = delete('contract_tenant', "contract_id_1 IN($extract_id)");
-            if (!$deleteTenants) {
-                setFlashData('msg', 'Không thể xóa liên kết tenant!');
-                setFlashData('msg_type', 'err');
-                redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
-                exit;
-            }
-        }
-
-        // Kiểm tra xem hợp đồng có liên kết với receipt không
-        $checkReceipts = get('receipt', "contract_id IN($extract_id)");
-
-        if (!empty($checkReceipts)) {
-            // Xóa bản ghi liên kết với receipt
-            $deleteReceipts = delete('receipt', "contract_id IN($extract_id)");
-
-            if (!$deleteReceipts) {
-                setFlashData('msg', 'Không thể xóa liên kết với receipt!');
-                setFlashData('msg_type', 'err');
-                redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
-                exit;
-            }
-        }
-
-        // Xóa dịch vụ liên kết với hợp đồng
-        $deleteServices = delete('contract_services', "contract_id IN($extract_id)");
-
-        if ($deleteServices) {
-            // Xóa hợp đồng
-            $deleteContracts = delete('contract', "id IN($extract_id)");
-
-            if ($deleteContracts) {
-                // Xóa phòng liên kết với hợp đồng
-                $deleteRooms = delete('room', "id IN(SELECT room_id FROM contract WHERE id IN($extract_id))");
-
-                if ($deleteRooms) {
-                    setFlashData('msg', 'Xóa hợp đồng thành công!');
-                    setFlashData('msg_type', 'suc');
-                } else {
-                    setFlashData('msg', 'Không thể xóa phòng liên kết với hợp đồng!');
-                    setFlashData('msg_type', 'err');
-                }
-            } else {
-                setFlashData('msg', 'Không thể xóa hợp đồng!');
-                setFlashData('msg_type', 'err');
-            }
-        }
-    }
-    redirect('?module=contract'); // Chuyển hướng đến trang hợp đồng
-}
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -250,19 +184,9 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
                 
-
-                <!-- <div class="col-2"> 
-                    <div class="dropdown">
-                        <select name="tinhtrangcoc" class="form-control" style="height: 50px;">
-                            <option value="">Chọn trạng thái cọc</option>
-                            <option value="2" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '2') ? 'selected' : ''; ?>>Chưa thu</option>
-                            <option value="1" <?php echo (isset($_POST['tinhtrangcoc']) && $_POST['tinhtrangcoc'] == '1') ? 'selected' : ''; ?>>Đã thu</option>
-                        </select>
-                        <span class="fa fa-chevron-down" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);"></span>
-                    </div>
-                </div> -->
                 <div class="col-4"> <!-- Cột chứa ô tìm kiếm tên phòng, tên khách hoặc cmnd -->
-                    <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
+                    <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng tìm kiếm" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
+                    <!-- <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>"> -->
                 </div>
 
                 <div class="col"> <!-- Cột chứa nút tìm kiếm -->
@@ -280,9 +204,6 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-4">
                 <thead>
                     <tr>
-                        <th>
-                            <input type="checkbox" id="check-all" onclick="toggle(this)">
-                        </th>
                         <!-- <th></th> -->
                         <th style="text-align: center;" width="1%">STT</th>
                         <th style="width: 3%; text-align: center;">Tên phòng</th>
@@ -317,9 +238,6 @@ layout('navbar', 'admin', $data);
                     ?>
 
                             <tr>
-                                <td style="text-align: center;">
-                                    <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
-                                </td>
                                 <!-- 
                             <td>
                                 <div class="image__contract">
@@ -477,12 +395,4 @@ layout('footer', 'admin');
             });
         });
     });
-
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked
-        }
-    }
 </script>

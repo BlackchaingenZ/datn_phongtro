@@ -62,19 +62,6 @@ if (isGet()) {
 
 /// Xử lý phân trang
 $allTenant = getRows("SELECT id FROM room $filter");
-$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
-$maxPage = ceil($allTenant / $perPage);
-
-// 3. Xử lý số trang dựa vào phương thức GET
-if (!empty(getBody()['page'])) {
-    $page = getBody()['page'];
-    if ($page < 1 and $page > $maxPage) {
-        $page = 1;
-    }
-} else {
-    $page = 1;
-}
-$offset = ($page - 1) * $perPage;
 $listAllroom = getRaw("
     SELECT room.*, 
            cost.giathue, 
@@ -98,78 +85,63 @@ $listAllroom = getRaw("
     LEFT JOIN contract ON room.id = contract.room_id  -- Lấy thông tin hợp đồng từ bảng contract
     $filter 
     GROUP BY room.id
-    ORDER BY tenphong ASC 
-    LIMIT $offset, $perPage
+    ORDER BY tenphong ASC
 ");
 
-
-
-
-// Xử lý query string tìm kiếm với phân trang
-$queryString = null;
-if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    $queryString = str_replace('module=room', '', $queryString);
-    $queryString = str_replace('&page=' . $page, '', $queryString);
-    $queryString = trim($queryString, '&');
-    $queryString = '&' . $queryString;
-}
-
 // Xóa hết
-if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records'];
+// if (isset($_POST['deleteMultip'])) {
+//     $numberCheckbox = $_POST['records'];
 
-    if (empty($numberCheckbox)) {
-        setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-        setFlashData('msg_type', 'err');
-    } else {
-        $extract_id = implode(',', $numberCheckbox);
+//     if (empty($numberCheckbox)) {
+//         setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
+//         setFlashData('msg_type', 'err');
+//     } else {
+//         $extract_id = implode(',', $numberCheckbox);
 
-        // Kiểm tra xem phòng có hợp đồng liên kết không
-        $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id IN($extract_id)");
+//         // Kiểm tra xem phòng có hợp đồng liên kết không
+//         $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id IN($extract_id)");
 
-        if ($checkContractInRoom) {
-            setFlashData('msg', 'Phòng đang có hợp đồng, không thể xóa!');
-            setFlashData('msg_type', 'err');
-        } else {
-            // Kiểm tra xem phòng có tenant liên kết không
-            $checkTenantInRoom = getRaw("SELECT room_id FROM tenant WHERE room_id IN($extract_id)");
+//         if ($checkContractInRoom) {
+//             setFlashData('msg', 'Phòng đang có hợp đồng, không thể xóa!');
+//             setFlashData('msg_type', 'err');
+//         } else {
+//             // Kiểm tra xem phòng có tenant liên kết không
+//             $checkTenantInRoom = getRaw("SELECT room_id FROM tenant WHERE room_id IN($extract_id)");
 
-            if ($checkTenantInRoom) {
-                setFlashData('msg', 'Phòng đang có người ở, không thể xóa!');
-                setFlashData('msg_type', 'err');
-            } else {
-                // Xóa các thiết bị liên kết với phòng trọ
-                $deleteEquipment = delete('equipment_room', "room_id IN($extract_id)");
+//             if ($checkTenantInRoom) {
+//                 setFlashData('msg', 'Phòng đang có người ở, không thể xóa!');
+//                 setFlashData('msg_type', 'err');
+//             } else {
+//                 // Xóa các thiết bị liên kết với phòng trọ
+//                 $deleteEquipment = delete('equipment_room', "room_id IN($extract_id)");
 
-                if ($deleteEquipment) {
-                    // Xóa các khu vực liên kết với phòng trọ
-                    $deleteArea = delete('area_room', "room_id IN($extract_id)");
+//                 if ($deleteEquipment) {
+//                     // Xóa các khu vực liên kết với phòng trọ
+//                     $deleteArea = delete('area_room', "room_id IN($extract_id)");
 
-                    if ($deleteArea) {
-                        // Xóa các giá thuê liên kết với phòng trọ
-                        $deleteCost = delete('cost_room', "room_id IN($extract_id)");
+//                     if ($deleteArea) {
+//                         // Xóa các giá thuê liên kết với phòng trọ
+//                         $deleteCost = delete('cost_room', "room_id IN($extract_id)");
 
-                        if ($deleteCost) {
-                            // Xóa phòng trọ
-                            $checkDeleteRoom = delete('room', "id IN($extract_id)");
+//                         if ($deleteCost) {
+//                             // Xóa phòng trọ
+//                             $checkDeleteRoom = delete('room', "id IN($extract_id)");
 
-                            if ($checkDeleteRoom) {
-                                setFlashData('msg', 'Xóa thông tin phòng trọ thành công!');
-                                setFlashData('msg_type', 'suc');
-                            } else {
-                                setFlashData('msg', 'Không thể xóa phòng trọ!');
-                                setFlashData('msg_type', 'err');
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    redirect('?module=room');
-}
-
+//                             if ($checkDeleteRoom) {
+//                                 setFlashData('msg', 'Xóa thông tin phòng trọ thành công!');
+//                                 setFlashData('msg_type', 'suc');
+//                             } else {
+//                                 setFlashData('msg', 'Không thể xóa phòng trọ!');
+//                                 setFlashData('msg_type', 'err');
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+//     redirect('?module=room');
+// }
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -221,16 +193,13 @@ layout('navbar', 'admin', $data);
             </div>
             <a href="<?php echo getLinkAdmin('room', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
             <a href="<?php echo getLinkAdmin('room', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <button type="submit" name="deleteMultip" value="delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
-            <!-- <a href="<?php echo getLinkAdmin('room', 'import'); ?>" class="btn btn-secondary"><i class="fa fa-upload"></i> Import</a> -->
             <a href="<?php echo getLinkAdmin('room', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
-
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <th>
+                        <!-- <th>
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
-                        </th>
+                        </th> -->
                         <th>STT</th>
                         <th>Ảnh</th>
                         <th>Khu vực</th>
@@ -258,10 +227,9 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td style="text-align: center;">
+                                <!-- <td style="text-align: center;">
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
-                                </td>
-
+                                </td> -->
 
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;">
@@ -343,39 +311,6 @@ layout('navbar', 'admin', $data);
                 </tbody>
             </table>
 
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination pagination-sm">
-                    <?php
-                    if ($page > 1) {
-                        $prePage = $page - 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=room' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
-                    }
-                    ?>
-
-                    <?php
-                    // Giới hạn số trang
-                    $begin = $page - 2;
-                    $end = $page + 2;
-                    if ($begin < 1) {
-                        $begin = 1;
-                    }
-                    if ($end > $maxPage) {
-                        $end = $maxPage;
-                    }
-                    for ($index = $begin; $index <= $end; $index++) {  ?>
-                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
-                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=room' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
-                        </li>
-                    <?php  } ?>
-
-                    <?php
-                    if ($page < $maxPage) {
-                        $nextPage = $page + 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=room' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
     </div>
 
 </div>

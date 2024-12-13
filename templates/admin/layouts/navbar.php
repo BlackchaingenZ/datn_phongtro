@@ -31,8 +31,6 @@
   <section class="content">
     <div class="container-fluid">
       <div class="menu__list">
-
-
         <!-- Item 1 -->
         <a href="<?php echo getLinkAdmin('room') ?>" class="link__menu ">
           <div class="menu__item">
@@ -126,6 +124,13 @@
             <p class="menu__item-title">Người dùng hệ thống</p>
           </div>
         </a>
+
+        <!-- <a href="<?php echo getLinkAdmin('city'); ?>" class="link__menu ">
+          <div class="menu__item">
+            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.png" class="menu__item-image" alt="">
+            <p class="menu__item-title">Quản lý thành phố</p>
+          </div>
+        </a> -->
 
       </div>
     </div>

@@ -31,35 +31,10 @@ if (isGet()) {
     }
 }
 
-/// Xử lý phân trang
-$allPayment = getRows("SELECT id FROM payment $filter");
-$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
-$maxPage = ceil($allPayment / $perPage);
-
-// 3. Xử lý số trang dựa vào phương thức GET
-if (!empty(getBody()['page'])) {
-    $page = getBody()['page'];
-    if ($page < 1 and $page > $maxPage) {
-        $page = 1;
-    }
-} else {
-    $page = 1;
-}
-$offset = ($page - 1) * $perPage;
-
 $listAllPayment = getRaw("SELECT *, tenphong, tendanhmuc, payment.id 
 FROM payment LEFT JOIN room ON room.id = payment.room_id 
-LEFT JOIN category_spend ON category_spend.id = payment.danhmucchi_id ORDER BY payment.id DESC $filter LIMIT $offset, $perPage");
+LEFT JOIN category_spend ON category_spend.id = payment.danhmucchi_id ORDER BY payment.id DESC  ");
 
-// Xử lý query string tìm kiếm với phân trang
-$queryString = null;
-if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    $queryString = str_replace('module=payment', '', $queryString);
-    $queryString = str_replace('&page=' . $page, '', $queryString);
-    $queryString = trim($queryString, '&');
-    $queryString = '&' . $queryString;
-}
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -152,7 +127,6 @@ layout('navbar', 'admin', $data);
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
                                         <div class="box-action">
                                             <a title="Xem phiếu chi" target="_blank" href="<?php echo getLinkAdmin('payment', 'view', ['id' => $item['id']]) ?>" class="btn btn-primary btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
-                                            <a title="In phiếu chi" target="_blank" href="<?php echo getLinkAdmin('payment', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i></a>
                                             <a href="<?php echo getLinkAdmin('payment', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
                                             <a href="<?php echo getLinkAdmin('payment', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                         </div>
@@ -167,40 +141,6 @@ layout('navbar', 'admin', $data);
                         <?php endif; ?>
                 </tbody>
             </table>
-
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination pagination-sm">
-                    <?php
-                    if ($page > 1) {
-                        $prePage = $page - 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=payment' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
-                    }
-                    ?>
-
-                    <?php
-                    // Giới hạn số trang
-                    $begin = $page - 2;
-                    $end = $page + 2;
-                    if ($begin < 1) {
-                        $begin = 1;
-                    }
-                    if ($end > $maxPage) {
-                        $end = $maxPage;
-                    }
-                    for ($index = $begin; $index <= $end; $index++) {  ?>
-                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
-                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=payment' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
-                        </li>
-                    <?php  } ?>
-
-                    <?php
-                    if ($page < $maxPage) {
-                        $nextPage = $page + 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=payment' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
     </div>
 
 </div>

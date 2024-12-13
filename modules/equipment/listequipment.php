@@ -26,96 +26,51 @@ layout('breadcrumb', 'admin', $data);
 function getRoomAndEquipmentList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-               GROUP_CONCAT(e.tenthietbi SEPARATOR ', ') AS tenthietbi, 
-               GROUP_CONCAT(er.thoigiancap SEPARATOR ', ') AS thoigiancap
-        FROM room r
-        LEFT JOIN equipment_room er ON r.id = er.room_id
-        LEFT JOIN equipment e ON er.equipment_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id ASC
+        SELECT room.id AS room_id, room.tenphong, 
+               GROUP_CONCAT(equipment.tenthietbi SEPARATOR ', ') AS tenthietbi, 
+               GROUP_CONCAT(equipment_room.thoigiancap SEPARATOR ', ') AS thoigiancap
+        FROM room
+        LEFT JOIN equipment_room ON room.id = equipment_room.room_id
+        LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
+        GROUP BY room.id
+        ORDER BY room.id ASC
     ";
 
     return getRaw($sql); // Hàm getRaw() sẽ thực hiện truy vấn và trả về kết quả
 }
+
 
 $searchTerm = ''; // Từ khóa tìm kiếm
 if (!empty($_POST['search_term'])) {
     $searchTerm = $_POST['search_term'];
 }
 
-
 // Truy vấn để tìm tên phòng và thiết bị
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, r.tenphong, 
-           e.id AS equipment_id,
-           e.tenthietbi, 
-           e.giathietbi,
-           e.mathietbi,
-           e.soluongnhap,
-           e.soluongtonkho,
-           e.thoihanbaohanh,
-           e.ngaybaotri,
-           e.ngaynhap
-    FROM room r
-    JOIN equipment_room er ON r.id = er.room_id
-    JOIN equipment e ON er.equipment_id = e.id
-    WHERE e.tenthietbi LIKE '%$searchTerm%' OR e.mathietbi LIKE '%$searchTerm%'
-    GROUP BY e.id 
-    ORDER BY e.tenthietbi ASC
+    SELECT room.id AS room_id, room.tenphong, 
+           equipment.id AS equipment_id,
+           equipment.tenthietbi, 
+           equipment.giathietbi,
+           equipment.mathietbi,
+           equipment.soluongnhap,
+           equipment.soluongtonkho,
+           equipment.thoihanbaohanh,
+           equipment.ngaybaotri,
+           equipment.ngaynhap
+    FROM room
+    JOIN equipment_room ON room.id = equipment_room.room_id
+    JOIN equipment ON equipment_room.equipment_id = equipment.id
+    WHERE equipment.tenthietbi LIKE '%$searchTerm%' OR equipment.mathietbi LIKE '%$searchTerm%'
+    GROUP BY equipment.id 
+    ORDER BY equipment.tenthietbi ASC
 ";
+
 
 $searchResults = getRaw($sqlSearchRooms);
 $listRoomAndEquipment = getRoomAndEquipmentList();
 
-
-
-
 // Lấy danh sách thiết bị từ cơ sở dữ liệu
 $listAllEquipment = getRaw("SELECT id AS equipment_id, tenthietbi, mathietbi, giathietbi, soluongnhap, soluongtonkho,thoihanbaohanh,ngaybaotri, ngaynhap FROM equipment ORDER BY tenthietbi ASC");
-
-
-if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
-    if (empty($numberCheckbox)) {
-        setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-        setFlashData('msg_type', 'err');
-    } else {
-        // Chuyển mảng các ID thiết bị thành chuỗi để sử dụng trong câu truy vấn SQL
-        $extract_id = implode(',', array_map('intval', $numberCheckbox));
-
-        try {
-            // Kiểm tra trước nếu có thiết bị nào đang được sử dụng trong bảng equipment_room
-            $sqlCheck = "SELECT COUNT(*) AS count FROM equipment_room WHERE equipment_id IN ($extract_id)";
-            $count = getRow($sqlCheck)['count'];
-
-            if ($count > 0) {
-                // Nếu thiết bị đang được sử dụng trong phòng, không thực hiện xóa
-                setFlashData('msg', 'Không thể xóa thiết bị vì nó đang được sử dụng trong phòng.');
-                setFlashData('msg_type', 'err');
-                redirect('?module=equipment&action=listequipment');
-                exit(); // Dừng việc thực hiện thêm
-            } else {
-                // Thực hiện xóa các thiết bị đã chọn từ cơ sở dữ liệu nếu không có thiết bị nào đang được sử dụng
-                $checkDelete = delete('equipment', "id IN($extract_id)");
-
-                if ($checkDelete) {
-                    setFlashData('msg', 'Xóa thiết bị thành công');
-                    setFlashData('msg_type', 'suc');
-                } else {
-                    setFlashData('msg', 'Có lỗi xảy ra khi xóa thiết bị');
-                    setFlashData('msg_type', 'err');
-                }
-            }
-        } catch (PDOException $e) {
-            setFlashData('msg', 'Đã xảy ra lỗi: ' . $e->getMessage());
-            setFlashData('msg_type', 'err');
-        }
-    }
-    redirect('?module=equipment&action=listequipment'); // Chuyển hướng về trang danh sách
-}
-
-
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -152,7 +107,6 @@ $msgType = getFlashData('msg_type');
                 <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
                         <th>STT</th>
                         <th>Mã thiết bị</th>
                         <th>Tên thiết bị</th>
@@ -180,7 +134,6 @@ $msgType = getFlashData('msg_type');
                             $count++;
                     ?>
                             <tr>
-                                <td style="text-align:center;"> <input type="checkbox" name="records[]" value="<?php echo $item['equipment_id']; ?>"></td>
                                 <td><?php echo $count; ?></td>
                                 <td style="color:red"><?php echo $item['mathietbi']; ?></td>
                                 <td><b><?php echo $item['tenthietbi']; ?></b></td>
@@ -224,6 +177,33 @@ $msgType = getFlashData('msg_type');
 
                                     ?>
                                 </td>
+                                <!-- <td>
+                                    <?php
+                                    $compareResult = sosanh($item['soluongtonkho'], $item['soluongnhap']);
+
+                                    if ($compareResult == "Bằng nhau") {
+                                        echo '<span class="btn-bangnhau-err">' . $compareResult . '</span>';
+                                    } elseif ($compareResult == "Nhỏ hơn") {
+                                        echo '<span class="btn-nhohon-err">' . $compareResult . '</span>';
+                                    } elseif ($compareResult == "Lớn hơn") {
+                                        echo '<span class="btn-lonhon-err">' . $compareResult . '</span>';
+                                    }
+                                    ?>
+                                </td> -->
+                                <!-- <td>
+                                    <?php
+                                    $compareDatesResult = compareDates($item['ngaynhap'], $item['thoihanbaohanh']);
+
+                                    if ($compareDatesResult == "Bằng nhau") {
+                                        echo '<span class="btn-bangnhau-err">' . $compareDatesResult . '</span>';
+                                    } elseif ($compareDatesResult == "Ngày nhập nhỏ hơn ngày bảo hành") {
+                                        echo '<span class="btn-nhohon-err">' . $compareDatesResult . '</span>';
+                                    } elseif ($compareDatesResult == "Ngày nhập lớn hơn ngày bảo hành") {
+                                        echo '<span class="btn-lonhon-err">' . $compareDatesResult . '</span>';
+                                    }
+                                    ?>
+                                </td> -->
+
                                 <td><?php
                                     if (empty($item['ngaybaotri'])) {
                                         echo "Trống";
@@ -270,13 +250,3 @@ $msgType = getFlashData('msg_type');
 </div>
 
 <?php layout('footer', 'admin'); ?>
-
-<script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked;
-        }
-    }
-</script>

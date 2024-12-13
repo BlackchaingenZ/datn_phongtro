@@ -81,31 +81,16 @@ if (isGet()) {
 
 /// Xử lý phân trang
 $allBill = getRows("SELECT id FROM bill $filter");
-$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
-$maxPage = ceil($allBill / $perPage);
 
-// 3. Xử lý số trang dựa vào phương thức GET
-if (!empty(getBody()['page'])) {
-    $page = getBody()['page'];
-    if ($page < 1 and $page > $maxPage) {
-        $page = 1;
-    }
-} else {
-    $page = 1;
-}
-$offset = ($page - 1) * $perPage;
-$listAllBill = getRaw("SELECT *, bill.id, room.tenphong FROM bill 
-INNER JOIN room ON bill.room_id = room.id LEFT JOIN tenant ON bill.tenant_id = tenant.id $filter  ORDER BY bill.id DESC  LIMIT $offset, $perPage");
+$listAllBill = getRaw("
+    SELECT *, bill.id, room.tenphong 
+    FROM bill 
+    INNER JOIN room ON bill.room_id = room.id 
+    LEFT JOIN tenant ON bill.tenant_id = tenant.id 
+    $filter  
+    ORDER BY bill.id DESC
+");
 
-// Xử lý query string tìm kiếm với phân trang
-$queryString = null;
-if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    $queryString = str_replace('module=bill', '', $queryString);
-    $queryString = str_replace('&page=' . $page, '', $queryString);
-    $queryString = trim($queryString, '&');
-    $queryString = '&' . $queryString;
-}
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -164,7 +149,6 @@ layout('navbar', 'admin', $data);
             <a style="margin-right: 5px" href="<?php echo getLinkAdmin('bill', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
             <a href="<?php echo getLinkAdmin('bill', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
             <a href="<?php echo getLinkAdmin('bill', 'bills'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <a href="<?php echo getLinkAdmin('bill', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
 
             <table class="table table-bordered mt-3" style="overflow-x: auto;">
                 <thead>
@@ -281,40 +265,6 @@ layout('navbar', 'admin', $data);
                     <?php endif; ?>
                 </tbody>
             </table>
-
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination pagination-sm">
-                    <?php
-                    if ($page > 1) {
-                        $prePage = $page - 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=bill' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
-                    }
-                    ?>
-
-                    <?php
-                    // Giới hạn số trang
-                    $begin = $page - 2;
-                    $end = $page + 2;
-                    if ($begin < 1) {
-                        $begin = 1;
-                    }
-                    if ($end > $maxPage) {
-                        $end = $maxPage;
-                    }
-                    for ($index = $begin; $index <= $end; $index++) {  ?>
-                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
-                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=bill' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
-                        </li>
-                    <?php  } ?>
-
-                    <?php
-                    if ($page < $maxPage) {
-                        $nextPage = $page + 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=bill' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
     </div>
 
 </div>

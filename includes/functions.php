@@ -395,6 +395,7 @@ function getThoihanbaohanhStatus($endDate)
         return "Trong thời hạn bảo hành";
     }
 }
+
 // check trang thái ngày bảo trì
 function getNgaybaotriStatus($endDate)
 {
@@ -412,6 +413,30 @@ function getNgaybaotriStatus($endDate)
     }
 }
 
+function sosanh($soluongtonkho, $soluongnhap)
+{
+    if ($soluongtonkho == $soluongnhap) {
+        return "Bằng nhau";
+    } elseif ($soluongtonkho < $soluongnhap) {
+        return "Nhỏ hơn";
+    } else {
+        return "Lớn hơn";
+    }
+}
+
+function compareDates($ngaynhap, $thoihanbaohanh)
+{
+    $date1 = new DateTime($ngaynhap);
+    $date2 = new DateTime($thoihanbaohanh);
+
+    if ($date1 == $date2) {
+        return "Bằng nhau";
+    } elseif ($date1 < $date2) {
+        return "Ngày nhập nhỏ hơn ngày bảo hành";
+    } else {
+        return "Ngày nhập lớn hơn ngày bảo hành";
+    }
+}
 
 // truy vấn lấy dữ liệu của equipment xem có đang liên lết với room nào không
 function getRow($sql)

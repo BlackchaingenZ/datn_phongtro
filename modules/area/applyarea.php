@@ -91,7 +91,6 @@ layout('navbar', 'admin', $data);
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('area', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('area', 'addapply') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('area', 'applyarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('area', 'removeapplyarea') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 

@@ -65,53 +65,13 @@ if (isGet()) {
 
 /// Xử lý phân trang
 $allTenant = getRows("SELECT id FROM users $filter");
-$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
-$maxPage = ceil($allTenant / $perPage);
 
-// 3. Xử lý số trang dựa vào phương thức GET
-if (!empty(getBody()['page'])) {
-    $page = getBody()['page'];
-    if ($page < 1 and $page > $maxPage) {
-        $page = 1;
-    }
-} else {
-    $page = 1;
-}
-$offset = ($page - 1) * $perPage;
 $listAllUser = getRaw("SELECT users.*, groups.name, room.tenphong
 FROM users 
 LEFT JOIN `groups` ON users.group_id = groups.id 
 LEFT JOIN room ON users.room_id = room.id 
 $filter
-ORDER BY users.id DESC 
-LIMIT $offset, $perPage");
-
-// Xử lý query string tìm kiếm với phân trang
-$queryString = null;
-if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    $queryString = str_replace('module=users', '', $queryString);
-    $queryString = str_replace('&page=' . $page, '', $queryString);
-    $queryString = trim($queryString, '&');
-    $queryString = '&' . $queryString;
-}
-
-// Xóa hết
-if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records'];
-    if (empty($numberCheckbox)) {
-        setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-        setFlashData('msg_type', 'err');
-    } else {
-        $extract_id = implode(',', $numberCheckbox);
-        $checkDelete = delete('users', "id IN($extract_id)");
-        if ($checkDelete) {
-            setFlashData('msg', 'Xóa thông tin người dùng thành công');
-            setFlashData('msg_type', 'suc');
-        }
-    }
-    redirect('?module=users');
-}
+ORDER BY users.id DESC ");
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -182,14 +142,10 @@ layout('navbar', 'admin', $data);
             </div>
             <a href="<?php echo getLinkAdmin('users', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm</a>
             <a href="<?php echo getLinkAdmin('users', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
 
             <table class="table table-bordered mt-3" id="dataTable">
                 <thead>
                     <tr>
-                        <th>
-                            <input type="checkbox" id="check-all" onclick="toggle(this)">
-                        </th>
                         <th>STT</th>
                         <th>Tên khách hàng</th>
                         <th>Email</th>
@@ -210,9 +166,6 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td style="text-align: center;">
-                                    <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
-                                </td>
 
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td><b><?php echo $item['fullname']; ?></b></td>
@@ -237,40 +190,6 @@ layout('navbar', 'admin', $data);
                         <?php endif; ?>
                 </tbody>
             </table>
-
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination pagination-sm">
-                    <?php
-                    if ($page > 1) {
-                        $prePage = $page - 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=users' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
-                    }
-                    ?>
-
-                    <?php
-                    // Giới hạn số trang
-                    $begin = $page - 2;
-                    $end = $page + 2;
-                    if ($begin < 1) {
-                        $begin = 1;
-                    }
-                    if ($end > $maxPage) {
-                        $end = $maxPage;
-                    }
-                    for ($index = $begin; $index <= $end; $index++) {  ?>
-                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
-                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=users' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
-                        </li>
-                    <?php  } ?>
-
-                    <?php
-                    if ($page < $maxPage) {
-                        $nextPage = $page + 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=users' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
     </div>
 
 </div>
@@ -279,13 +198,3 @@ layout('navbar', 'admin', $data);
 
 layout('footer', 'admin');
 ?>
-
-<script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked
-        }
-    }
-</script>

@@ -22,22 +22,23 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndEquipmentList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(
-            CASE 
-                WHEN er.soluongcap > 0 THEN CONCAT(e.tenthietbi, ' (', er.soluongcap, ')')
-                ELSE NULL 
-            END SEPARATOR '\n ') AS tenthietbi,
-        GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
-        FROM room r
-        LEFT JOIN equipment_room er ON r.id = er.room_id
-        LEFT JOIN equipment e ON er.equipment_id = e.id
-        GROUP BY r.id
+        SELECT room.id AS room_id, room.tenphong, 
+               GROUP_CONCAT(
+                   CASE 
+                       WHEN equipment_room.soluongcap > 0 THEN CONCAT(equipment.tenthietbi, ' (', equipment_room.soluongcap, ')')
+                       ELSE NULL 
+                   END SEPARATOR '\n ') AS tenthietbi,
+               GROUP_CONCAT(DISTINCT equipment_room.thoigiancap SEPARATOR ', ') AS thoigiancap
+        FROM room
+        LEFT JOIN equipment_room ON room.id = equipment_room.room_id
+        LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
+        GROUP BY room.id
         -- HAVING tenthietbi IS NOT NULL  -- Chỉ hiển thị phòng có thiết bị có số lượng > 0
-        ORDER BY r.id DESC -- sắp xếp phòng mới nhất xếp trước
+        ORDER BY room.id DESC -- sắp xếp phòng mới nhất xếp trước
     ";
     return getRaw($sql);
 }
+
 
 
 
@@ -48,21 +49,22 @@ if (!empty($_POST['search_term'])) {
 
 // Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, 
-           r.tenphong, 
-                GROUP_CONCAT(
-            CASE 
-                WHEN er.soluongcap > 0 THEN CONCAT(e.tenthietbi, ' (', er.soluongcap, ')')
-                ELSE NULL 
-            END SEPARATOR '\n ') AS tenthietbi,
-        GROUP_CONCAT(DISTINCT er.thoigiancap SEPARATOR ', ') AS thoigiancap
-    FROM room r
-    LEFT JOIN equipment_room er ON r.id = er.room_id
-    LEFT JOIN equipment e ON er.equipment_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tenthietbi LIKE '%$searchTerm%'
-    GROUP BY r.id, r.tenphong
-    ORDER BY r.tenphong ASC
+    SELECT room.id AS room_id, 
+           room.tenphong, 
+           GROUP_CONCAT(
+               CASE 
+                   WHEN equipment_room.soluongcap > 0 THEN CONCAT(equipment.tenthietbi, ' (', equipment_room.soluongcap, ')')
+                   ELSE NULL 
+               END SEPARATOR '\n ') AS tenthietbi,
+           GROUP_CONCAT(DISTINCT equipment_room.thoigiancap SEPARATOR ', ') AS thoigiancap
+    FROM room
+    LEFT JOIN equipment_room ON room.id = equipment_room.room_id
+    LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
+    WHERE room.tenphong LIKE '%$searchTerm%' OR equipment.tenthietbi LIKE '%$searchTerm%'
+    GROUP BY room.id, room.tenphong
+    ORDER BY room.tenphong ASC
 ";
+
 
 $searchResults = getRaw($sqlSearchRooms);
 $listRoomAndEquipment = getRoomAndEquipmentList();
@@ -95,7 +97,6 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('equipment', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('equipment', 'distribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Phân bổ </a>
                 <a href="<?php echo getLinkAdmin('equipment', 'listdistribute'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('equipment', 'removedistribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 

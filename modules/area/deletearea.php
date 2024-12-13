@@ -12,7 +12,7 @@ layout('breadcrumb', 'admin', $data);
 // Xử lý xóa toàn bộ thông tin khu vực
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    
+
     // Kiểm tra xem id có tồn tại trong bảng area hay không
     $checkArea = getRow("SELECT id FROM area WHERE id = $id");
 
@@ -21,6 +21,9 @@ if (isset($_GET['id'])) {
         $checkLinkedRoom = getRow("SELECT room_id FROM area_room WHERE area_id = $id");
 
         if ($checkLinkedRoom) {
+            // $checkLinkedRoom = array_column($checkLinkedRoom, 'tenphong');
+            // $countIdList = implode(', ', $checkLinkedRoom); // Nối danh sách ID hợp đồng       
+            // setFlashData('msg', "Thiết bị này đang sử dụng trong phòng có (ID: $countIdList), không thể xóa!");
             // Nếu khu vực này đã được liên kết với phòng
             setFlashData('msg', 'Không thể xóa vì đang chứa phòng nào đó!');
             setFlashData('msg_type', 'err');
@@ -51,5 +54,3 @@ if (isset($_GET['id'])) {
     setFlashData('msg_type', 'err');
     redirect('?module=area&action=listarea');
 }
-
-?>

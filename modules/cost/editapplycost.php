@@ -17,14 +17,6 @@ if (empty($roomDetail)) {
     redirect('?module=cost&action=applycost');
 }
 
-// Kiểm tra xem phòng đã có giá chưa
-$costCheck = firstRaw("SELECT * FROM cost_room WHERE room_id = $roomId");
-if (empty($costCheck)) {
-    setFlashData('msg', 'Hãy thêm loại giá cho phòng trước!');
-    setFlashData('msg_type', 'err');
-    redirect('?module=cost&action=applyroom');
-}
-
 // Xử lý sửa thông tin khi gửi biểu mẫu
 if (isPost()) {
     $body = getBody();

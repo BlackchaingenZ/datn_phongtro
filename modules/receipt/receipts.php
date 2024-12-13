@@ -34,32 +34,9 @@ if (isGet()) {
 
 /// Xử lý phân trang
 $allReceipt = getRows("SELECT id FROM receipt $filter");
-$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
-$maxPage = ceil($allReceipt / $perPage);
-
-// 3. Xử lý số trang dựa vào phương thức GET
-if (!empty(getBody()['page'])) {
-    $page = getBody()['page'];
-    if ($page < 1 and $page > $maxPage) {
-        $page = 1;
-    }
-} else {
-    $page = 1;
-}
-$offset = ($page - 1) * $perPage;
 
 $listAllReceipt = getRaw("SELECT *, tenphong, tendanhmuc, receipt.id FROM receipt INNER JOIN room ON room.id = receipt.room_id 
-INNER JOIN category_collect ON category_collect.id = receipt.danhmucthu_id $filter ORDER BY receipt.id DESC  LIMIT $offset, $perPage");
-
-// Xử lý query string tìm kiếm với phân trang
-$queryString = null;
-if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    $queryString = str_replace('module=contract', '', $queryString);
-    $queryString = str_replace('&page=' . $page, '', $queryString);
-    $queryString = trim($queryString, '&');
-    $queryString = '&' . $queryString;
-}
+INNER JOIN category_collect ON category_collect.id = receipt.danhmucthu_id $filter ORDER BY receipt.id DESC ");
 
 // Xóa hết
 if (isset($_POST['deleteMultip'])) {
@@ -162,7 +139,6 @@ layout('navbar', 'admin', $data);
                                         <button type="button" class="btn btn-secondary btn-sm"><i class="fa fa-ellipsis-v"></i></button>
                                         <div class="box-action">
                                             <a title="Xem phiếu thu" target="_blank" href="<?php echo getLinkAdmin('receipt', 'view', ['id' => $item['id']]) ?>" class="btn btn-primary btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
-                                            <a title="In phiếu thu" target="_blank" href="<?php echo getLinkAdmin('receipt', 'print', ['id' => $item['id']]) ?>" class="btn btn-dark btn-sm"><i class="fa fa-print"></i></a>
                                             <a href="<?php echo getLinkAdmin('receipt', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
                                             <a href="<?php echo getLinkAdmin('receipt', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                         </div>
@@ -178,40 +154,6 @@ layout('navbar', 'admin', $data);
                         <?php endif; ?>
                 </tbody>
             </table>
-
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination pagination-sm">
-                    <?php
-                    if ($page > 1) {
-                        $prePage = $page - 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=receipt' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
-                    }
-                    ?>
-
-                    <?php
-                    // Giới hạn số trang
-                    $begin = $page - 2;
-                    $end = $page + 2;
-                    if ($begin < 1) {
-                        $begin = 1;
-                    }
-                    if ($end > $maxPage) {
-                        $end = $maxPage;
-                    }
-                    for ($index = $begin; $index <= $end; $index++) {  ?>
-                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
-                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=receipt' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
-                        </li>
-                    <?php  } ?>
-
-                    <?php
-                    if ($page < $maxPage) {
-                        $nextPage = $page + 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=receipt' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
     </div>
 
 </div>

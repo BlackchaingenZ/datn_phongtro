@@ -150,17 +150,18 @@ foreach ($allRoom as $room) {
 function getRoomAndCostList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-        GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
-        FROM room r
-        LEFT JOIN cost_room er ON r.id = er.room_id
-        LEFT JOIN cost e ON er.cost_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id ASC
+        SELECT room.id AS room_id, room.tenphong, 
+               GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
+               GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+        FROM room
+        LEFT JOIN cost_room ON room.id = cost_room.room_id
+        LEFT JOIN cost ON cost_room.cost_id = cost.id
+        GROUP BY room.id
+        ORDER BY room.id ASC
     ";
     return getRaw($sql);
 }
+
 
 
 $listRoomAndCost = getRoomAndCostList();

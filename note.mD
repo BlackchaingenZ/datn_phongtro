@@ -106,3 +106,6 @@ if (empty(trim($body['tenphong']))) {
                 </script>
 
                 echo '<span style = "color: red">'. "Trống".'</span>';
+
+
+    $checkCost = getRow("SELECT id FROM cost WHERE id = $id");

@@ -1477,3 +1477,14 @@ th {
     border-color: #0d6efd; /* Viền */
     color: white; /* Màu chữ */
 }
+
+/* màu hàng lẻ */
+/* .table.table-bordered.mt-3 tbody tr:nth-child(even) {
+    background-color: #279957; 
+} */
+
+
+/* màu hàng chẵn */
+/* .table.table-bordered.mt-3 tbody tr:nth-child(odd) {
+    background-color: #9c1111; 
+} */

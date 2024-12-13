@@ -23,32 +23,32 @@ layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
 // Xóa hết
-if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records'];
-    $extract_id = implode(',', $numberCheckbox);
+// if (isset($_POST['deleteMultip'])) {
+//     $numberCheckbox = $_POST['records'];
+//     $extract_id = implode(',', $numberCheckbox);
 
-    // Kiểm tra xem tenant có liên kết với contract_tenant không?
-    $checkTenantInContract = getRaw("SELECT tenant_id_1 FROM contract_tenant WHERE tenant_id_1 IN($extract_id)");
+//     // Kiểm tra xem tenant có liên kết với contract_tenant không?
+//     $checkTenantInContract = getRaw("SELECT tenant_id_1 FROM contract_tenant WHERE tenant_id_1 IN($extract_id)");
 
-    if ($checkTenantInContract) {
-        // Nếu có liên kết, không thực hiện xóa và thông báo cho người dùng
-        setFlashData('msg', 'Không thể xóa khách thuê vì đang có hợp đồng liên quan');
-        setFlashData('msg_type', 'err');
-    } else {
-        // Nếu không có liên kết, thực hiện xóa tenant
-        $checkDelete = delete('tenant', "id IN($extract_id)");
+//     if ($checkTenantInContract) {
+//         // Nếu có liên kết, không thực hiện xóa và thông báo cho người dùng
+//         setFlashData('msg', 'Không thể xóa khách thuê vì đang có hợp đồng liên quan');
+//         setFlashData('msg_type', 'err');
+//     } else {
+//         // Nếu không có liên kết, thực hiện xóa tenant
+//         $checkDelete = delete('tenant', "id IN($extract_id)");
 
-        if ($checkDelete) {
-            setFlashData('msg', 'Xóa thông tin khách thuê thành công');
-            setFlashData('msg_type', 'suc');
-        } else {
-            setFlashData('msg', 'Đã xảy ra lỗi khi xóa khách thuê');
-            setFlashData('msg_type', 'err');
-        }
-    }
+//         if ($checkDelete) {
+//             setFlashData('msg', 'Xóa thông tin khách thuê thành công');
+//             setFlashData('msg_type', 'suc');
+//         } else {
+//             setFlashData('msg', 'Đã xảy ra lỗi khi xóa khách thuê');
+//             setFlashData('msg_type', 'err');
+//         }
+//     }
 
-    redirect('?module=tenant');
-}
+//     redirect('?module=tenant');
+// }
 
 // Xử lý lọc dữ liệu
 $allRoom = getRaw("SELECT id, tenphong, soluong, trangthai FROM room ORDER BY tenphong");
@@ -104,22 +104,18 @@ if (isGet()) {
 
 /// Xử lý phân trang
 $allTenant = getRows("SELECT id FROM tenant $filter");
-$perPage = _PER_PAGE; // Mỗi trang có 3 bản ghi
-$maxPage = ceil($allTenant / $perPage);
 
-// 3. Xử lý số trang dựa vào phương thức GET
-if (!empty(getBody()['page'])) {
-    $page = getBody()['page'];
-    if ($page < 1 and $page > $maxPage) {
-        $page = 1;
-    }
-} else {
-    $page = 1;
-}
-$offset = ($page - 1) * $perPage;
-$listAllTenant = getRaw("SELECT *, tenant.id, tenphong  FROM tenant LEFT JOIN room ON tenant.room_id = room.id  $filter ORDER BY tenant.id DESC LIMIT $offset, $perPage");
+$listAllTenant = getRaw("
+    SELECT *, tenant.id, tenphong  
+    FROM tenant 
+    LEFT JOIN room ON tenant.room_id = room.id  
+    $filter 
+    ORDER BY tenant.id DESC
+");
+
 
 $allRoomId = getRaw("SELECT room_id FROM contract");
+
 $allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
 // Phân loại phòng theo khu vực
 $roomsByArea = [];
@@ -134,15 +130,7 @@ foreach ($allRoom as $room) {
         ];
     }
 }
-// Xử lý query string tìm kiếm với phân trang
-$queryString = null;
-if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    $queryString = str_replace('module=tenant', '', $queryString);
-    $queryString = str_replace('&page=' . $page, '', $queryString);
-    $queryString = trim($queryString, '&');
-    $queryString = '&' . $queryString;
-}
+
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
@@ -192,7 +180,8 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách, số điện thoại hoặc cmnd/cccd để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
+                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
+                    <!-- <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách, số điện thoại hoặc cmnd/cccd để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>"> -->
                 </div>
 
                 <div class="col">
@@ -212,9 +201,9 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-3" id="dataTable">
                 <thead>
                     <tr>
-                        <th>
+                        <!-- <th>
                             <input type="checkbox" id="check-all" onclick="toggle(this)">
-                        </th>
+                        </th> -->
                         <th>STT</th>
                         <th>Tên khách hàng</th>
                         <th>Số điện thoại</th>
@@ -239,9 +228,9 @@ layout('navbar', 'admin', $data);
 
                     ?>
                             <tr>
-                                <td style="text-align: center;">
+                                <!-- <td style="text-align: center;">
                                     <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
-                                </td>
+                                </td> -->
 
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;"><b><?php echo $item['tenkhach']; ?></b></td>
@@ -376,39 +365,6 @@ layout('navbar', 'admin', $data);
                 </tbody>
             </table>
 
-            <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-                <ul class="pagination pagination-sm">
-                    <?php
-                    if ($page > 1) {
-                        $prePage = $page - 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '/?module=tenant' . $queryString . '&page=' . $prePage . '">Pre</a></li>';
-                    }
-                    ?>
-
-                    <?php
-                    // Giới hạn số trang
-                    $begin = $page - 2;
-                    $end = $page + 2;
-                    if ($begin < 1) {
-                        $begin = 1;
-                    }
-                    if ($end > $maxPage) {
-                        $end = $maxPage;
-                    }
-                    for ($index = $begin; $index <= $end; $index++) {  ?>
-                        <li class="page-item <?php echo ($index == $page) ? 'active' : false; ?> ">
-                            <a class="page-link" href="<?php echo _WEB_HOST_ROOT . '?module=tenant' . $queryString . '&page=' . $index;  ?>"> <?php echo $index; ?> </a>
-                        </li>
-                    <?php  } ?>
-
-                    <?php
-                    if ($page < $maxPage) {
-                        $nextPage = $page + 1;
-                        echo '<li class="page-item"><a class="page-link" href="' . _WEB_HOST_ROOT . '?module=tenant' . $queryString . '&page=' . $nextPage . '">Next</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
     </div>
 
 </div>
@@ -418,7 +374,7 @@ layout('navbar', 'admin', $data);
 layout('footer', 'admin');
 ?>
 
-<script>
+<!-- <script>
     function toggle(__this) {
         let isChecked = __this.checked;
         let checkbox = document.querySelectorAll('input[name="records[]"]');
@@ -426,7 +382,7 @@ layout('footer', 'admin');
             checkbox[index].checked = isChecked
         }
     }
-</script>
+</script> -->
 <script>
     const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
     const areaSelect = document.getElementById('area-select');

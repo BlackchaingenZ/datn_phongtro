@@ -28,45 +28,44 @@ $msgType = getFlashData('msg_type');
 $listAllArea = getRaw("SELECT id AS id, tenkhuvuc, mota, ngaytao FROM area ORDER BY tenkhuvuc ASC");
 
 
-if (isset($_POST['deleteMultip'])) {
-    $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
-    if (empty($numberCheckbox)) {
-        setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-        setFlashData('msg_type', 'err');
-    } else {
-        // Chuyển mảng các ID thiết bị thành chuỗi để sử dụng trong câu truy vấn SQL
-        $extract_id = implode(',', array_map('intval', $numberCheckbox));
+//     $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
+//     if (empty($numberCheckbox)) {
+//         setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
+//         setFlashData('msg_type', 'err');
+//     } else {
+//         // Chuyển mảng các ID thiết bị thành chuỗi để sử dụng trong câu truy vấn SQL
+//         $extract_id = implode(',', array_map('intval', $numberCheckbox));
 
-        try {
-            // Kiểm tra trước nếu có khu vưc nào đang được sử dụng trong bảng room
-            $sqlCheck = "SELECT COUNT(*) AS count FROM area_room WHERE area_id IN ($extract_id)";
-            $count = getRow($sqlCheck)['count'];
+//         try {
+//             // Kiểm tra trước nếu có khu vưc nào đang được sử dụng trong bảng room
+//             $sqlCheck = "SELECT COUNT(*) AS count FROM area_room WHERE area_id IN ($extract_id)";
+//             $count = getRow($sqlCheck)['count'];
 
-            if ($count > 0) {
-                // Nếu khu vực đang được sử dụng trong phòng, không thực hiện xóa
-                setFlashData('msg', 'Không thể xóa vì đang chứa phòng nào đó!');
-                setFlashData('msg_type', 'err');
-                redirect('?module=area&action=listarea');
-                exit(); // Dừng việc thực hiện thêm
-            } else {
-                // Thực hiện xóa các thiết bị đã chọn từ cơ sở dữ liệu nếu không có thiết bị nào đang được sử dụng
-                $checkDelete = delete('cost', "id IN($extract_id)");
+//             if ($count > 0) {
+//                 // Nếu khu vực đang được sử dụng trong phòng, không thực hiện xóa
+//                 setFlashData('msg', 'Không thể xóa vì đang chứa phòng nào đó!');
+//                 setFlashData('msg_type', 'err');
+//                 redirect('?module=area&action=listarea');
+//                 exit(); // Dừng việc thực hiện thêm
+//             } else {
+//                 // Thực hiện xóa các thiết bị đã chọn từ cơ sở dữ liệu nếu không có thiết bị nào đang được sử dụng
+//                 $checkDelete = delete('cost', "id IN($extract_id)");
 
-                if ($checkDelete) {
-                    setFlashData('msg', 'Xóa  thành công');
-                    setFlashData('msg_type', 'suc');
-                } else {
-                    setFlashData('msg', 'Có lỗi xảy ra khi xóa loại giá');
-                    setFlashData('msg_type', 'err');
-                }
-            }
-        } catch (PDOException $e) {
-            setFlashData('msg', 'Đã xảy ra lỗi: ' . $e->getMessage());
-            setFlashData('msg_type', 'err');
-        }
-    }
-    redirect('?module=area&action=listarea'); // Chuyển hướng về trang danh sách
-}
+//                 if ($checkDelete) {
+//                     setFlashData('msg', 'Xóa  thành công');
+//                     setFlashData('msg_type', 'suc');
+//                 } else {
+//                     setFlashData('msg', 'Có lỗi xảy ra khi xóa loại giá');
+//                     setFlashData('msg_type', 'err');
+//                 }
+//             }
+//         } catch (PDOException $e) {
+//             setFlashData('msg', 'Đã xảy ra lỗi: ' . $e->getMessage());
+//             setFlashData('msg_type', 'err');
+//         }
+//     }
+//     redirect('?module=area&action=listarea'); // Chuyển hướng về trang danh sách
+// }
 
 
 layout('navbar', 'admin', $data);
@@ -115,10 +114,9 @@ if (isset($_POST['search'])) {
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('area', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('area', 'addarea') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm khu vực </a>
                 <a href="<?php echo getLinkAdmin('area', 'listarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Làm mới</a>
-                <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th>
+                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Tên khu vực</th>
                         <th>Mô tả</th>
@@ -135,8 +133,8 @@ if (isset($_POST['search'])) {
                             $count++;
                     ?>
                             <tr>
-                                <td><input type="checkbox" name="records[]" value="<?php echo $item['id']; ?>"></td>
-                                <td class="" style =text-align:end ><?php echo $count; ?></td>
+                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['id']; ?>"></td> -->
+                                <td style="text-align:left;color:back"><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
                                 <td><b><?php echo $item['mota']; ?></b></td>
                                 <td><?php echo getDateFormat($item['ngaytao'], 'd-m-Y'); ?></td>
@@ -162,13 +160,3 @@ if (isset($_POST['search'])) {
 
 
 <?php layout('footer', 'admin'); ?>
-
-<script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked;
-        }
-    }
-</script>
