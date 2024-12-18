@@ -46,6 +46,7 @@ if (!empty($_POST['search_term'])) {
 $sqlSearchRooms = "
     SELECT room.id AS room_id, 
            room.tenphong, 
+           room.tiencoc,
            GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
            GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
     FROM room
@@ -100,6 +101,7 @@ $listRoomAndCost = getRoomAndCostList();
                         <th>STT</th>
                         <th>Mã phòng</th>
                         <th>Tên Phòng</th>
+                        <th>Tiền cọc</th>
                         <th>Tên bảng giá</th>
                         <th>Ngày áp dụng</th>
                         <th>Thao tác</th>
@@ -119,6 +121,7 @@ $listRoomAndCost = getRoomAndCostList();
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
+                                <td><?php echo $item['tiencoc']; ?></td>
                                 <td>
                                     <?php
                                     if (empty($item['tengia'])) {

@@ -109,3 +109,5 @@ if (empty(trim($body['tenphong']))) {
 
 
     $checkCost = getRow("SELECT id FROM cost WHERE id = $id");
+
+    UPDATE equipment SET ngaybaotri = DATE_ADD(ngaybaotri, INTERVAL 3 MONTH) WHERE ngaybaotri = CURDATE();

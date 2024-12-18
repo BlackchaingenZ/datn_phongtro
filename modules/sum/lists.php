@@ -33,17 +33,6 @@ if ($userDetail['group_id'] == 7) {
         <div class="box-content dashboard-content">
             <div class="content-left">
 
-                <div class="total-room">
-                    <div class="content-left-title">
-                        <div class="content-left-icon">
-                            <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/home1.svg" alt="">
-                        </div>
-                        <p class="total-desc">Tổng số phòng</p>
-                    </div>
-                    <?php $totalRoom = getRows("SELECT id FROM room") ?>
-                    <p class="total-count"><?php echo $totalRoom ?></p>
-                </div>
-
                 <div class="content-left-child">
                     <div class="child-one">
                         <div class="content-left-title">

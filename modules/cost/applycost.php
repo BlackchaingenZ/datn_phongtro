@@ -51,41 +51,22 @@ if (isPost()) {
 
         // Kiểm tra mảng error
         if (empty($errors)) {
-            // Kiểm tra xem phòng đã có giá thuê chưa
-            $checkExistsQuery = "
-                SELECT COUNT(*) AS count
-                FROM cost_room
-                WHERE room_id = :room_id 
-            ";
-            $stmt = $pdo->prepare($checkExistsQuery);
-            $stmt->execute([
-                ':room_id' => $body['room_id'],
-            ]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($result['count'] > 0) {
-                // Nếu giá đã tồn tại trong phòng
-                setFlashData('msg', 'Không thể thêm vì phòng này đã có giá thuê rồi !');
-                setFlashData('msg_type', 'err');
-                redirect('?module=cost&action=applycost'); // Chuyển hướng về trang phân bổ
+            // Không có lỗi nào, tiến hành thêm giá
+            $dataInsert = [
+                'cost_id' => $body['cost_id'],
+                'room_id' => $body['room_id'],
+                'thoigianapdung' => $body['thoigianapdung'], // Thêm thời gian cấp vào mảng chèn
+            ];
+        
+            $insertStatus = insert('cost_room', $dataInsert); // Sử dụng bảng cost_room để lưu thông tin phân bổ
+            if ($insertStatus) {
+                setFlashData('msg', 'Thêm loại giá thành công');
+                setFlashData('msg_type', 'suc');
+                redirect('?module=cost&action=applyroom');
             } else {
-                // Không có lỗi nào, tiến hành thêm giá
-                $dataInsert = [
-                    'cost_id' => $body['cost_id'],
-                    'room_id' => $body['room_id'],
-                    'thoigianapdung' => $body['thoigianapdung'], // Thêm thời gian cấp vào mảng chèn
-                ];
-
-                $insertStatus = insert('cost_room', $dataInsert); // Sử dụng bảng cost_room để lưu thông tin phân bổ
-                if ($insertStatus) {
-                    setFlashData('msg', 'Thêm loại giá thành công');
-                    setFlashData('msg_type', 'suc');
-                    redirect('?module=cost&action=applyroom');
-                } else {
-                    setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
-                    setFlashData('msg_type', 'err');
-                    redirect('?module=cost&action=applyroom');
-                }
+                setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+                setFlashData('msg_type', 'err');
+                redirect('?module=cost&action=applyroom');
             }
         }
 

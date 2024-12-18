@@ -25,17 +25,18 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndAreaList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc,
-        GROUP_CONCAT(e.mota SEPARATOR ', ') AS mota
-        FROM room r
-        LEFT JOIN area_room er ON r.id = er.room_id
-        LEFT JOIN area e ON er.area_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id DESC
+        SELECT room.id AS room_id, room.tenphong, 
+        GROUP_CONCAT(area.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc,
+        GROUP_CONCAT(area.mota SEPARATOR ', ') AS mota
+        FROM room
+        LEFT JOIN area_room ON room.id = area_room.room_id
+        LEFT JOIN area ON area_room.area_id = area.id
+        GROUP BY room.id
+        ORDER BY room.id DESC
     ";
     return getRaw($sql);
 }
+
 
 $searchTerm = '';
 if (!empty($_POST['search_term'])) {
@@ -44,17 +45,18 @@ if (!empty($_POST['search_term'])) {
 
 // Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, 
-           r.tenphong, 
-           e.mota,
-           GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
-    FROM room r
-    JOIN area_room er ON r.id = er.room_id
-    JOIN area e ON er.area_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tenkhuvuc LIKE '%$searchTerm%'
-    GROUP BY r.id, r.tenphong
-    ORDER BY r.tenphong ASC
+    SELECT room.id AS room_id, 
+           room.tenphong, 
+           area.mota,
+           GROUP_CONCAT(area.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
+    FROM room
+    JOIN area_room ON room.id = area_room.room_id
+    JOIN area ON area_room.area_id = area.id
+    WHERE room.tenphong LIKE '%$searchTerm%' OR area.tenkhuvuc LIKE '%$searchTerm%'
+    GROUP BY room.id, room.tenphong
+    ORDER BY room.tenphong ASC
 ";
+
 
 
 $searchResults = getRaw($sqlSearchRooms);

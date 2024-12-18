@@ -27,47 +27,6 @@ $msgType = getFlashData('msg_type');
 // Lấy danh sách khu vực từ cơ sở dữ liệu
 $listAllArea = getRaw("SELECT id AS id, tenkhuvuc, mota, ngaytao FROM area ORDER BY tenkhuvuc ASC");
 
-
-//     $numberCheckbox = $_POST['records']; // Lấy các ID thiết bị đã chọn
-//     if (empty($numberCheckbox)) {
-//         setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-//         setFlashData('msg_type', 'err');
-//     } else {
-//         // Chuyển mảng các ID thiết bị thành chuỗi để sử dụng trong câu truy vấn SQL
-//         $extract_id = implode(',', array_map('intval', $numberCheckbox));
-
-//         try {
-//             // Kiểm tra trước nếu có khu vưc nào đang được sử dụng trong bảng room
-//             $sqlCheck = "SELECT COUNT(*) AS count FROM area_room WHERE area_id IN ($extract_id)";
-//             $count = getRow($sqlCheck)['count'];
-
-//             if ($count > 0) {
-//                 // Nếu khu vực đang được sử dụng trong phòng, không thực hiện xóa
-//                 setFlashData('msg', 'Không thể xóa vì đang chứa phòng nào đó!');
-//                 setFlashData('msg_type', 'err');
-//                 redirect('?module=area&action=listarea');
-//                 exit(); // Dừng việc thực hiện thêm
-//             } else {
-//                 // Thực hiện xóa các thiết bị đã chọn từ cơ sở dữ liệu nếu không có thiết bị nào đang được sử dụng
-//                 $checkDelete = delete('cost', "id IN($extract_id)");
-
-//                 if ($checkDelete) {
-//                     setFlashData('msg', 'Xóa  thành công');
-//                     setFlashData('msg_type', 'suc');
-//                 } else {
-//                     setFlashData('msg', 'Có lỗi xảy ra khi xóa loại giá');
-//                     setFlashData('msg_type', 'err');
-//                 }
-//             }
-//         } catch (PDOException $e) {
-//             setFlashData('msg', 'Đã xảy ra lỗi: ' . $e->getMessage());
-//             setFlashData('msg_type', 'err');
-//         }
-//     }
-//     redirect('?module=area&action=listarea'); // Chuyển hướng về trang danh sách
-// }
-
-
 layout('navbar', 'admin', $data);
 
 // Khởi tạo biến để lưu giá trị tìm kiếm

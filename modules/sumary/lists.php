@@ -106,7 +106,6 @@ if ($filterType && $dateInput) {
     }
     $year = date('Y', strtotime($dateInput));
 }
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');

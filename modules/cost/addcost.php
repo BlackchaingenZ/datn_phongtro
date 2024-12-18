@@ -45,7 +45,7 @@ if (isPost()) {
             'ngayketthuc' => $body['ngayketthuc'],
         ];
 
-        $insertStatus = insert('cost', $dataInsert); // Giả định bạn có hàm insert để thêm dữ liệu vào bảng cost
+        $insertStatus = insert('cost', $dataInsert); 
         if ($insertStatus) {
             setFlashData('msg', 'Thêm thông tin bảng giá thành công');
             setFlashData('msg_type', 'suc');

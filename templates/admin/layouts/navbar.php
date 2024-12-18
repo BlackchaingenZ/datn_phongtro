@@ -125,12 +125,12 @@
           </div>
         </a>
 
-        <!-- <a href="<?php echo getLinkAdmin('city'); ?>" class="link__menu ">
+        <a href="<?php echo getLinkAdmin('city'); ?>" class="link__menu ">
           <div class="menu__item">
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.png" class="menu__item-image" alt="">
-            <p class="menu__item-title">Quản lý thành phố</p>
+            <p class="menu__item-title">Quản lý thiết bị 1</p>
           </div>
-        </a> -->
+        </a>
 
       </div>
     </div>

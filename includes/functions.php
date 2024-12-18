@@ -428,7 +428,7 @@ function compareDates($ngaynhap, $thoihanbaohanh)
 {
     $date1 = new DateTime($ngaynhap);
     $date2 = new DateTime($thoihanbaohanh);
-
+    
     if ($date1 == $date2) {
         return "Bằng nhau";
     } elseif ($date1 < $date2) {
