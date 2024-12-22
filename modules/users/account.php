@@ -83,7 +83,7 @@ $errors = getFlashData('errors');
                         </div>
                     </div>
                     <hr />
-                    <div style="background: #ffe2e5; color: #f64e60; padding: 20px 20px"  class="alert alert-danger alert-dismissible fade show alert-hover" role="alert">
+                    <!-- <div style="background: #ffe2e5; color: #f64e60; padding: 20px 20px"  class="alert alert-danger alert-dismissible fade show alert-hover" role="alert">
                         <div style="display: flex; gap: 20px">
                             <div >
                                 <i class="fa-solid fa-circle-info"></i>
@@ -93,7 +93,7 @@ $errors = getFlashData('errors');
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                    </div>
+                    </div> -->
                     <form class="form-account" style="margin-top: 30px" action="" method="post">                          
                             <div class="form-group">
                                 <label style="width: 200px; font-size: 14px; color: black; font-weight: 400;" for="">Mật khẩu mới</label>

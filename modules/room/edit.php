@@ -79,7 +79,7 @@ if (isPost()) {
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
-        setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lê khi nhập vào
+        setFlashData('old', $body);  
     }
 
     redirect('?module=room&action=edit&id=' . $roomId);

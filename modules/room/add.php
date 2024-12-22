@@ -11,13 +11,12 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-// Xử lý thêm người dùng
-if (isPost()) {
-    // Validate form
-    $body = getBody(); // lấy tất cả dữ liệu trong form
-    $errors = [];  // mảng lưu trữ các lỗi
 
-    //Valide họ tên: Bắt buộc phải nhập, >=5 ký tự
+if (isPost()) {
+
+    $body = getBody(); 
+    $errors = [];  
+
     if (empty(trim($body['tenphong']))) {
         $errors['tenphong']['required'] = '** Bạn chưa nhập tên phòng!';
     } else {
@@ -67,7 +66,7 @@ if (isPost()) {
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
-        setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lê khi nhập vào
+        setFlashData('old', $body); 
         redirect('?module=room&action=add');
     }
 }
@@ -113,9 +112,9 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
+
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); 
                     }
                 </script>
             </div>
@@ -127,9 +126,8 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('soluongtoida', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); 
                     }
                 </script>
 
@@ -139,9 +137,9 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
+
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        input.value = input.value.replace(/[^0-9\.]/g, '');
                     }
                 </script>
 

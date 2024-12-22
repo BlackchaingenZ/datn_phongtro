@@ -180,7 +180,7 @@ layout('navbar', 'admin', $data);
                 <script>
                     // Hàm kiểm tra chỉ cho phép nhập số
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); 
                     }
                 </script>
 

@@ -60,7 +60,7 @@ if (isGet()) {
     }
 }
 
-/// Xử lý phân trang
+
 $allTenant = getRows("SELECT id FROM room $filter");
 $listAllroom = getRaw("
     SELECT room.*, 
@@ -82,66 +82,12 @@ $listAllroom = getRaw("
     LEFT JOIN equipment ON equipment_room.equipment_id = equipment.id
     LEFT JOIN area_room ON room.id = area_room.room_id
     LEFT JOIN area ON area_room.area_id = area.id
-    LEFT JOIN contract ON room.id = contract.room_id  -- Lấy thông tin hợp đồng từ bảng contract
+    LEFT JOIN contract ON room.id = contract.room_id 
     $filter 
     GROUP BY room.id
     ORDER BY tenphong ASC
 ");
 
-// Xóa hết
-// if (isset($_POST['deleteMultip'])) {
-//     $numberCheckbox = $_POST['records'];
-
-//     if (empty($numberCheckbox)) {
-//         setFlashData('msg', 'Bạn chưa chọn mục nào để xóa!');
-//         setFlashData('msg_type', 'err');
-//     } else {
-//         $extract_id = implode(',', $numberCheckbox);
-
-//         // Kiểm tra xem phòng có hợp đồng liên kết không
-//         $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id IN($extract_id)");
-
-//         if ($checkContractInRoom) {
-//             setFlashData('msg', 'Phòng đang có hợp đồng, không thể xóa!');
-//             setFlashData('msg_type', 'err');
-//         } else {
-//             // Kiểm tra xem phòng có tenant liên kết không
-//             $checkTenantInRoom = getRaw("SELECT room_id FROM tenant WHERE room_id IN($extract_id)");
-
-//             if ($checkTenantInRoom) {
-//                 setFlashData('msg', 'Phòng đang có người ở, không thể xóa!');
-//                 setFlashData('msg_type', 'err');
-//             } else {
-//                 // Xóa các thiết bị liên kết với phòng trọ
-//                 $deleteEquipment = delete('equipment_room', "room_id IN($extract_id)");
-
-//                 if ($deleteEquipment) {
-//                     // Xóa các khu vực liên kết với phòng trọ
-//                     $deleteArea = delete('area_room', "room_id IN($extract_id)");
-
-//                     if ($deleteArea) {
-//                         // Xóa các giá thuê liên kết với phòng trọ
-//                         $deleteCost = delete('cost_room', "room_id IN($extract_id)");
-
-//                         if ($deleteCost) {
-//                             // Xóa phòng trọ
-//                             $checkDeleteRoom = delete('room', "id IN($extract_id)");
-
-//                             if ($checkDeleteRoom) {
-//                                 setFlashData('msg', 'Xóa thông tin phòng trọ thành công!');
-//                                 setFlashData('msg_type', 'suc');
-//                             } else {
-//                                 setFlashData('msg', 'Không thể xóa phòng trọ!');
-//                                 setFlashData('msg_type', 'err');
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     redirect('?module=room');
-// }
 
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
@@ -197,12 +143,8 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <!-- <th>
-                            <input type="checkbox" id="check-all" onclick="toggle(this)">
-                        </th> -->
                         <th>STT</th>
                         <th>Ảnh</th>
-                        <th>Khu vực</th>
                         <th>Tên phòng</th>
                         <th>Diện tích</th>
                         <th>Giá thuê</th>
@@ -218,25 +160,26 @@ layout('navbar', 'admin', $data);
                 <tbody id="roomData">
 
                     <?php
-                    
+
                     if (!empty($listAllroom)):
                         $count = 0; // Hiển thi số thứ tự
                         foreach ($listAllroom as $item):
-                            
+
                             $count++;
 
                     ?>
+                            <!-- <tr style="<?php echo $item['trangthai'] == 1 ? 'background-color: red; color: white;' : ''; ?>"> -->
                             <tr>
-                                <!-- <td style="text-align: center;">
-                                    <input type="checkbox" name="records[]" value="<?= $item['id'] ?>">
-                                </td> -->
-
+                                <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                                 <td style="text-align: center;"><?php echo $count; ?></td>
                                 <td style="text-align: center;">
                                     <img class="" style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt="">
                                 </td>
-                                <td style="text-align: center;"><b><?php echo $item['tenkhuvuc']; ?></b></td>
-                                <td style="text-align: center;"><b><?php echo $item['tenphong']; ?></b></td>
+                                <!-- <td style="<?php echo ($item['tenphong'] == 'Phòng A01' || $item['tenphong'] == 'Phòng A02') ? 'color: red;' : ''; ?>">
+                                    <?php echo $item['tenphong']; ?>
+                                </td> -->
+                                <!-- <td style="background-color: <?php echo ($count == 1) ? 'red' : 'transparent'; ?>"><b><?php echo $item['tenphong']; ?></b></td> -->
+                                <td><?php echo $item['tenphong']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['dientich'] ?> m2</td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
@@ -244,10 +187,8 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <?php
                                     if (!empty($item['ngayvao'])) {
-                                        // Giả sử $item['ngayvao'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
                                         $date = DateTime::createFromFormat('Y-m-d', $item['ngayvao']);
 
-                                        // Kiểm tra nếu chuyển đổi thành công
                                         if ($date && $date->format('Y-m-d') === $item['ngayvao']) {
                                             echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
                                         } else {
@@ -278,6 +219,7 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <?php
                                     echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>' : '<span class="btn-status-err">Đang trống</span>';
+                                    // echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đang ở</span>'. $item['soluong'].'<span> người</span>'  : '<span class="btn-status-err">Đang trống</span>';
                                     ?>
                                 </td>
                                 <td style="text-align: center;">
@@ -294,7 +236,6 @@ layout('navbar', 'admin', $data);
                                     </span>
                                 </td>
 
-
                                 <td class="" style="text-align: center;">
                                     <a href="<?php echo getLinkAdmin('room', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('room', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
@@ -310,7 +251,6 @@ layout('navbar', 'admin', $data);
                         <?php endif; ?>
                 </tbody>
             </table>
-
     </div>
 
 </div>
@@ -319,13 +259,3 @@ layout('navbar', 'admin', $data);
 
 layout('footer', 'admin');
 ?>
-
-<script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked
-        }
-    }
-</script>

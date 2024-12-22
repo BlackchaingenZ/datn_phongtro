@@ -104,7 +104,6 @@ $msgType = getFlashData('msg_type');
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('equipment', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('equipment', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới </a>
                 <a href="<?php echo getLinkAdmin('equipment', 'listequipment'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
                 <thead>
                     <tr>
                         <th>STT</th>
@@ -115,10 +114,10 @@ $msgType = getFlashData('msg_type');
                         <th>Số lượng tồn kho</th>
                         <!-- <th>Bảo hành</th> -->
                         <th>Ngày nhập</th>
-                        <th>Thời hạn bảo hành</th>
+                        <!-- <th>Thời hạn bảo hành</th>
                         <th>Tình trạng bảo hành</th>
                         <th>Ngày bảo trì</th>
-                        <th>Tình trạng bảo trì</th>
+                        <th>Tình trạng bảo trì</th> -->
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -134,8 +133,9 @@ $msgType = getFlashData('msg_type');
                             $count++;
                     ?>
                             <tr>
+                                <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                                 <td><?php echo $count; ?></td>
-                                <td style="color:red"><?php echo $item['mathietbi']; ?></td>
+                                <td><?php echo $item['mathietbi']; ?></td>
                                 <td><b><?php echo $item['tenthietbi']; ?></b></td>
                                 <td><?php echo number_format($item['giathietbi'], 0, ',', '.'); ?> VND</td>
                                 <td><?php echo $item['soluongnhap']; ?></td>
@@ -156,15 +156,15 @@ $msgType = getFlashData('msg_type');
                                             ?>
                                 </td> -->
                                 <td><?php echo getDateFormat($item['ngaynhap'], 'd-m-Y'); ?></td>
-                                <td><?php
-                                    if (empty($item['thoihanbaohanh'])) {
-                                        echo "Trống";
-                                    } else {
-                                        echo getDateFormat($item['thoihanbaohanh'], 'd-m-Y');
-                                    }
-                                    ?>
-                                </td>
-                                <td>
+                                <!-- <td><?php
+                                            if (empty($item['thoihanbaohanh'])) {
+                                                echo "Trống";
+                                            } else {
+                                                echo getDateFormat($item['thoihanbaohanh'], 'd-m-Y');
+                                            }
+                                            ?>
+                                </td> -->
+                                <!-- <td>
                                     <?php
                                     $getEquipmentStatus = getThoihanbaohanhStatus($item['thoihanbaohanh']);
                                     if ($getEquipmentStatus == "Đã hết hạn bảo hành") {
@@ -176,7 +176,7 @@ $msgType = getFlashData('msg_type');
                                     }
 
                                     ?>
-                                </td>
+                                </td> -->
                                 <!-- <td>
                                     <?php
                                     $compareResult = sosanh($item['soluongtonkho'], $item['soluongnhap']);
@@ -204,29 +204,29 @@ $msgType = getFlashData('msg_type');
                                     ?>
                                 </td> -->
 
-                                <td><?php
-                                    if (empty($item['ngaybaotri'])) {
-                                        echo "Trống";
-                                    } else {
-                                        echo "" . getDateFormat($item['ngaybaotri'], 'd-m-Y' . ' ');
-                                    }
-                                    ?>
-                                </td>
-                                <td><?php
-                                    if (empty($item['ngaybaotri'])) {
-                                        echo "Trống";
-                                    } else {
-                                        $getNgaybaotriStatus = getNgaybaotriStatus($item['ngaybaotri']);
-                                        if ($getNgaybaotriStatus == "Đã đến ngày") {
-                                            echo '<span class = "btn-dadenngay-err">' . $getNgaybaotriStatus . '</span>';
-                                        } elseif ($getNgaybaotriStatus == "Sắp đến ngày") {
-                                            echo '<span class = "btn-saphetngay-err">' . $getNgaybaotriStatus . '</span>';
-                                        } elseif ($getNgaybaotriStatus == "Chưa đến ngày") {
-                                            echo '<span class = "btn-chuadenngay-err">' . $getNgaybaotriStatus . '</span>';
-                                        }
-                                    }
-                                    ?>
-                                </td>
+                                <!-- <td><?php
+                                            if (empty($item['ngaybaotri'])) {
+                                                echo "Trống";
+                                            } else {
+                                                echo "" . getDateFormat($item['ngaybaotri'], 'd-m-Y' . ' ');
+                                            }
+                                            ?>
+                                </td> -->
+                                <!-- <td><?php
+                                            if (empty($item['ngaybaotri'])) {
+                                                echo "Trống";
+                                            } else {
+                                                $getNgaybaotriStatus = getNgaybaotriStatus($item['ngaybaotri']);
+                                                if ($getNgaybaotriStatus == "Đã đến ngày") {
+                                                    echo '<span class = "btn-dadenngay-err">' . $getNgaybaotriStatus . '</span>';
+                                                } elseif ($getNgaybaotriStatus == "Sắp đến ngày") {
+                                                    echo '<span class = "btn-saphetngay-err">' . $getNgaybaotriStatus . '</span>';
+                                                } elseif ($getNgaybaotriStatus == "Chưa đến ngày") {
+                                                    echo '<span class = "btn-chuadenngay-err">' . $getNgaybaotriStatus . '</span>';
+                                                }
+                                            }
+                                            ?>
+                                </td> -->
                                 <td class="" style="width: 100px; height: 50px; text-align:center">
                                     <a href="<?php echo getLinkAdmin('equipment', 'editequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('equipment', 'deleteequipment', ['id' => $item['equipment_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>

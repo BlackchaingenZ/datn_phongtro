@@ -396,13 +396,13 @@ function getThoihanbaohanhStatus($endDate)
     }
 }
 
-// check trang thái ngày bảo trì
+
 function getNgaybaotriStatus($endDate)
 {
     $currentDate = new DateTime(); //
     $EquipmentEndDate = new DateTime($endDate);
-    $interval = $currentDate->diff($EquipmentEndDate); // Tính khoảng cách giữa 2 ngày
-    $daysLeft = (int)$interval->format('%R%a'); // chuyển khoảng cách ngày thành số ngày
+    $interval = $currentDate->diff($EquipmentEndDate);
+    $daysLeft = (int)$interval->format('%R%a');
 
     if ($daysLeft <= 0) {
         return "Đã đến ngày";
@@ -428,7 +428,7 @@ function compareDates($ngaynhap, $thoihanbaohanh)
 {
     $date1 = new DateTime($ngaynhap);
     $date2 = new DateTime($thoihanbaohanh);
-    
+
     if ($date1 == $date2) {
         return "Bằng nhau";
     } elseif ($date1 < $date2) {

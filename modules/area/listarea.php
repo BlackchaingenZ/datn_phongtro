@@ -36,11 +36,11 @@ $searchResults = [];
 // Xử lý tìm kiếm
 if (isset($_POST['search'])) {
     $searchTerm = $_POST['search_term'];
-    $searchTerm = htmlspecialchars($searchTerm); // Bảo mật đầu vào
+    $searchTerm = htmlspecialchars($searchTerm); 
 
     // Truy vấn tìm kiếm tên khuyến mãi
-    $query = "SELECT * FROM area WHERE tenkhuvuc LIKE '%$searchTerm%'"; // Thêm điều kiện tìm kiếm
-    $searchResults = executeResult($query); // Lấy kết quả tìm kiếm
+    $query = "SELECT * FROM area WHERE tenkhuvuc LIKE '%$searchTerm%'"; 
+    $searchResults = executeResult($query); 
 } else {
     // Nếu không tìm kiếm, lấy toàn bộ dữ liệu
     $query = "SELECT * FROM area";
@@ -72,10 +72,9 @@ if (isset($_POST['search'])) {
                 <p></p>
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('area', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('area', 'addarea') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm khu vực </a>
-                <a href="<?php echo getLinkAdmin('area', 'listarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Làm mới</a>
+                <a href="<?php echo getLinkAdmin('area', 'listarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
                 <thead>
                     <tr>
-                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Tên khu vực</th>
                         <th>Mô tả</th>
@@ -91,8 +90,9 @@ if (isset($_POST['search'])) {
                         foreach ($searchResults as $item):
                             $count++;
                     ?>
+                            <!-- <tr style="background-color: <?php echo ($item['tenkhuvuc'] == 'Khu A') ? 'red' : 'white'; ?>;"></tr> -->
+                            <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                             <tr>
-                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['id']; ?>"></td> -->
                                 <td style="text-align:left;color:back"><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
                                 <td><b><?php echo $item['mota']; ?></b></td>

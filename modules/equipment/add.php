@@ -47,9 +47,7 @@ if (isPost()) {
             'giathietbi' => $body['giathietbi'],
             'ngaynhap' => $body['ngaynhap'],
             'soluongnhap' => $body['soluongnhap'],
-            'soluongtonkho' => $body['soluongnhap'],  // Gán soluongtonkho bằng soluongnhap
-            'thoihanbaohanh' => $body['thoihanbaohanh'],
-            'ngaybaotri' => $body['ngaybaotri']
+            'soluongtonkho' => $body['soluongnhap']  // Gán soluongtonkho bằng soluongnhap
         ];
 
         $insertStatus = insert('equipment', $dataInsert);
@@ -104,9 +102,9 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
                     <?php echo form_error('giathietbi', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
+
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        input.value = input.value.replace(/[^0-9\.]/g, '');
                     }
                 </script>
                 <div class="form-group">
@@ -115,27 +113,15 @@ $linkreturnlistequipment = getLinkAdmin('equipment', 'listequipment');
                     <?php echo form_error('soluongnhap', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
+
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                        input.value = input.value.replace(/[^0-9\.]/g, '');
                     }
                 </script>
                 <div class="form-group">
                     <label for="">Ngày nhập <span style="color: red">*</span></label>
                     <input type="date" name="ngaynhap" class="form-control" value="<?php echo old('ngaynhap', $old); ?>">
                     <?php echo form_error('ngaynhap', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-            </div>
-            <div class="col-5">
-                <div class="form-group">
-                    <label for="">Thời hạn bảo hành <span style="color: red">*</span></label>
-                    <input type="date" name="thoihanbaohanh" class="form-control" value="<?php echo old('thoihanbaohanh', $old); ?>">
-                    <?php echo form_error('thoihanbaohanh', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-                <div class="form-group">
-                    <label for="">Ngày bảo trì <span style="color: red">*</span></label>
-                    <input type="date" name="ngaybaotri" class="form-control" value="<?php echo old('ngaybaotri', $old); ?>">
-                    <?php echo form_error('ngaybaotri', $errors, '<span class="error">', '</span>'); ?>
                 </div>
             </div>
             <div class="form-group">

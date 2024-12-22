@@ -24,18 +24,15 @@ if (isPost()) {
     // if (empty(trim($body['tenkhuvuc']))) {
     //     $errors['tenkhuvuc']['required'] = '** Bạn chưa nhập tên khu vực!';
     // } else {
-    //     // Chuẩn bị truy vấn kiểm tra tên khu vực
     //     $tenkhuvuc = trim($body['tenkhuvuc']);
-    //     $stmt = $pdo->prepare("SELECT COUNT(*) FROM area WHERE tenkhuvuc = :tenkhuvuc");
-    //     $stmt->bindParam(':tenkhuvuc', $tenkhuvuc, PDO::PARAM_STR);
-    //     $stmt->execute();
-    //     $count = $stmt->fetchColumn();
-
-    //     // Kiểm tra nếu tên khu vực đã tồn tại
+    //     $query = "SELECT COUNT(*) FROM area WHERE tenkhuvuc = '$tenkhuvuc'";
+    //     $count = $pdo->query($query)->fetchColumn();
+        
     //     if ($count > 0) {
-    //         $errors['tenkhuvuc']['exists'] = '** Tên khu vực này đã tồn tại!';
+    //         $errors['tenkhuvuc']['exists'] = '**!';
     //     }
     // }
+    
     // Validate mota
     if (empty(trim($body['mota']))) {
         $errors['mota']['required'] = '** Bạn chưa nhập mô tả!';

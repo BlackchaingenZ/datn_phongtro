@@ -106,9 +106,11 @@ if (isGet()) {
 $allTenant = getRows("SELECT id FROM tenant $filter");
 
 $listAllTenant = getRaw("
-    SELECT *, tenant.id, tenphong  
-    FROM tenant 
+    SELECT *, tenant.id, room.tenphong, area.tenkhuvuc 
+    FROM tenant
     LEFT JOIN room ON tenant.room_id = room.id  
+    INNER JOIN area_room ON area_room.room_id = room.id
+    INNER JOIN area ON area_room.area_id = area.id
     $filter 
     ORDER BY tenant.id DESC
 ");
@@ -196,7 +198,6 @@ layout('navbar', 'admin', $data);
 
             </div>
             <a href="<?php echo getLinkAdmin('tenant', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <button type="submit" name="deleteMultip" value="Delete" onclick="return confirm('Bạn có chắn chắn muốn xóa không ?')" class="btn btn-secondary"><i class="fa fa-trash"></i> Xóa</button>
 
             <table class="table table-bordered mt-3" id="dataTable">
                 <thead>
@@ -248,10 +249,10 @@ layout('navbar', 'admin', $data);
                                     if (empty($item['sdt'])) {
                                         echo "Trống";
                                     } else {
-                                        // Kiểm tra nếu số điện thoại bắt đầu bằng "0"
+
                                         $phone = $item['sdt'];
                                         if (substr($phone, 0, 1) == '0') {
-                                            $phone = '+84' . substr($phone, 1); // Loại bỏ "0" và thay bằng "+84"
+                                            $phone = '+84' . substr($phone, 1);
                                         }
                                         echo $phone;
                                     }
@@ -320,7 +321,6 @@ layout('navbar', 'admin', $data);
                                             ?>
                                         </a>
                                     <?php else: ?>
-                                        <!-- Giá trị mặc định nếu chưa có -->
                                         Trống
                                     <?php endif; ?>
                                 </td>
@@ -334,7 +334,6 @@ layout('navbar', 'admin', $data);
                                             ?>
                                         </a>
                                     <?php else: ?>
-                                        <!-- Giá trị mặc định nếu chưa có -->
                                         Trống
                                     <?php endif; ?>
                                 </td>

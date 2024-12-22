@@ -34,43 +34,8 @@ if (empty(trim($body['tenphong']))) {
     <small id="passwordHelp" style="color: red; display: none;">Mật khẩu phải đủ 6 ký tự!</small>
             </div>
 
-///
-            <!-- On tables -->
-<table class="table-primary">...</table>
-<table class="table-secondary">...</table>
-<table class="table-success">...</table>
-<table class="table-danger">...</table>
-<table class="table-warning">...</table>
-<table class="table-info">...</table>
-<table class="table-light">...</table>
-<table class="table-dark">...</table>
-
-<!-- On rows -->
-<tr class="table-primary">...</tr>
-<tr class="table-secondary">...</tr>
-<tr class="table-success">...</tr>
-<tr class="table-danger">...</tr>
-<tr class="table-warning">...</tr>
-<tr class="table-info">...</tr>
-<tr class="table-light">...</tr>
-<tr class="table-dark">...</tr>
-
-<!-- On cells (`td` or `th`) -->
-<tr>
-  <td class="table-primary">...</td>
-  <td class="table-secondary">...</td>
-  <td class="table-success">...</td>
-  <td class="table-danger">...</td>
-  <td class="table-warning">...</td>
-  <td class="table-info">...</td>
-  <td class="table-light">...</td>
-  <td class="table-dark">...</td>
-</tr>
-//
- <div class="container mt-5">
 
 //
-  // Lấy dữ liệu ghi chú từ POST
     $ghichu = $_POST['ghichu'] ?? null;
 
     // Kiểm tra nếu ghi chú vượt quá 20 ký tự
@@ -98,16 +63,28 @@ if (empty(trim($body['tenphong']))) {
                     <?php echo form_error('giathietbi', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-                    // Hàm kiểm tra chỉ cho phép nhập số
+
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
-                         input.value = input.value.replace(/[^a-zA-Z\s]/g, ''); // Loại bỏ ký tự không phải chữ cái
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); 
+                         input.value = input.value.replace(/[^a-zA-Z\s]/g, '');
                     }
                 </script>
 
                 echo '<span style = "color: red">'. "Trống".'</span>';
 
 
-    $checkCost = getRow("SELECT id FROM cost WHERE id = $id");
+if (empty(trim($body['dientich']))) {
+    $errors['dientich']['required'] = '** Bạn chưa nhập diện tích phòng!';
+} elseif (!is_numeric($body['dientich']) || $body['dientich'] <= 0) {
+    $errors['dientich']['invalid'] = '** Diện tích phải là một số dương!';
+} elseif ($body['dientich'] >= 100) {
+    $errors['dientich']['max'] = '** Diện tích phải nhỏ hơn 100!';
+}
 
-    UPDATE equipment SET ngaybaotri = DATE_ADD(ngaybaotri, INTERVAL 3 MONTH) WHERE ngaybaotri = CURDATE();
+GROUP_CONCAT(
+    CASE 
+        WHEN equipment_room.soluongcap > 0 THEN equipment_room.soluongcap 
+        ELSE NULL 
+    END
+    SEPARATOR ', '
+) AS soluong

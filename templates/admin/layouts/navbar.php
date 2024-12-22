@@ -1,30 +1,3 @@
-<?php
-// function isActive($module) {
-//   return strpos($_SERVER['REQUEST_URI'], $module) !== false ? 'active' : '';
-// }
-/* Hiệu ứng phong to menu */
-?>
-
-<style>
-  .link__menu.active .menu__item {
-    box-shadow: 1px 1px 10px #15a05c;
-    border-bottom: 6px solid #15a05c;
-    /* Example active border */
-  }
-
-  /* Thêm hiệu ứng khi di chuột vào các mục menu */
-  .link__menu .menu__item {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .link__menu:hover .menu__item {
-    transform: scale(1.04);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
-    /* Hiệu ứng bóng đổ khi hover */
-  }
-</style>
-
 
 <!-- Main content -->
 <div class="">
@@ -125,12 +98,12 @@
           </div>
         </a>
 
-        <a href="<?php echo getLinkAdmin('city'); ?>" class="link__menu ">
+        <!-- <a href="<?php echo getLinkAdmin('city'); ?>" class="link__menu ">
           <div class="menu__item">
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/user.png" class="menu__item-image" alt="">
             <p class="menu__item-title">Quản lý thiết bị 1</p>
           </div>
-        </a>
+        </a> -->
 
       </div>
     </div>

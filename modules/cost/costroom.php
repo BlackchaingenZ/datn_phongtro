@@ -94,6 +94,7 @@ if (isset($_POST['search'])) {
                             $count++;
                     ?>
                             <tr>
+                                <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                                 <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['id']; ?>"></td> -->
                                 <td><?php echo $count; ?></td>
                                 <td><b><?php echo $item['tengia']; ?></b></td>
@@ -101,7 +102,7 @@ if (isset($_POST['search'])) {
                                 <td><?php echo getDateFormat($item['ngaybatdau'], 'd-m-Y'); ?></td>
                                 <td><?php echo getDateFormat($item['ngayketthuc'], 'd-m-Y'); ?></td>
                                 <td class="" style="width: 100px; height: 50px; text-align:center">
-                                    <a href="<?php echo getLinkAdmin('cost', 'editcostroom', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm" ><i class="fa fa-edit"></i> </a>
+                                    <a href="<?php echo getLinkAdmin('cost', 'editcostroom', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('cost', 'deletecost', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
                                 </td>
                             </tr>

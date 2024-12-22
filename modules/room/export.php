@@ -77,6 +77,7 @@ $oddRow = [
 
 // heading 
 $spreadsheet->getActiveSheet()
+// ->mergeCells('A1:J1')
    ->setCellValue('A1', 'Danh sách phòng trọ');
 
 // merge heading
@@ -104,7 +105,7 @@ $spreadsheet->getActiveSheet()
    ->setCellValue('A2', 'Mã Phòng')
    ->setCellValue('B2', 'Khu vực')
    ->setCellValue('C2', 'Tên phòng')
-   ->setCellValue('D2', 'Diện tích : m2')
+   ->setCellValue('D2', 'Diện tích')
    ->setCellValue('E2', 'Giá thuê')
    ->setCellValue('F2', 'Giá tiền cọc')
    ->setCellValue('G2', 'Số lượng')
@@ -134,9 +135,9 @@ $row = 3;
 foreach ($roomFinal as $room) {
    $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $room['id']);
    $spreadsheet->getActiveSheet()
-   ->getStyle('A' . $row)
-   ->getAlignment()
-   ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+      ->getStyle('A' . $row)
+      ->getAlignment()
+      ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
    $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $room['tenkhuvuc']);
    $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $room['tenphong']);
    $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']);
@@ -145,8 +146,17 @@ foreach ($roomFinal as $room) {
    $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $room['tiencoc']);
    $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $room['soluong']);
    $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $room['ngayvao']);
+   // if (!empty($room['ngayvao'])) {
+   //    $spreadsheet->getActiveSheet()->setCellValue('H' . $row, getDateFormat($room['ngayvao'], 'd-m-Y'));
+   // } else {
+   //    $spreadsheet->getActiveSheet()->setCellValue('H' . $row, '');
+   // }
    $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['ngayra']);
    $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['tenthietbi']);
+
+   // $spreadsheet->getActiveSheet()->setCellValue('J' . $row, str_replace(',', "\n", $room['tenthietbi']));
+   // $spreadsheet->getActiveSheet()->getStyle('J' . $row)->getAlignment()->setWrapText(true);
+
    // set row style
    if ($row % 2 == 0) {
       $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($evenRow);

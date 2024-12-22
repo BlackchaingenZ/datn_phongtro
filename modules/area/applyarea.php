@@ -16,11 +16,6 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-
-// Lấy danh sách cơ sở vật chất và phòng trọ
-$listAllArea = getRaw("SELECT * FROM area ORDER BY tenkhuvuc ASC");
-$listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
-
 // Hàm lấy danh sách phòng và khuvuc
 function getRoomAndAreaList()
 {
@@ -100,7 +95,6 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Mã phòng</th>
                         <th>Tên khu vực</th>
@@ -118,8 +112,9 @@ layout('navbar', 'admin', $data);
                         foreach ($resultsToDisplay as $item):
                             $count++;
                     ?>
+                            <!-- <tr <?php if ($item['tenkhuvuc'] === 'Khu A') echo 'style="background-color: red; color: white;"'; ?>> -->
                             <tr>
-                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
+                                <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
@@ -146,12 +141,3 @@ layout('navbar', 'admin', $data);
     </div>
 </div>
 <?php layout('footer', 'admin'); ?>
-<script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked;
-        }
-    }
-</script>

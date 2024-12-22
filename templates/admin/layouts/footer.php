@@ -2,7 +2,7 @@
 <footer class="main-footer">
    Mọi ý kiến đóng góp vui lòng gửi về địa chỉ Email:  <strong>phongtrothaonguyen@gmail.com </strong>
 </footer>
-
+<!-- <footer class="main-footer" style="text-align: left; margin: 0; padding: 0;"></footer> -->
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->

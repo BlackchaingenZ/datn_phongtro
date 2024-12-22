@@ -58,7 +58,7 @@ if (isPost()) {
                 'thoigianapdung' => $body['thoigianapdung'], // Thêm thời gian cấp vào mảng chèn
             ];
         
-            $insertStatus = insert('cost_room', $dataInsert); // Sử dụng bảng cost_room để lưu thông tin phân bổ
+            $insertStatus = insert('cost_room', $dataInsert);
             if ($insertStatus) {
                 setFlashData('msg', 'Thêm loại giá thành công');
                 setFlashData('msg_type', 'suc');
@@ -158,7 +158,7 @@ $listRoomAndCost = getRoomAndCostList();
 
     <div class="box-content">
         <form action="" method="post" class="row">
-            <div class="col-5">
+            <div class="col-5 cut">
                 <div class="form-group">
                     <label for="">Chọn khu vực <span style="color: red">*</span></label>
                     <select name="area_id" id="area-select" class="form-select">

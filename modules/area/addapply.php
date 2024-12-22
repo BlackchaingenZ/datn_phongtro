@@ -108,7 +108,7 @@ $old = getFlashData('old');
 
 
 
-// Lấy danh sách phòng và area
+
 $listAllArea = getRaw("SELECT * FROM area ORDER BY tenkhuvuc ASC");
 
 // kiểm tra nếu phòng nào có khu vực rồi thì không hiện
@@ -180,7 +180,10 @@ $listRoomAndArea = getRoomAndAreaList();
                                 <option value="<?php echo htmlspecialchars($item['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($item['tenphong'], ENT_QUOTES, 'UTF-8'); ?></option>
                         <?php
                             }
-                        }
+                        } 
+                        // else {
+                        //     echo '<option value="" disabled></option>';
+                        // }
                         ?>
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>

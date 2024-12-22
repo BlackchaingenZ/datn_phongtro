@@ -22,7 +22,7 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndCostList()
 {
     $sql = "
-        SELECT room.id AS room_id, room.tenphong, 
+        SELECT room.id AS room_id, room.tenphong,
                GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
                GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
         FROM room
@@ -89,7 +89,6 @@ $listRoomAndCost = getRoomAndCostList();
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('cost', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('cost', 'historycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử áp dụng</a>
             </div>
         </form>
 
@@ -97,11 +96,10 @@ $listRoomAndCost = getRoomAndCostList();
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
+                        <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                         <th>STT</th>
-                        <th>Mã phòng</th>
+                        <th>ID phòng</th>
                         <th>Tên Phòng</th>
-                        <th>Tiền cọc</th>
                         <th>Tên bảng giá</th>
                         <th>Ngày áp dụng</th>
                         <th>Thao tác</th>
@@ -121,7 +119,6 @@ $listRoomAndCost = getRoomAndCostList();
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
-                                <td><?php echo $item['tiencoc']; ?></td>
                                 <td>
                                     <?php
                                     if (empty($item['tengia'])) {
@@ -170,13 +167,3 @@ $listRoomAndCost = getRoomAndCostList();
 </div>
 
 <?php layout('footer', 'admin'); ?>
-
-<!-- <script>
-    function toggle(checkbox) {
-        let isChecked = checkbox.checked;
-        let checkboxes = document.querySelectorAll('input[name="records[]"]');
-        checkboxes.forEach(function(cb) {
-            cb.checked = isChecked;
-        });
-    }
-</script> -->

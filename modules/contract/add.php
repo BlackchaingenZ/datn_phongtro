@@ -11,7 +11,6 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-// include 'includes/add_contracts.php';
 // kiểm tra nếu phòng nào có người rồi thì không hiện
 $allRoom = getRaw("
     SELECT room.id, room.tenphong, room.soluong 
@@ -39,7 +38,7 @@ foreach ($allRoom as $room) {
 
 if (!empty($_POST['services'])) {
     $services = implode(',', $_POST['services']); // Chuyển đổi mảng dịch vụ thành chuỗi
-    // Thêm mã thêm dịch vụ vào cơ sở dữ liệu (cần có xử lý cho phần này)
+
 }
 
 // Lấy thông tin flash message
@@ -89,13 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($tempCustomers)) {
         setFlashData('msg', 'Bạn chưa nhập thông tin khách thuê!.');
         setFlashData('msg_type', 'err');
-        redirect('?module=contract&action=add'); // Chuyển hướng lại trang thêm hợp đồng
-        exit; // Ngừng xử lý
+        redirect('?module=contract&action=add'); 
+        exit; 
     }
 
     if ($room_id && $ngaylaphopdong && $ngayvao && $ngayra && $tinhtrangcoc && $create_at && $ghichu && $sotiencoc && $dieukhoan1 && $dieukhoan2 && $dieukhoan3) {
         // Lấy số lượng hiện tại và số lượng tối đa của phòng
-        $roomCapacity = checkSoluongtoida($room_id); // Hàm trả về ['soluong' => ..., 'soluongtoida' => ...]
+        $roomCapacity = checkSoluongtoida($room_id);
         $currentCapacity = $roomCapacity['soluong'];
         $maxCapacity = $roomCapacity['soluongtoida'];
 

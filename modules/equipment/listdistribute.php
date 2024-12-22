@@ -22,7 +22,9 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndEquipmentList()
 {
     $sql = "
-        SELECT room.id AS room_id, room.tenphong, 
+        SELECT room.id AS room_id, room.tenphong,
+        -- GROUP_CONCAT(equipment.tenthietbi SEPARATOR ', ') AS tenthietbi,
+        -- GROUP_CONCAT(equipment_room.soluongcap SEPARATOR  ', ') AS soluong,
                GROUP_CONCAT(
                    CASE 
                        WHEN equipment_room.soluongcap > 0 THEN CONCAT(equipment.tenthietbi, ' (', equipment_room.soluongcap, ')')
@@ -49,7 +51,7 @@ if (!empty($_POST['search_term'])) {
 
 // Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT room.id AS room_id, 
+    SELECT room.id AS room_id,
            room.tenphong, 
            GROUP_CONCAT(
                CASE 
@@ -123,8 +125,8 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                             $count++;
                     ?>
                             <tr>
-                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
-                                <td style="text-align: center;"><?php echo $count; ?></td>
+                                <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
+                                <td style="text-align: left;"><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
                                 <td>
@@ -133,7 +135,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                                         echo "Trống";
                                     } else {
                                         // echo nl2br($item['tenthietbi']); 
-                                        echo $item['tenthietbi']; 
+                                        echo $item['tenthietbi'];
                                     }
                                     ?>
                                 </td>
@@ -143,7 +145,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                                     if (!empty($item['thoigiancap'])) {
                                         echo getDateFormat($item['thoigiancap'], 'd-m-Y');
                                     } else {
-                                        echo 'Trống'; // Hoặc một giá trị mặc định khác
+                                        echo 'Trống';
                                     }
                                     ?>
                                 </td>

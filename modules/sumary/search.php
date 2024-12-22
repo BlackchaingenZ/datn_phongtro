@@ -217,7 +217,6 @@ WHERE
             </form>
             <p></p>
             <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
-            <a href="<?php echo getLinkAdmin('sumary', 'print_details'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất </a>
             <h3 class="sumary-title">
                 Danh sách phòng chưa thu
             </h3>

@@ -54,10 +54,9 @@ select {
     /* Thêm hiệu ứng chuyển tiếp */
 }
 
-.btn-secondary:hover {
+/* .btn-secondary:hover {
     transform: scale(1.1);
-    /* Phóng to nút lên 10% khi di chuột qua */
-}
+} */
 
 .btn-status-err {
     font-size: 10px;
@@ -172,9 +171,9 @@ th {
     height: 65px;
 }
 
-.menu__item:hover {
-    box-shadow: 1px 1px 10px #15a05c;
-}
+/* .menu__item:hover {
+    box-shadow: 1px 1px 10px #f9f9f9;
+} */
 
 .menu__item-title {
     font-size: 14px;
@@ -276,12 +275,12 @@ th {
     /* Hiệu ứng mượt mà */
 }
 
-/* Hiệu ứng khi di chuột vào */
+
 .nav__item:hover {
     transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
+
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
+
 }
 
 .image__room {
@@ -707,18 +706,7 @@ th {
     padding: 20px 20px;
     border-radius: 12px;
     width: 30%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Bóng đổ nhẹ */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
-}
 
-/* Hiệu ứng khi di chuột vào */
-.collect-item:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
 }
 
 
@@ -840,16 +828,6 @@ th {
     /* Hiệu ứng mượt mà */
 }
 
-.service-item_right .edit:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    /* Bóng lớn hơn khi hover */
-    transform: scale(1.09);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
-}
-
-
 .service-item_right .del {
     display: flex;
     align-items: center;
@@ -864,14 +842,6 @@ th {
     /* Hiệu ứng mượt mà */
 }
 
-.service-item_right .del:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    /* Bóng lớn hơn khi hover */
-    transform: scale(1.09);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
-}
 
 
 .water {
@@ -912,14 +882,6 @@ th {
     /* Hiệu ứng mượt mà */
 }
 
-/* Hiệu ứng khi di chuột vào */
-.report-receipt:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
-}
-
 .report-spend {
     background: #4caf5014;
     border-radius: 10px;
@@ -931,13 +893,6 @@ th {
     /* Hiệu ứng mượt mà */
 }
 
-/* Hiệu ứng khi di chuột vào */
-.report-spend:hover {
-    transform: scale(1.02);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
-}
 
 .report-sumary {
     color: #198754;
@@ -1258,31 +1213,14 @@ th {
 .service-items {
 
     display: flex;
-    /* Sử dụng flexbox cho dịch vụ */
     justify-content: space-between;
-    /* Căn giữa nội dung */
     align-items: center;
-    /* Căn giữa theo chiều dọc */
     margin-bottom: 20px;
-    /* Khoảng cách giữa các item */
     border: 1px solid #ccc;
-    /* Optional: thêm đường viền */
-    padding: 10px;
-    /* Optional: thêm padding */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    /* Thêm bóng */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    /* Hiệu ứng mượt mà */
 }
 
-.service-items:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    /* Bóng lớn hơn khi hover */
-    transform: scale(1.05);
-    /* Phóng to nhẹ khi hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    /* Tăng bóng đổ khi hover */
-}
 
 
 /* Popup Modal */
@@ -1452,7 +1390,6 @@ th {
     transition-delay: 0s;
     /* Không có độ trễ khi trở về kích thước ban đầu */
 }
-
 .zoom-image:hover {
     transform: scale(2.5);
     /* Phóng to ảnh khi di chuột */
@@ -1478,13 +1415,16 @@ th {
     color: white; /* Màu chữ */
 }
 
-/* màu hàng lẻ */
+
 /* .table.table-bordered.mt-3 tbody tr:nth-child(even) {
     background-color: #279957; 
 } */
 
 
-/* màu hàng chẵn */
+
 /* .table.table-bordered.mt-3 tbody tr:nth-child(odd) {
     background-color: #ff0303; 
 } */
+ /* .cut{
+    margin: 0 auto
+ } */

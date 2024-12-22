@@ -88,8 +88,6 @@ layout('navbar', 'admin', $data);
             <a style="margin-right: 5px" href="<?php echo getLinkAdmin('receipt', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
             <a href="<?php echo getLinkAdmin('payment', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm</a>
             <a href="<?php echo getLinkAdmin('payment'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-            <a href="<?php echo getLinkAdmin('payment', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-save"></i> Xuất Excel</a>
-            <!--<a style="margin-left: 20px " href="<?php echo getLinkAdmin('sumary') ?>" class="btn btn-secondary"><i class="fa fa-forward"></i></a>-->
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>

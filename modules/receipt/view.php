@@ -52,8 +52,6 @@ $receiptDetail = firstRaw("
         receipt.id = $id
 ");
 
-
-
 ?>
 
 <!DOCTYPE html>
