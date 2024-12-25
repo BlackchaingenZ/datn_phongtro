@@ -14,11 +14,11 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-// Lấy danh sách cơ sở vật chất và phòng trọ
+$listAllArea = getRaw("SELECT id AS id, tenthietbi FROM equipment ORDER BY id ASC");
 $listAllEquipment = getRaw("SELECT * FROM equipment ORDER BY tenthietbi ASC");
 $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 
-// Hàm lấy danh sách phòng và thiết bị
+
 function getRoomAndEquipmentList()
 {
     $sql = "
@@ -83,7 +83,7 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 
     <div class="box-content">
         <form action="" method="post" class="row">
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-4"></div>
                 <div class="col-4">
                     <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng cần tìm thiết bị" value="<?php echo htmlspecialchars($searchTerm); ?>">
@@ -94,7 +94,22 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
                         <i class="fa fa-search"></i>
                     </button>
                 </div>
-            </div>
+            </div> -->
+            <div class="col-4">
+                        <select style="height: 50px" name="search_term" class="form-control">
+                            <option value="">Chọn thiết bị</option>
+                            <?php foreach ($listAllArea as $area): ?>
+                                <option value="<?php echo $area['tenthietbi']; ?>" <?php echo ($searchTerm == $area['tenthietbi']) ? 'selected' : ''; ?>>
+                                    <?php echo $area['tenthietbi']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <button style="height: 50px; width: 50px" type="submit" name="search" class="btn btn-secondary">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
             <div class="form-group mt-3">
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('equipment', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('equipment', 'distribute') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Phân bổ </a>
@@ -171,13 +186,3 @@ $listRoomAndEquipment = getRoomAndEquipmentList();
 </div>
 
 <?php layout('footer', 'admin'); ?>
-
-<!-- <script>
-    function toggle(checkbox) {
-        let isChecked = checkbox.checked;
-        let checkboxes = document.querySelectorAll('input[name="records[]"]');
-        checkboxes.forEach(function(cb) {
-            cb.checked = isChecked;
-        });
-    }
-</script> -->

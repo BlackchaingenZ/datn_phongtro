@@ -36,7 +36,7 @@ function getRoomAndEquipmentList()
         ORDER BY room.id ASC
     ";
 
-    return getRaw($sql); // Hàm getRaw() sẽ thực hiện truy vấn và trả về kết quả
+    return getRaw($sql); 
 }
 
 

@@ -75,7 +75,7 @@ layout('navbar', 'admin', $data);
             <div class="row">
                 <div class="col-4"></div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng hoặc khu vực cần tìm" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng cần tìm" value="<?php echo htmlspecialchars($searchTerm); ?>">
                 </div>
 
                 <div class="col">

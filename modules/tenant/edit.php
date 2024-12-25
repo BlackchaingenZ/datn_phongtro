@@ -30,14 +30,14 @@ if (!empty($body['id'])) {
     }
 }
 
-// Xử lý sửa người dùng
+
 if (isPost()) {
-    // Validate form
-    $body = getBody(); // lấy tất cả dữ liệu trong form
-    $errors = [];  // mảng lưu trữ các lỗi
+
+    $body = getBody(); 
+    $errors = []; 
 
 
-    // Valide họ tên: Bắt buộc phải nhập, >=5 ký tự
+
     if (empty(trim($body['tenkhach']))) {
         $errors['tenkhach']['required'] = '** Bạn chưa nhập tên khách thuê!';
     } else {
@@ -55,7 +55,7 @@ if (isPost()) {
             $errors['cmnd']['length'] = '** CMND phải có đúng 9 hoặc 12 chữ số!';
         }
     }
-    // Valide SĐT: Chỉ gồm số, phải có đúng 10 chữ số (không bắt buộc nhập)
+
     if (!empty(trim($body['sdt']))) {
         $sdt = trim($body['sdt']);
         if (!is_numeric($sdt)) {
@@ -64,16 +64,14 @@ if (isPost()) {
             $errors['sdt']['length'] = '** Số điện thoại phải có 10 chữ số!';
         }
     }
-    // Kiểm tra mảng error
+
     if (empty($errors)) {
-        // Trường hợp không chọn phòng
+
         $room_id = !empty($body['room_id']) ? $body['room_id'] : NULL;
 
-        // Mảng lưu các trường cần cập nhật
+
         $dataUpdate = [];
 
-        // Kiểm tra từng trường và chỉ thêm vào mảng $dataUpdate nếu trường đó có giá trị
-        // tức là chỉ cần sửa trường nào nếu cần ,không nhất thiết phải toàn bộ
         if (!empty($body['tenkhach'])) $dataUpdate['tenkhach'] = $body['tenkhach'];
         if (!empty($body['sdt'])) $dataUpdate['sdt'] = $body['sdt'];
         if (!empty($body['ngaysinh'])) $dataUpdate['ngaysinh'] = $body['ngaysinh'];

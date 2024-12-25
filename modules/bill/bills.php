@@ -199,13 +199,13 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;"><?php echo $item['sodiencu']; ?></td>
                                 <td style="text-align: center;">
                                     <?php echo $item['sodienmoi']; ?>
-                                    <a target="_blank" href="<?php echo getLinkAdmin('bill', 'img_sdm', ['id' => $item['id']]); ?>" class="fa fa-eye"></a>
+                                    <!-- <a target="_blank" href="<?php echo getLinkAdmin('bill', 'img_sdm', ['id' => $item['id']]); ?>" class="fa fa-eye"></a> -->
                                 </td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiendien'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['sonuoccu']; ?></td>
                                 <td style="text-align: center;">
                                     <?php echo $item['sonuocmoi']; ?>
-                                    <a target="_blank" href="<?php echo getLinkAdmin('bill', 'img_snm', ['id' => $item['id']]); ?>" class="fa fa-eye"></a>
+                                    <!-- <a target="_blank" href="<?php echo getLinkAdmin('bill', 'img_snm', ['id' => $item['id']]); ?>" class="fa fa-eye"></a> -->
                                 </td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiennuoc'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><?php echo $item['songuoi']; ?></td>

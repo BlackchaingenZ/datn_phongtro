@@ -107,10 +107,8 @@
 
       </div>
     </div>
-    <!-- Content Header (Page header) -->
     <div class="container-box text-center">
       <h1 class="m-0 text-dark"><?php echo $data['pageTitle']; ?></h1>
     </div>
   </section>
-  <!-- Content Wrapper. Contains page content -->
 </div>

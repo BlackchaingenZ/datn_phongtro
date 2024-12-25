@@ -192,6 +192,5 @@ layout('navbar', 'admin', $data);
     </div>
 </div>
 
-
 <?php
 layout('footer', 'admin');

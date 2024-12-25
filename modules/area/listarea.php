@@ -2,12 +2,12 @@
 
 if (!defined('_INCODE')) die('Access denied...');
 
-// Ngăn chặn quyền truy cập nếu người dùng không thuộc nhóm có quyền
+
 $userId = isLogin()['user_id'];
 $userDetail = getUserInfo($userId);
 $groupId = $userDetail['group_id'];
 
-// Kiểm tra nếu người dùng không thuộc nhóm 7 thì chặn truy cập
+
 if ($groupId != 7) {
     setFlashData('msg', 'Bạn không được truy cập vào trang này');
     setFlashData('msg_type', 'err');
@@ -67,6 +67,21 @@ if (isset($_POST['search'])) {
                             <i class="fa fa-search"></i>
                         </button>
                     </div>
+                    <!-- <div class="col-4">
+                        <select style="height: 50px" name="search_term" class="form-control">
+                            <option value=""></option>
+                            <?php foreach ($listAllArea as $area): ?>
+                                <option value="<?php echo $area['tenkhuvuc']; ?>" <?php echo ($searchTerm == $area['tenkhuvuc']) ? 'selected' : ''; ?>>
+                                    <?php echo $area['tenkhuvuc']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <button style="height: 50px; width: 50px" type="submit" name="search" class="btn btn-secondary">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div> -->
                 </div>
                 <input type="hidden" name="module" value="cost">
                 <p></p>
@@ -116,6 +131,4 @@ if (isset($_POST['search'])) {
     </div>
 
 </div>
-
-
 <?php layout('footer', 'admin'); ?>

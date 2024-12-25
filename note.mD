@@ -88,3 +88,73 @@ GROUP_CONCAT(
     END
     SEPARATOR ', '
 ) AS soluong
+<div class="form-group">
+    <label for="name">Ảnh <span style="color: red">*</span></label>
+    <div class="row">
+        <div class="col-10">
+            <input type="text" placeholder="Ảnh phòng" name="image" id="name" class="form-control" value="<?php echo old('image', $old); ?>">
+        </div>
+        <div class="col-2">
+            <button type="button" class="btn btn-secondary btn-sm choose-image">
+                <i class="fa fa-upload"></i> Chọn ảnh
+            </button>
+        </div>
+    </div>
+    <div class="mt-2">
+        <img id="preview-image" src="<?php echo old('image', $old); ?>" alt="Ảnh phòng" style="max-width: 200px; max-height: 200px; display: <?php echo $old ? 'block' : 'none'; ?>">
+    </div>
+</div>
+
+<script src="path/to/ckfinder/ckfinder.js"></script>
+<script>
+    document.querySelector('.choose-image').addEventListener('click', function() {
+        CKFinder.modal({
+            chooseFiles: true,
+            onInit: function(finder) {
+                finder.on('files:choose', function(evt) {
+                    var file = evt.data.files.first();
+                    var imageUrl = file.getUrl();
+                    document.getElementById('name').value = imageUrl;
+                    document.getElementById('preview-image').src = imageUrl;
+                    document.getElementById('preview-image').style.display = 'block';
+                });
+            }
+        });
+    });
+</script>
+
+function getThoihanbaohanhStatus($endDate, $dem)
+{
+    $currentDate = new DateTime(); //
+    $EquipmentEndDate = new DateTime($endDate);
+    $interval = $currentDate->diff($EquipmentEndDate); // Tính khoảng cách giữa 2 ngày
+    $daysLeft = (int)$interval->format('%R%a'); // chuyển khoảng cách ngày thành số ngày
+
+    if ($daysLeft < 0) {
+        return "Đã hết hạn bảo hành";
+    } elseif ($daysLeft > 0 && $daysLeft <= $dem) {
+        return "Sắp hết hạn bảo hành";
+    } else {
+        return "Trong thời hạn bảo hành";
+    }
+}
+<td>
+    <?php
+    // Lấy giá trị 'dem' từ cơ sở dữ liệu
+    $stmt = $pdo->prepare("SELECT dem FROM equipment WHERE id = ?");
+    $stmt->execute([$item['id']]); // $item['id'] là ID thiết bị
+    $dem = $stmt->fetchColumn();
+
+    // Gọi hàm để lấy trạng thái bảo hành
+    $getEquipmentStatus = getThoihanbaohanhStatus($item['thoihanbaohanh'], $dem);
+
+    // Hiển thị trạng thái với class phù hợp
+    if ($getEquipmentStatus == "Đã hết hạn bảo hành") {
+        echo '<span class="btn-dahethan-err">' . $getEquipmentStatus . '</span>';
+    } elseif ($getEquipmentStatus == "Sắp hết hạn bảo hành") {
+        echo '<span class="btn-saphethan-err">' . $getEquipmentStatus . '</span>';
+    } elseif ($getEquipmentStatus == "Trong thời hạn bảo hành") {
+        echo '<span class="btn-trongthoihan-err">' . $getEquipmentStatus . '</span>';
+    }
+    ?>
+</td>

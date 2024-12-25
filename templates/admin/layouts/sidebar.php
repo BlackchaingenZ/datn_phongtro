@@ -41,28 +41,28 @@
          </li>
 
          <li class="nav-item has-treeview <?php echo activeMenuSidebar('bill') ? 'menu-open' : false; ?>">
-           <a href="#" class="nav-link <?php echo activeMenuSidebar('bill') ? 'active' : false; ?>">
+           <!-- <a href="#" class="nav-link <?php echo activeMenuSidebar('bill') ? 'active' : false; ?>">
              <i class="nav-icon fas fa-solid fa-graduation-cap"></i>
              <p>
-               <!-- <?php $num = getRows("SELECT id FROM bill WHERE room_id = $roomId AND trangthaihoadon = 2") ?> -->
+               <?php $num = getRows("SELECT id FROM bill WHERE room_id = $roomId AND trangthaihoadon = 2") ?>
                <?php $num = getRows("SELECT id FROM bill WHERE room_id = $roomId AND trangthaihoadon IN (2, 3)") ?>
-               Quản lý hóa đơn
+               Hóa đơn
                <i class="right fas fa-angle-left"></i>
                <span class="badge badge-danger"><?php echo $num ?></span>
              </p>
-           </a>
+           </a> -->
            <ul class="nav nav-treeview">
 
-             <li class="nav-item">
+             <!-- <li class="nav-item">
                <a href="<?php echo getLinkAdmin('bill', 'history'); ?>" class="nav-link">
                  <i class="far fa-circle nav-icon"></i>
                  <p>Lịch sử hóa đơn</p>
                </a>
              </li>
-           </ul>
+           </ul> -->
          </li>
 
-         <li class="nav-item has-treeview <?php echo activeMenuSidebar('contract') ? 'menu-open' : false; ?>">
+         <!-- <li class="nav-item has-treeview <?php echo activeMenuSidebar('contract') ? 'menu-open' : false; ?>">
            <a href="#" class="nav-link <?php echo activeMenuSidebar('contract') ? 'active' : false; ?>">
              <i class="nav-icon fas fa-solid fa-graduation-cap"></i>
              <p>
@@ -79,7 +79,7 @@
                </a>
              </li>
            </ul>
-         </li>
+         </li> -->
        </ul>
      </nav>
      <!-- /.sidebar-menu -->

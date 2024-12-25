@@ -4,6 +4,36 @@ body,
     background-color: #e4eef5;
 }
 
+.custom {
+    background-color: green;  
+    border-color: blue;       
+}
+
+.custom-size {
+    width: 300px; 
+    height: 1000px;   
+    font-size: 16px;
+}
+
+.page-item.active .page-link {
+    background-color: #0d6efd; 
+    border-color: #0d6efd; 
+    color: white;
+}
+
+
+/* .table.table-bordered.mt-3 tbody tr:nth-child(even) {
+    background-color: #279957; 
+} */
+
+
+
+/* .table.table-bordered.mt-3 tbody tr:nth-child(odd) {
+    background-color: #ff0303; 
+} */
+ /* .cut{
+    margin: 0 auto
+ } */
 
 /* ScrollBar */
 ::-webkit-scrollbar {
@@ -275,13 +305,6 @@ th {
     /* Hiệu ứng mượt mà */
 }
 
-
-.nav__item:hover {
-    transform: scale(1.02);
-
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-
-}
 
 .image__room {
     display: flex;
@@ -1398,33 +1421,4 @@ th {
     transition-delay: 1s;
     /* Đợi 1 giây trước khi phóng to */
 }
-.custom {
-    background-color: green;  /* Màu xanh lá cây */
-    border-color: blue;       /* Màu viền xanh dương */
-}
 
-.custom-size {
-    width: 300px;    /* Chiều rộng của trường input */
-    height: 1000px;    /* Chiều cao của trường input */
-    font-size: 16px; /* Kích thước chữ */
-}
-
-.page-item.active .page-link {
-    background-color: #0d6efd; /* Màu nền */
-    border-color: #0d6efd; /* Viền */
-    color: white; /* Màu chữ */
-}
-
-
-/* .table.table-bordered.mt-3 tbody tr:nth-child(even) {
-    background-color: #279957; 
-} */
-
-
-
-/* .table.table-bordered.mt-3 tbody tr:nth-child(odd) {
-    background-color: #ff0303; 
-} */
- /* .cut{
-    margin: 0 auto
- } */

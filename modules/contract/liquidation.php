@@ -90,12 +90,12 @@ if ($contract_id) {
                     // Duy trì liên kết khách với phòng
                     foreach ($tenants as $tenant) {
                         $tenant_id = $tenant['tenant_id_1'];
-                        // Không cập nhật room_id của khách thuê, liên kết vẫn giữ nguyên
+
                     }
 
-                    // Cập nhật số người trong phòng về 0
-                    $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
-                    $stmt_update_room->execute([$room_id]);
+                    // $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
+                    $stmt_update_room = $pdo->prepare("UPDATE tenant SET trangthai = 1 WHERE id = ?");
+                    $stmt_update_room->execute([$tenant_id]);
                 }
 
                 // Cập nhật thông tin hợp đồng trong cơ sở dữ liệu

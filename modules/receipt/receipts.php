@@ -12,7 +12,7 @@ layout('breadcrumb', 'admin', $data);
 
 $allCollect = getRaw("SELECT id, tendanhmuc FROM category_collect");
 
-// Xử lý lọc dữ liệu
+
 $filter = '';
 $collectId = null;
 if (isGet()) {

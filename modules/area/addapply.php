@@ -120,22 +120,30 @@ $listAllRoom = getRaw("
     ORDER BY room.tenphong
 ");
 
-
+// // chỉ lấy khu vực nào chưa có phòng
+// $listAllArea = getRaw("SELECT DISTINCT area.id, area.tenkhuvuc FROM area
+// INNER JOIN area_room ON area.id=area_room.area_id
+// INNER JOIN room ON area_room.room_id =room.id
+// WHERE area_room.room_id IS NULL
+//  ORDER BY tenkhuvuc ASC");
 
 // Hàm lấy danh sách phòng và area
 function getRoomAndAreaList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
-        FROM room r
-        LEFT JOIN area_room er ON r.id = er.room_id
-        LEFT JOIN area e ON er.area_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id ASC
+        SELECT 
+            room.id AS room_id, 
+            room.tenphong, 
+            GROUP_CONCAT(area.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
+        FROM room
+        LEFT JOIN area_room ON room.id = area_room.room_id
+        LEFT JOIN area ON area_room.area_id = area.id
+        GROUP BY room.id
+        ORDER BY room.id ASC
     ";
     return getRaw($sql);
 }
+
 
 
 $listRoomAndArea = getRoomAndAreaList();

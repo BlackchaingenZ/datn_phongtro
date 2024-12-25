@@ -28,7 +28,6 @@ if (isGet()) {
     $body = getBody('get');
 
 
-    // Xử lý lọc theo từ khóa
     if (!empty($body['keyword'])) {
         $keyword = $body['keyword'];
 
@@ -40,7 +39,19 @@ if (isGet()) {
 
         $filter .= " $operator tenphong LIKE '%$keyword%'";
     }
-    //Xử lý lọc Status
+
+    // if (!empty($body['room_id'])) {
+    //     $roomId = $body['room_id'];
+
+    //     if (!empty($filter) && strpos($filter, 'WHERE') >= 0) {
+    //         $operator = 'AND';
+    //     } else {
+    //         $operator = 'WHERE';
+    //     }
+
+    //     $filter .= " $operator room.id = '$roomId'";
+    // }
+
     if (!empty($body['status'])) {
         $status = $body['status'];
 
@@ -60,7 +71,7 @@ if (isGet()) {
     }
 }
 
-
+// $allRooms = getRaw("SELECT id, tenphong FROM room");
 $allTenant = getRows("SELECT id FROM room $filter");
 $listAllroom = getRaw("
     SELECT room.*, 
@@ -122,6 +133,18 @@ layout('navbar', 'admin', $data);
                     </div>
                 </div>
 
+                <!-- <div class="col-4">
+                    <div class="form-group">
+                        <select name="room_id" id="room_id" class="form-select" style="height: 50px;">
+                            <option value="0" disabled selected>Chọn phòng</option>
+                            <?php foreach ($allRooms as $room): ?>
+                                <option value="<?php echo $room['id']; ?>" <?php echo (!empty($roomId) && $roomId == $room['id']) ? 'selected' : ''; ?>>
+                                    <?php echo $room['tenphong']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div> -->
+
                 <div class="col-4">
                     <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên phòng cần tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
                 </div>
@@ -162,7 +185,7 @@ layout('navbar', 'admin', $data);
                     <?php
 
                     if (!empty($listAllroom)):
-                        $count = 0; // Hiển thi số thứ tự
+                        $count = 0;
                         foreach ($listAllroom as $item):
 
                             $count++;
@@ -172,6 +195,11 @@ layout('navbar', 'admin', $data);
                             <tr>
                                 <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                                 <td style="text-align: center;"><?php echo $count; ?></td>
+                                <!-- <td style="text-align: center;">
+                                    <a href="<?php echo getLinkAdmin('room', 'view', ['id' => $item['id']]); ?>" target="_blank">
+                                        <img style="width: 70px; height: 50px;" src="<?php echo $item['image']; ?>" alt="">
+                                    </a>
+                                </td> -->
                                 <td style="text-align: center;">
                                     <img class="" style="width: 70px; height: 50px" src="<?php echo $item['image'] ?>" alt="">
                                 </td>
@@ -179,7 +207,7 @@ layout('navbar', 'admin', $data);
                                     <?php echo $item['tenphong']; ?>
                                 </td> -->
                                 <!-- <td style="background-color: <?php echo ($count == 1) ? 'red' : 'transparent'; ?>"><b><?php echo $item['tenphong']; ?></b></td> -->
-                                <td><?php echo $item['tenphong']; ?></td>
+                                <td style="text-align:center"><?php echo $item['tenphong']; ?></td>
                                 <td style="text-align: center;"><?php echo $item['dientich'] ?> m2</td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['giathue'], 0, ',', '.') ?> đ</b></td>
                                 <td style="text-align: center;"><b><?php echo number_format($item['tiencoc'], 0, ',', '.') ?> đ</b></td>
@@ -202,10 +230,9 @@ layout('navbar', 'admin', $data);
                                 <td style="text-align: center;">
                                     <?php
                                     if (!empty($item['ngayra'])) {
-                                        // Giả sử $item['gioitinh'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+
                                         $date = DateTime::createFromFormat('Y-m-d', $item['ngayra']);
 
-                                        // Kiểm tra nếu chuyển đổi thành công
                                         if ($date && $date->format('Y-m-d') === $item['ngayra']) {
                                             echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
                                         } else {
@@ -223,12 +250,12 @@ layout('navbar', 'admin', $data);
                                     ?>
                                 </td>
                                 <td style="text-align: center;">
-                                    <!-- Thông tin -->
+
                                     <span class="tooltip-icon">
                                         <i class="nav-icon fas fa-solid fa-eye"></i>
                                         <span class="tooltiptext">
                                             <?php
-                                            // Kiểm tra nếu 'tenthietbi' trống hoặc NULL thì hiển thị 'Trống'
+
                                             echo !empty($item['tenthietbi']) ? $item['tenthietbi'] : 'Trống';
                                             // echo nl2br ($item['tenthietbi']);
                                             ?>

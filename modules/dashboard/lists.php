@@ -31,7 +31,7 @@ if ($userDetail['group_id'] == 7) {
 if ($userDetail['group_id'] == 7) {
 ?>
     <div class="container-fluid">
-        <!-- chỗ để banner  ở đây-->
+
         <div class="container-fluid" style="text-align: center;">
             <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/banner.png" class="img-fluid" alt="Banner" style="transform: scale(0.75); display: block; margin: 0 auto;">
         </div>

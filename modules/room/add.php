@@ -14,8 +14,8 @@ layout('breadcrumb', 'admin', $data);
 
 if (isPost()) {
 
-    $body = getBody(); 
-    $errors = [];  
+    $body = getBody();
+    $errors = [];
 
     if (empty(trim($body['tenphong']))) {
         $errors['tenphong']['required'] = '** Bạn chưa nhập tên phòng!';
@@ -36,11 +36,9 @@ if (isPost()) {
     if (empty(trim($body['soluongtoida']))) {
         $errors['soluongtoida']['required'] = '** Bạn chưa nhập số lượng người tối đa';
     }
-
-
-    // Kiểm tra mảng error
+    
     if (empty($errors)) {
-        // không có lỗi nào
+
         $dataInsert = [
             'tenphong' => $body['tenphong'],
             'image' => $body['image'],
@@ -66,7 +64,7 @@ if (isPost()) {
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
-        setFlashData('old', $body); 
+        setFlashData('old', $body);
         redirect('?module=room&action=add');
     }
 }
@@ -112,9 +110,8 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); 
+                        input.value = input.value.replace(/[^0-9\.]/g, '');
                     }
                 </script>
             </div>
@@ -127,7 +124,7 @@ layout('navbar', 'admin', $data);
                 </div>
                 <script>
                     function validateNumber(input) {
-                        input.value = input.value.replace(/[^0-9\.]/g, ''); 
+                        input.value = input.value.replace(/[^0-9\.]/g, '');
                     }
                 </script>
 
@@ -137,7 +134,6 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <script>
-
                     function validateNumber(input) {
                         input.value = input.value.replace(/[^0-9\.]/g, '');
                     }

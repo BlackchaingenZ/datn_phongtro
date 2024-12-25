@@ -22,33 +22,6 @@ $data = [
 layout('header', 'admin', $data);
 layout('breadcrumb', 'admin', $data);
 
-// Xóa hết
-// if (isset($_POST['deleteMultip'])) {
-//     $numberCheckbox = $_POST['records'];
-//     $extract_id = implode(',', $numberCheckbox);
-
-//     // Kiểm tra xem tenant có liên kết với contract_tenant không?
-//     $checkTenantInContract = getRaw("SELECT tenant_id_1 FROM contract_tenant WHERE tenant_id_1 IN($extract_id)");
-
-//     if ($checkTenantInContract) {
-//         // Nếu có liên kết, không thực hiện xóa và thông báo cho người dùng
-//         setFlashData('msg', 'Không thể xóa khách thuê vì đang có hợp đồng liên quan');
-//         setFlashData('msg_type', 'err');
-//     } else {
-//         // Nếu không có liên kết, thực hiện xóa tenant
-//         $checkDelete = delete('tenant', "id IN($extract_id)");
-
-//         if ($checkDelete) {
-//             setFlashData('msg', 'Xóa thông tin khách thuê thành công');
-//             setFlashData('msg_type', 'suc');
-//         } else {
-//             setFlashData('msg', 'Đã xảy ra lỗi khi xóa khách thuê');
-//             setFlashData('msg_type', 'err');
-//         }
-//     }
-
-//     redirect('?module=tenant');
-// }
 
 // Xử lý lọc dữ liệu
 $allRoom = getRaw("SELECT id, tenphong, soluong, trangthai FROM room ORDER BY tenphong");
@@ -61,17 +34,17 @@ if (isGet()) {
     if (!empty($body['keyword'])) {
         $keyword = $body['keyword'];
 
-        // Kiểm tra từ khóa là số (CCCD/CMND hoặc SĐT)
+
         if (ctype_digit($keyword)) {
             if (strlen($keyword) === 9 || strlen($keyword) === 12) {
-                $searchField = 'cmnd'; // Tìm theo CCCD/CMND
+                $searchField = 'cmnd';
             } else if (strlen($keyword) >= 10 && strlen($keyword) <= 11) {
-                $searchField = 'sdt'; // Tìm theo số điện thoại
+                $searchField = 'sdt';
             } else {
-                $searchField = ''; // Không hợp lệ, bỏ qua tìm kiếm
+                $searchField = '';
             }
         } else {
-            $searchField = 'tenkhach'; // Tìm theo tên khách
+            $searchField = 'tenkhach';
         }
 
 
@@ -102,11 +75,9 @@ if (isGet()) {
     }
 }
 
-/// Xử lý phân trang
-$allTenant = getRows("SELECT id FROM tenant $filter");
 
 $listAllTenant = getRaw("
-    SELECT *, tenant.id, room.tenphong, area.tenkhuvuc 
+    SELECT *, tenant.id, room.tenphong, area.tenkhuvuc, tenant.trangthai
     FROM tenant
     LEFT JOIN room ON tenant.room_id = room.id  
     INNER JOIN area_room ON area_room.room_id = room.id
@@ -216,6 +187,7 @@ layout('navbar', 'admin', $data);
                         <th>Mặt trước CCCD</th>
                         <th>Mặt sau CCCD</th>
                         <th>Phòng ở</th>
+                        <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -348,6 +320,11 @@ layout('navbar', 'admin', $data);
                                     <?php
                                     } ?>
                                 </td>
+                                <td style="text-align: center;">
+                                    <?php
+                                    echo $item['trangthai'] == 1 ? '<span class="btn-status-suc">Đã từng ở</span>' : '<span class="btn-status-err">Đang ở</span>';
+                                    ?>
+                                </td>
                                 <td class="" style="text-align: center;">
                                     <a href="<?php echo getLinkAdmin('tenant', 'edit', ['id' => $item['id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> </a>
                                     <a href="<?php echo getLinkAdmin('tenant', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
@@ -373,15 +350,6 @@ layout('navbar', 'admin', $data);
 layout('footer', 'admin');
 ?>
 
-<!-- <script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked
-        }
-    }
-</script> -->
 <script>
     const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
     const areaSelect = document.getElementById('area-select');
