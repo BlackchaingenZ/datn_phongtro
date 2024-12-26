@@ -91,11 +91,14 @@ if ($contract_id) {
                     foreach ($tenants as $tenant) {
                         $tenant_id = $tenant['tenant_id_1'];
 
+                        // Cập nhật trạng thái khách thuê
+                        $stmt_update_tenant = $pdo->prepare("UPDATE tenant SET trangthai = 1 WHERE id = ?");
+                        $stmt_update_tenant->execute([$tenant_id]);
                     }
 
-                    // $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
-                    $stmt_update_room = $pdo->prepare("UPDATE tenant SET trangthai = 1 WHERE id = ?");
-                    $stmt_update_room->execute([$tenant_id]);
+                    // Cập nhật số lượng phòng
+                    $stmt_update_room = $pdo->prepare("UPDATE room SET soluong = 0 WHERE id = ?");
+                    $stmt_update_room->execute([$room_id]);
                 }
 
                 // Cập nhật thông tin hợp đồng trong cơ sở dữ liệu
