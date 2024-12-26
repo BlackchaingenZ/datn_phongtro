@@ -1,15 +1,18 @@
 <?php
-$listAllReceipt = getRaw("SELECT payment.id, room.tenphong, category_spend.tendanhmuc, sotien, ghichu, ngaychi, phuongthuc FROM payment INNER JOIN room ON payment.room_id = room.id 
-INNER JOIN category_spend ON payment.danhmucchi_id = category_spend.id");
+$listAllReceipt = getRaw("SELECT payment.id, room.tenphong, category_spend.tendanhmuc, sotien, ghichu, ngaychi, phuongthuc 
+FROM payment 
+INNER JOIN room ON payment.room_id = room.id 
+INNER JOIN category_spend ON payment.danhmucchi_id = category_spend.id
+ORDER BY payment.id DESC");
 $dataReceipt = json_encode($listAllReceipt);
 
-$receiptFinal = json_decode($dataReceipt,true);
+$receiptFinal = json_decode($dataReceipt, true);
 
 
 require_once './vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\IOFactory; 
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -21,24 +24,24 @@ $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 
 $spreadsheet->getDefaultStyle()
-            ->getFont()
-            ->setName('Arial')
-            ->setSize(10);
+   ->getFont()
+   ->setName('Arial')
+   ->setSize(10);
 
 $tableHead = [
    'font' => [
       'color' => [
          'rgb' => 'FFFFFF'
       ],
-      'bold'=> true,
-      'size'=> 10
-      ],
-      'fill' => [
-         'fillType' => Fill::FILL_SOLID,
-         'startColor' => [
-            'rgb' => "538ED5",
-         ]
-         ]
+      'bold' => true,
+      'size' => 10
+   ],
+   'fill' => [
+      'fillType' => Fill::FILL_SOLID,
+      'startColor' => [
+         'rgb' => "538ED5",
+      ]
+   ]
 ];
 
 //even row
@@ -65,7 +68,7 @@ $oddRow = [
 
 // heading 
 $spreadsheet->getActiveSheet()
-            ->setCellValue('A1', 'Danh sách phiếu chi');
+   ->setCellValue('A1', 'Danh sách phiếu chi');
 
 // merge heading
 $spreadsheet->getActiveSheet()->mergeCells("A1:F1");
@@ -86,55 +89,62 @@ $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 
 //header Text
 $spreadsheet->getActiveSheet()
-            ->setCellValue('A2', 'ID')
-            ->setCellValue('B2', 'Khoản chi')
-            ->setCellValue('C2', 'Tên phòng')
-            ->setCellValue('D2', 'Số tiền')
-            ->setCellValue('E2', 'Ghi chú')
-            ->setCellValue('F2', 'Ngày phát sinh')
-            ->setCellValue('G2', 'Phương thức');
+   ->setCellValue('A2', 'ID')
+   ->setCellValue('B2', 'Khoản chi')
+   ->setCellValue('C2', 'Tên phòng')
+   ->setCellValue('D2', 'Số tiền')
+   ->setCellValue('E2', 'Ghi chú')
+   ->setCellValue('F2', 'Ngày phát sinh')
+   ->setCellValue('G2', 'Phương thức');
 
 // background color
 $spreadsheet->getActiveSheet()->getStyle('A2:G2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
-            ->getStyle('E')
-            ->getNumberFormat()
-            ->setFormatCode(NumberFormat::FORMAT_NUMBER);
+   ->getStyle('E')
+   ->getNumberFormat()
+   ->setFormatCode(NumberFormat::FORMAT_NUMBER);
 
 $spreadsheet->getActiveSheet()
-            ->getStyle('F')
-            ->getNumberFormat()
-            ->setFormatCode(NumberFormat::FORMAT_DATE_YYYYMMDD);
+   ->getStyle('F')
+   ->getNumberFormat()
+   ->setFormatCode(NumberFormat::FORMAT_DATE_YYYYMMDD);
 
 // Content
 $date = time();
 
 $row = 3;
-foreach($receiptFinal as $item) {
-      $spreadsheet->getActiveSheet()->setCellValue('A'.$row, $item['id']);
-      $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $item['tendanhmuc']);
-      $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $item['tenphong']);
-      $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $item['sotien']);
-      $spreadsheet->getActiveSheet()->setCellValue('E'.$row, $item['ghichu']);
-      $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['ngaychi']);
-      $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['phuongthuc']);
+foreach ($receiptFinal as $item) {
+   $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $item['id']);
+   $spreadsheet->getActiveSheet()
+       ->getStyle('A' . $row)
+       ->getAlignment()
+       ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+   
+   $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $item['tendanhmuc']);
+   $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $item['tenphong']);
+   $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $item['sotien']);
+   $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $item['ghichu']);
+   $spreadsheet->getActiveSheet()->setCellValue('F' . $row, getDateFormat($item['ngaychi'],'d-m-Y'));
+   $phuongThuc = ($item['phuongthuc'] == 0) ? 'Tiền mặt' : 'Chuyển khoản';
+   $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $phuongThuc);
 
-               // set row style
-             if($row % 2 == 0) {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':G'.$row)->applyFromArray($evenRow);
-             }else {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':G'.$row)->applyFromArray($oddRow);
-             }
 
-             $row++;
+   // set row style
+   if ($row % 2 == 0) {
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':G' . $row)->applyFromArray($evenRow);
+   } else {
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':G' . $row)->applyFromArray($oddRow);
+   }
+
+   $row++;
 }
 
 // set the autofilter
 $firstRow = 2;
-$lastRow = $row-1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":G".$lastRow);
+$lastRow = $row - 1;
+$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":G" . $lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -143,4 +153,3 @@ header('Content-Disposition: attachment;filename="Danh sách phiếu chi.xlsx"')
 // $writer = IOFactory::createWriter($spreadsheet, 'Xlsx'); 
 $writer = new Xlsx($spreadsheet);
 $writer->save('php://output');
-

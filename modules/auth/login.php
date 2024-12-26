@@ -82,8 +82,6 @@ $old = getFlashData('old');
         <p class="text-center title-login">HỆ THỐNG QUẢN LÝ PHÒNG TRỌ THẢO NGUYÊN</p>
         <p class="text-center" style="color: #000; margin-bottom: 20px">Hiệu quả - Chuyên nghiệp - Tiết kiệm chi phí</p>
 
-
-
         <form action="" method="post">
             
             <div class="form-group">

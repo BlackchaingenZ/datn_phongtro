@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Áp dụng bảng giá'
+    'pageTitle' => 'Danh sách phòng-bảng giá'
 ];
 
 layout('header', 'admin', $data);
@@ -22,17 +22,20 @@ $listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
 function getRoomAndCostList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-        GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
-        FROM room r
-        LEFT JOIN cost_room er ON r.id = er.room_id
-        LEFT JOIN cost e ON er.cost_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id ASC
+        SELECT room.id AS room_id, room.tenphong,
+               GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
+               GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+        FROM room
+        LEFT JOIN cost_room ON room.id = cost_room.room_id
+        LEFT JOIN cost ON cost_room.cost_id = cost.id
+        GROUP BY room.id
+        HAVING tengia IS NOT NULL  
+        -- Chỉ hiển thị phòng có giá thuê
+        ORDER BY room.id DESC
     ";
     return getRaw($sql);
 }
+
 
 $searchTerm = '';
 if (!empty($_POST['search_term'])) {
@@ -41,17 +44,19 @@ if (!empty($_POST['search_term'])) {
 
 // Truy vấn để tìm tên phòng và cost theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, 
-           r.tenphong, 
-           GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-           GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
-    FROM room r
-    JOIN cost_room er ON r.id = er.room_id
-    JOIN cost e ON er.cost_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tengia LIKE '%$searchTerm%'
-    GROUP BY r.id, r.tenphong
-    ORDER BY r.tenphong ASC
+    SELECT room.id AS room_id, 
+           room.tenphong, 
+           room.tiencoc,
+           GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
+           GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+    FROM room
+    LEFT JOIN cost_room ON room.id = cost_room.room_id
+    LEFT JOIN cost ON cost_room.cost_id = cost.id
+    WHERE room.tenphong LIKE '%$searchTerm%' OR cost.tengia LIKE '%$searchTerm%'
+    GROUP BY room.id, room.tenphong
+    ORDER BY room.tenphong ASC
 ";
+
 
 $searchResults = getRaw($sqlSearchRooms);
 $listRoomAndCost = getRoomAndCostList();
@@ -82,9 +87,8 @@ $listRoomAndCost = getRoomAndCostList();
             </div>
             <div class="form-group mt-3">
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('cost', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
-                <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng  </a>
+                <a href="<?php echo getLinkAdmin('cost', 'applycost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('cost', 'applyroom'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('cost', 'removecost') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 
@@ -92,11 +96,11 @@ $listRoomAndCost = getRoomAndCostList();
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
+                        <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                         <th>STT</th>
-                        <th>Mã phòng</th>
+                        <th>ID phòng</th>
                         <th>Tên Phòng</th>
-                        <th>Tên loại giá</th>
+                        <th>Tên bảng giá</th>
                         <th>Ngày áp dụng</th>
                         <th>Thao tác</th>
                     </tr>
@@ -115,12 +119,36 @@ $listRoomAndCost = getRoomAndCostList();
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
                                 <td><?php echo $item['tenphong']; ?></td>
-                                <td><b><?php echo $item['tengia']; ?></b></td>
-                                <td><?php echo $item['thoigianapdung']; ?></td>
-                                <td class="" style="width: 100px; height: 50px;">
-                                <a href="<?php echo getLinkAdmin('cost', 'editapplycost', ['applycost' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+                                <td>
+                                    <?php
+                                    if (empty($item['tengia'])) {
+                                        echo "Trống";
+                                    } else {
+                                        echo "" . $item['tengia'];
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if (!empty($item['thoigianapdung'])) {
+                                        // Giả sử $item['thoigianapdung'] là ngày có định dạng Y-m-d (năm-tháng-ngày)
+                                        $date = DateTime::createFromFormat('Y-m-d', $item['thoigianapdung']);
 
-                                <a href="<?php echo getLinkAdmin('cost', 'deleteapplycost', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
+                                        // Kiểm tra nếu chuyển đổi thành công
+                                        if ($date && $date->format('Y-m-d') === $item['thoigianapdung']) {
+                                            echo $date->format('d-m-Y'); // Hiển thị ngày tháng năm
+                                        } else {
+                                            echo "Không đúng định dạng ngày";
+                                        }
+                                    } else {
+                                        echo "Trống";
+                                    }
+                                    ?>
+                                </td>
+                                <td class="" style="width: 100px; height: 50px; text-align: center">
+                                    <a href="<?php echo getLinkAdmin('cost', 'editapplycost', ['applycost' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
+
+                                    <a href="<?php echo getLinkAdmin('cost', 'deleteapplycost', ['room_id' => $item['room_id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
 
                                 </td>
                             </tr>
@@ -139,13 +167,3 @@ $listRoomAndCost = getRoomAndCostList();
 </div>
 
 <?php layout('footer', 'admin'); ?>
-
-<!-- <script>
-    function toggle(checkbox) {
-        let isChecked = checkbox.checked;
-        let checkboxes = document.querySelectorAll('input[name="records[]"]');
-        checkboxes.forEach(function(cb) {
-            cb.checked = isChecked;
-        });
-    }
-</script> -->

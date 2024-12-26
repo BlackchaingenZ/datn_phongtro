@@ -25,6 +25,18 @@ if (empty($areaCheck)) {
     redirect('?module=area&action=applyarea'); // Chỉnh sửa đường dẫn chuyển hướng
 }
 
+// // Lấy dữ liệu cũ
+// $areaDetail = firstRaw("
+//     SELECT area_room.*, area.mota 
+//     FROM area_room 
+//     JOIN area ON area_room.area_id = area.id 
+//     WHERE area_room.room_id = $roomId
+// ");
+
+if (!empty($areaDetail)) {
+    $old = $areaDetail; // Sử dụng thông tin cũ nếu đã có
+}
+
 // Xử lý sửa thông tin khi gửi biểu mẫu
 if (isPost()) {
     $body = getBody();
@@ -122,10 +134,9 @@ if (!empty($areaDetail) && empty($old)) {
 
                 <div class="form-group">
                     <label for="">Mô tả <span style="color: red">*</span></label>
-                    <input type="type" name="mota" class="form-control" value="<?php echo isset($old['mota']) ? htmlspecialchars($old['mota'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+                    <input type="text" name="mota" class="form-control" value="<?php echo isset($old['mota']) ? htmlspecialchars($old['mota'], ENT_QUOTES, 'UTF-8') : ''; ?>">
                     <?php echo form_error('mota', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-
             </div>
 
             <div class="form-group">

@@ -48,6 +48,10 @@ if (isPost()) {
         $errors['tiencoc']['required'] = '** Bạn chưa nhập giá tiền cọc!';
     }
 
+    if (empty(trim($body['soluongtoida']))) {
+        $errors['soluongtoida']['required'] = '** Bạn chưa nhập số lượng người tối đa';
+    }
+
 
     // Kiểm tra mảng error
     if (empty($errors)) {
@@ -57,10 +61,7 @@ if (isPost()) {
             'image' => $body['image'],
             'dientich' => $body['dientich'],
             'tiencoc' => $body['tiencoc'],
-            'ngaylaphd' => $body['ngaylaphd'],
-            'chuky' => $body['chuky'],
-            'ngayvao' => $body['ngayvao'],
-            'ngayra' => $body['ngayra'],
+            'soluongtoida' => $body['soluongtoida'],
         ];
 
         $condition = "id=$id";
@@ -78,7 +79,7 @@ if (isPost()) {
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
-        setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lê khi nhập vào
+        setFlashData('old', $body);  
     }
 
     redirect('?module=room&action=edit&id=' . $roomId);
@@ -108,13 +109,29 @@ layout('navbar', 'admin', $data);
                     <label for="name">Ảnh <span style="color: red">*</span></label>
                     <div class="row ckfinder-group">
                         <div class="col-10">
-                            <input type="text" placeholder="Ảnh phòng" name="image" id="name" class="form-control image-render" value="<?php echo old('image', $old); ?>">
+                            <input type="text"
+                                placeholder="Ảnh phòng"
+                                name="image"
+                                id="name"
+                                class="form-control image-render"
+                                value="<?php echo old('image', $old); ?>"
+                                oninput="updateImagePreview(this)">
                         </div>
                         <div class="col-1">
-                            <button type="button" class="btn btn-secondary btn choose-image"><i class="fa fa-upload"></i></button>
+                            <button type="button" class="btn btn-secondary btn choose-image">
+                                <i class="fa fa-upload"></i>
+                            </button>
                         </div>
                     </div>
+                    <!-- <div class="image-preview mt-2">
+                        <img id="image-preview"
+                            src="<?php echo old('image', $old); ?>"
+                            alt="Ảnh phòng"
+                            style="width: 140px; height: 150px; display: <?php echo old('image', $old) ? 'block' : 'none'; ?>; object-fit: cover;">
+                    </div> -->
+
                 </div>
+
                 <div class="form-group">
                     <label for="">Tên phòng <span style="color: red">*</span></label>
                     <input type="text" placeholder="Tên phòng" name="tenphong" id="" class="form-control" value="<?php echo old('tenphong', $old); ?>">
@@ -123,58 +140,41 @@ layout('navbar', 'admin', $data);
 
                 <div class="form-group">
                     <label for="">Diện tích</label>
-                    <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>">
+                    <input type="text" placeholder="Diện tích (m2)" name="dientich" id="" class="form-control" value="<?php echo old('dientich', $old); ?>" oninput="validateNumber(this)">
                     <?php echo form_error('dientich', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="">Giá tiền cọc <span style="color: red">*</span></label>
-                    <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>">
-                    <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
-                </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
             </div>
 
             <div class="col-5">
                 <div class="form-group">
-                    <label for="">Ngày lập hóa đơn</label>
-                    <select name="ngaylaphd" id="" class="form-select">
-                        <!-- <option value="">Chọn ngày</option> -->
-                        <?php
-                        for ($i = 1; $i <= 31; $i++) {
-                            $selected = ($i == $roomDetail['ngaylaphd']) ? "selected" : "";
-                        ?>
-                            <option value="<?php echo $i ?>" <?php echo $selected; ?>>Ngày <?php echo $i; ?></option>
-                        <?php }
-                        ?>
-                    </select>
+                    <label for="">Số lượng người tối đa</label>
+                    <input type="text" placeholder="Số lượng người tối đa" name="soluongtoida" id="" class="form-control" value="<?php echo old('soluongtoida', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('soluongtoida', $errors, '<span class="error">', '</span>'); ?>
                 </div>
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
 
                 <div class="form-group">
-                    <label for="">Chu kỳ thu tiền</label>
-                    <select name="chuky" id="" class="form-select">
-                        <!--<option value="">Chọn chu kỳ</option>-->
-                        <?php
-                        for ($i = 1; $i < 7; $i += 2) {
-                            $selectChuky = ($i == $roomDetail['chuky']) ? 'selected' : "";
-                        ?>
-                            <option value="<?php echo $i ?>" <?php echo $selectChuky; ?>><?php echo $i; ?> tháng</option>
-                        <?php }
-                        ?>
-                    </select>
+                    <label for="">Giá tiền cọc <span style="color: red">*</span></label>
+                    <input type="text" placeholder="Giá cọc (đ)" name="tiencoc" id="" class="form-control" value="<?php echo old('tiencoc', $old); ?>" oninput="validateNumber(this)">
+                    <?php echo form_error('tiencoc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
-
-                <div class="form-group">
-                    <label for="">Ngày vào ở</label>
-                    <input type="date" name="ngayvao" id="" class="form-control" value="<?php echo old('ngayvao', $old); ?>">
-                    <?php echo form_error('ngayvao', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Thời hạn hợp đồng <span style="color: red">*</span></label>
-                    <input type="date" name="ngayra" id="" class="form-control" value="<?php echo old('ngayra', $old); ?>">
-                    <?php echo form_error('ngayra', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
+                <script>
+                    // Hàm kiểm tra chỉ cho phép nhập số
+                    function validateNumber(input) {
+                        input.value = input.value.replace(/[^0-9\.]/g, ''); // Loại bỏ ký tự không phải số
+                    }
+                </script>
             </div>
             <div class="from-group">
                 <div class="btn-row">
@@ -191,7 +191,6 @@ layout('navbar', 'admin', $data);
 
     </div>
 </div>
-
 
 <?php
 layout('footer', 'admin');

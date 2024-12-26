@@ -1,6 +1,6 @@
 <?php
 $listAllroom = getRaw("
-    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue,            
+    SELECT room.*, area.tenkhuvuc AS tenkhuvuc, cost.giathue AS giathue, contract.ngayvao AS ngayvao,contract.ngayra AS ngayra,            
     GROUP_CONCAT(DISTINCT equipment.tenthietbi SEPARATOR ', ') AS tenthietbi
     FROM room
     JOIN area_room ON room.id = area_room.room_id
@@ -9,6 +9,7 @@ $listAllroom = getRaw("
     JOIN cost ON cost_room.cost_id = cost_id
     JOIN equipment_room ON room.id = equipment_room.room_id
     JOIN equipment ON equipment_room.equipment_id = equipment_id
+    LEFT JOIN contract ON contract.room_id = room.id
     GROUP BY room.id
 ");
 //group by giúp trả về tất cả phòng có trong room
@@ -76,6 +77,7 @@ $oddRow = [
 
 // heading 
 $spreadsheet->getActiveSheet()
+// ->mergeCells('A1:J1')
    ->setCellValue('A1', 'Danh sách phòng trọ');
 
 // merge heading
@@ -96,27 +98,23 @@ $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('L')->setWidth(50);
+$spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(50);
 
 //header Text
 $spreadsheet->getActiveSheet()
-   ->setCellValue('A2', 'ID')
+   ->setCellValue('A2', 'Mã Phòng')
    ->setCellValue('B2', 'Khu vực')
    ->setCellValue('C2', 'Tên phòng')
    ->setCellValue('D2', 'Diện tích')
    ->setCellValue('E2', 'Giá thuê')
    ->setCellValue('F2', 'Giá tiền cọc')
    ->setCellValue('G2', 'Số lượng')
-   ->setCellValue('H2', 'Ngày lập hóa đơn')
-   ->setCellValue('I2', 'Chu kỳ')
-   ->setCellValue('J2', 'Ngày vào ở')
-   ->setCellValue('K2', 'Ngày hết hạn')
-   ->setCellValue('L2', 'Cơ sở vật chất');
+   ->setCellValue('H2', 'Ngày vào ở')
+   ->setCellValue('I2', 'Ngày hết hạn')
+   ->setCellValue('J2', 'Cơ sở vật chất');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:L2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:J2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -136,22 +134,34 @@ $date = time();
 $row = 3;
 foreach ($roomFinal as $room) {
    $spreadsheet->getActiveSheet()->setCellValue('A' . $row, $room['id']);
+   $spreadsheet->getActiveSheet()
+      ->getStyle('A' . $row)
+      ->getAlignment()
+      ->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
    $spreadsheet->getActiveSheet()->setCellValue('B' . $row, $room['tenkhuvuc']);
    $spreadsheet->getActiveSheet()->setCellValue('C' . $row, $room['tenphong']);
    $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']);
+   // $spreadsheet->getActiveSheet()->setCellValue('D' . $row, $room['dientich']. 'm2');
    $spreadsheet->getActiveSheet()->setCellValue('E' . $row, $room['giathue']);
    $spreadsheet->getActiveSheet()->setCellValue('F' . $row, $room['tiencoc']);
    $spreadsheet->getActiveSheet()->setCellValue('G' . $row, $room['soluong']);
-   $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $room['ngaylaphd']);
-   $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['chuky']);
-   $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['ngayvao']);
-   $spreadsheet->getActiveSheet()->setCellValue('K' . $row, $room['ngayra']);
-   $spreadsheet->getActiveSheet()->setCellValue('L' . $row, $room['tenthietbi']);
+   $spreadsheet->getActiveSheet()->setCellValue('H' . $row, $room['ngayvao']);
+   // if (!empty($room['ngayvao'])) {
+   //    $spreadsheet->getActiveSheet()->setCellValue('H' . $row, getDateFormat($room['ngayvao'], 'd-m-Y'));
+   // } else {
+   //    $spreadsheet->getActiveSheet()->setCellValue('H' . $row, '');
+   // }
+   $spreadsheet->getActiveSheet()->setCellValue('I' . $row, $room['ngayra']);
+   $spreadsheet->getActiveSheet()->setCellValue('J' . $row, $room['tenthietbi']);
+
+   // $spreadsheet->getActiveSheet()->setCellValue('J' . $row, str_replace(',', "\n", $room['tenthietbi']));
+   // $spreadsheet->getActiveSheet()->getStyle('J' . $row)->getAlignment()->setWrapText(true);
+
    // set row style
    if ($row % 2 == 0) {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':L' . $row)->applyFromArray($evenRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($evenRow);
    } else {
-      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':L' . $row)->applyFromArray($oddRow);
+      $spreadsheet->getActiveSheet()->getStyle('A' . $row . ':J' . $row)->applyFromArray($oddRow);
    }
 
    $row++;
@@ -160,7 +170,7 @@ foreach ($roomFinal as $room) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row - 1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":L" . $lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A" . $firstRow . ":J" . $lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

@@ -58,7 +58,7 @@ if (isPost()) {
             setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
             setFlashData('msg_type', 'err');
             setFlashData('errors', ['update' => 'Có lỗi xảy ra khi cập nhật!']);
-            setFlashData('old', $body); 
+            setFlashData('old', $body);
             redirect('?module=area&action=editarea&id=' . $id); // Giữ lại dữ liệu
         }
     } else {
@@ -71,13 +71,12 @@ if (isPost()) {
     }
 }
 
-
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
+$areaDetail = firstRaw("SELECT *, tenkhuvuc FROM area WHERE id = $id");
 if (!empty($areaDetail) && empty($old)) {
     $old = $areaDetail;
 }
@@ -93,19 +92,15 @@ layout('navbar', 'admin', $data);
     <div class="box-content">
         <form action="" method="post" class="row">
             <div class="col-5">
-            <div class="form-group">
-                    <label for="">Thông tin khu vực:</label>
-                    <p><?php echo htmlspecialchars($AreaDetail['tenkhuvuc'], ENT_QUOTES, 'UTF-8'); ?></p>
-                </div>
                 <div class="form-group">
                     <label for="tengia">Tên khu vực <span style="color: red">*</span></label>
                     <input type="text" name="tenkhuvuc" class="form-control" value="<?php echo old('tenkhuvuc', $old); ?>">
                     <?php echo form_error('tenkhuvuc', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
-                <div class="form-group" >
+                <div class="form-group">
                     <label for="giathue">Mô tả <span style="color: red">*</span></label>
-                    <input type="text" name="mota" class="form-control" value="<?php echo old('mota', $old); ?>  " style="width: 100%;height:100px"s>
+                    <input type="text" name="mota" class="form-control" value="<?php echo old('mota', $old); ?>  " style="width: 100%;height:100px" s>
                     <?php echo form_error('mota', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
@@ -121,7 +116,7 @@ layout('navbar', 'admin', $data);
                 <a style="margin-right: 20px" href="<?php echo getLinkAdmin('area', 'listarea') ?>" class="btn btn-secondary">
                     <i class="fa fa-arrow-circle-left"></i> Quay lại
                 </a>
-                <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Chỉnh sửa khu vực</button>
+                <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Cập nhật</button>
             </div>
         </form>
     </div>

@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Thêm mới áp dụng giá'
+    'pageTitle' => 'Áp dụng giá cho phòng trọ'
 ];
 
 layout('header', 'admin', $data);
@@ -51,41 +51,22 @@ if (isPost()) {
 
         // Kiểm tra mảng error
         if (empty($errors)) {
-            // Kiểm tra xem phòng đã có giá thuê chưa
-            $checkExistsQuery = "
-                SELECT COUNT(*) AS count
-                FROM cost_room
-                WHERE room_id = :room_id 
-            ";
-            $stmt = $pdo->prepare($checkExistsQuery);
-            $stmt->execute([
-                ':room_id' => $body['room_id'],
-            ]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($result['count'] > 0) {
-                // Nếu giá đã tồn tại trong phòng
-                setFlashData('msg', 'Không thể thêm vì phòng này đã có giá thuê rồi !');
-                setFlashData('msg_type', 'err');
-                redirect('?module=cost&action=applycost'); // Chuyển hướng về trang phân bổ
+            // Không có lỗi nào, tiến hành thêm giá
+            $dataInsert = [
+                'cost_id' => $body['cost_id'],
+                'room_id' => $body['room_id'],
+                'thoigianapdung' => $body['thoigianapdung'], // Thêm thời gian cấp vào mảng chèn
+            ];
+        
+            $insertStatus = insert('cost_room', $dataInsert);
+            if ($insertStatus) {
+                setFlashData('msg', 'Thêm loại giá thành công');
+                setFlashData('msg_type', 'suc');
+                redirect('?module=cost&action=applyroom');
             } else {
-                // Không có lỗi nào, tiến hành thêm giá
-                $dataInsert = [
-                    'cost_id' => $body['cost_id'],
-                    'room_id' => $body['room_id'],
-                    'thoigianapdung' => $body['thoigianapdung'], // Thêm thời gian cấp vào mảng chèn
-                ];
-
-                $insertStatus = insert('cost_room', $dataInsert); // Sử dụng bảng cost_room để lưu thông tin phân bổ
-                if ($insertStatus) {
-                    setFlashData('msg', 'Thêm loại giá thành công');
-                    setFlashData('msg_type', 'suc');
-                    redirect('?module=cost&action=applyroom');
-                } else {
-                    setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
-                    setFlashData('msg_type', 'err');
-                    redirect('?module=cost&action=applyroom');
-                }
+                setFlashData('msg', 'Hệ thống đang gặp sự cố, vui lòng thử lại sau');
+                setFlashData('msg_type', 'err');
+                redirect('?module=cost&action=applyroom');
             }
         }
 
@@ -124,29 +105,44 @@ $linkreturndistribite = getLinkAdmin('equipment', 'listdistribute');
 $listAllCost = getRaw("SELECT * FROM cost ORDER BY giathue ASC");
 
 //láy phòng nào chưa có giathue
-$listAllRoom = getRaw("
+
+$allRoom = getRaw("
     SELECT room.id, room.tenphong
     FROM room 
-    LEFT JOIN cost_room ON cost_room.room_id = room.id
-    WHERE cost_room.cost_id IS NULL
+    WHERE room.id NOT IN (SELECT room_id FROM cost_room)  -- Kiểm tra phòng chưa có thiết bị
     ORDER BY room.tenphong
 ");
 
+$allArea = getRaw("SELECT id, tenkhuvuc FROM area ORDER BY tenkhuvuc");
+$roomsByArea = [];
+
+foreach ($allRoom as $room) {
+    // Lấy các khu vực của phòng
+    $areaIds = getRaw("SELECT area_id FROM area_room WHERE room_id = " . $room['id']);
+    foreach ($areaIds as $area) {
+        // Thêm thông tin vào mảng theo khu vực
+        $roomsByArea[$area['area_id']][] = [
+            'id' => $room['id'],
+            'tenphong' => $room['tenphong']
+        ];
+    }
+}
 // Hàm lấy danh sách phòng và cost
 function getRoomAndCostList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tengia SEPARATOR ', ') AS tengia, 
-        GROUP_CONCAT(er.thoigianapdung SEPARATOR ', ') AS thoigianapdung
-        FROM room r
-        LEFT JOIN cost_room er ON r.id = er.room_id
-        LEFT JOIN cost e ON er.cost_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id ASC
+        SELECT room.id AS room_id, room.tenphong, 
+               GROUP_CONCAT(cost.tengia SEPARATOR ', ') AS tengia, 
+               GROUP_CONCAT(cost_room.thoigianapdung SEPARATOR ', ') AS thoigianapdung
+        FROM room
+        LEFT JOIN cost_room ON room.id = cost_room.room_id
+        LEFT JOIN cost ON cost_room.cost_id = cost.id
+        GROUP BY room.id
+        ORDER BY room.id ASC
     ";
     return getRaw($sql);
 }
+
 
 
 $listRoomAndCost = getRoomAndCostList();
@@ -162,11 +158,39 @@ $listRoomAndCost = getRoomAndCostList();
 
     <div class="box-content">
         <form action="" method="post" class="row">
-            <div class="col-5">
+            <div class="col-5 cut">
+                <div class="form-group">
+                    <label for="">Chọn khu vực <span style="color: red">*</span></label>
+                    <select name="area_id" id="area-select" class="form-select">
+                        <option value="" disabled selected>Chọn khu vực</option>
+                        <?php
+                        if (!empty($allArea)) {
+                            foreach ($allArea as $item) {
+                        ?>
+                                <option value="<?php echo $item['id'] ?>"
+                                    <?php echo (!empty($areaId) && $areaId == $item['id']) ? 'selected' : '' ?>>
+                                    <?php echo $item['tenkhuvuc'] ?></option>
+                        <?php
+                            }
+                        }
+                        ?>
+                    </select>
+                    <?php echo form_error('area_id', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="">Chọn phòng <span style="color: red">*</span></label>
+                    <select name="room_id" id="room-select" class="form-select">
+                        <option value="" disabled selected>Chọn phòng</option>
+                        <!-- Danh sách phòng sẽ được cập nhật qua JavaScript -->
+                    </select>
+                    <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
+                </div>
+
                 <div class="form-group">
                     <label for="">Chọn tên giá <span style="color: red">*</span></label>
                     <select name="cost_id" class="form-control">
-                        <option value="">Chọn tên giá</option>
+                        <option value="" disabled selected>Chọn tên giá</option>
                         <?php
                         if (!empty($listAllCost)) {
                             foreach ($listAllCost as $item) {
@@ -178,23 +202,6 @@ $listRoomAndCost = getRoomAndCostList();
                         ?>
                     </select>
                     <?php echo form_error('cost_id', $errors, '<span class="error">', '</span>'); ?>
-                </div>
-
-                <div class="form-group">
-                    <label for="">Chọn phòng trọ <span style="color: red">*</span></label>
-                    <select name="room_id" class="form-control">
-                        <option value="">Chọn phòng</option>
-                        <?php
-                        if (!empty($listAllRoom)) {
-                            foreach ($listAllRoom as $item) {
-                        ?>
-                                <option value="<?php echo htmlspecialchars($item['id'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($item['tenphong'], ENT_QUOTES, 'UTF-8'); ?></option>
-                        <?php
-                            }
-                        }
-                        ?>
-                    </select>
-                    <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
 
                 <div class="form-group">
@@ -219,3 +226,22 @@ $listRoomAndCost = getRoomAndCostList();
 </div>
 
 <?php layout('footer', 'admin'); ?>
+<script>
+    const roomsByArea = <?php echo json_encode($roomsByArea); ?>; // Chuyển đổi mảng PHP sang JS
+    const areaSelect = document.getElementById('area-select');
+    const roomSelect = document.getElementById('room-select');
+
+    areaSelect.addEventListener('change', function() {
+        const areaId = this.value;
+        roomSelect.innerHTML = '<option value="" disabled selected>Chọn phòng</option>'; // Reset danh sách phòng
+
+        if (areaId && roomsByArea[areaId]) {
+            roomsByArea[areaId].forEach(room => {
+                const option = document.createElement('option');
+                option.value = room.id;
+                option.textContent = room.tenphong; // Hiển thị chỉ tên phòng
+                roomSelect.appendChild(option);
+            });
+        }
+    });
+</script>

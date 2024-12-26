@@ -5,12 +5,14 @@ $body = getBody();
 if (!empty($body['id'])) {
     $roomId = $body['id'];
 
-    // Kiểm tra xem phòng có hợp đồng đang liên kết không
-    $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id = $roomId");
 
-    if ($checkContractInRoom) {
-        // Nếu có hợp đồng liên kết, thông báo không thể xóa
-        setFlashData('msg', 'Phòng đang có hợp đồng, không thể xóa!');
+    $checkContractInRoom = getRaw("SELECT id FROM contract WHERE room_id = $roomId");
+    if (!empty($checkContractInRoom)) {
+        // $contractIds = array_column($checkContractInRoom, 'id');
+        // $contractIdList = implode(', ', $contractIds);
+        // setFlashData('msg', "Phòng  (ID: $contractIdList), không thể xóa!");
+        setFlashData('msg', "Phòng đang có hợp đồng không thể xóa!");
+
         setFlashData('msg_type', 'err');
     } else {
         // Kiểm tra xem phòng có tenant liên kết không

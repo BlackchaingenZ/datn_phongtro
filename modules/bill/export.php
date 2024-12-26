@@ -1,5 +1,5 @@
 <?php
-$listAlltenant = getRaw("SELECT room.tenphong, bill.id, tienphong, tiendien, tiennuoc, tienrac, tienmang, nocu, tongtien, bill.create_at FROM bill INNER JOIN room ON room.id = bill.room_id");
+$listAlltenant = getRaw("SELECT room.tenphong, bill.id, bill.mahoadon, tienphong, tiendien, tiennuoc, tienrac, tienmang, thang, tongtien, bill.create_at FROM bill INNER JOIN room ON room.id = bill.room_id");
 
 // print_r($listAlltenant); die;
 $dataTenant = json_encode($listAlltenant);
@@ -79,7 +79,7 @@ $spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setVertical(Alig
 // set column with
 $spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(6);
 $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(20);
-$spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(20);
 $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
@@ -87,22 +87,24 @@ $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 
 //header Text
 $spreadsheet->getActiveSheet()
             ->setCellValue('A2', 'ID')
-            ->setCellValue('B2', 'Tên phòng')
-            ->setCellValue('C2', 'Tiền phòng')
-            ->setCellValue('D2', 'Tiền điện')
-            ->setCellValue('E2', 'Tiền nước')
-            ->setCellValue('F2', 'Tiền rác')
-            ->setCellValue('G2', 'Tiền Wifi')
-            ->setCellValue('H2', 'Nợ cũ')
-            ->setCellValue('I2', 'Tổng cộng')
-            ->setCellValue('J2', 'Ngày lập hóa đơn');
+            ->setCellValue('B2', 'Mã hoá đơn')
+            ->setCellValue('C2', 'Tên phòng')
+            ->setCellValue('D2', 'Tiền phòng')
+            ->setCellValue('E2', 'Tiền điện')
+            ->setCellValue('F2', 'Tiền nước')
+            ->setCellValue('G2', 'Tiền rác')
+            ->setCellValue('H2', 'Tiền Wifi')
+            ->setCellValue('I2', 'Tháng')
+            ->setCellValue('J2', 'Tổng cộng')
+            ->setCellValue('K2', 'Ngày lập hóa đơn');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:J2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:K2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -121,21 +123,22 @@ $date = time();
 $row = 3;
 foreach($tenantFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('A'.$row, $item['id']);
-      $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $item['tenphong']);
-      $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $item['tienphong']);
-      $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $item['tiendien']);
-      $spreadsheet->getActiveSheet()->setCellValue('E'.$row, $item['tiennuoc']);
-      $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['tienrac']);
-      $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['tienmang']);
-      $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $item['nocu']);
-      $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['tongtien']);
-      $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['create_at']);    
+      $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $item['mahoadon']);
+      $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $item['tenphong']);
+      $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $item['tienphong']);
+      $spreadsheet->getActiveSheet()->setCellValue('E'.$row, $item['tiendien']);
+      $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['tiennuoc']);
+      $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['tienrac']);
+      $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $item['tienmang']);
+      $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['thang']);
+      $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['tongtien']);
+      $spreadsheet->getActiveSheet()->setCellValue('K'.$row, $item['create_at']);    
 
                // set row style
              if($row % 2 == 0) {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($evenRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($evenRow);
              }else {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':J'.$row)->applyFromArray($oddRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($oddRow);
              }
 
              $row++;
@@ -144,7 +147,7 @@ foreach($tenantFinal as $item) {
 // set the autofilter
 $firstRow = 2;
 $lastRow = $row-1;
-$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":J".$lastRow);
+$spreadsheet->getActiveSheet()->setAutoFilter("A".$firstRow.":K".$lastRow);
 
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

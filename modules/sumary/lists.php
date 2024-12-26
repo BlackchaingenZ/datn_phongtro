@@ -3,7 +3,7 @@
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Thu/Chi - Tổng kết'
+    'pageTitle' => 'Báo cáo thu chi'
 ];
 
 layout('header', 'admin', $data);
@@ -31,9 +31,68 @@ if ($filterType && $dateInput) {
         $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month");
         $tongthu = $sql['tong_thu'];
 
-        // Tiền cọc
+        $sql = firstRaw("
+        SELECT 
+            SUM(tong_tien) AS tong_tien
+        FROM (
+            -- Tổng tiền từ bảng receipt
+            SELECT SUM(sotien) AS tong_tien 
+            FROM receipt 
+            WHERE YEAR(ngaythu) = $year 
+              AND MONTH(ngaythu) = $month
+            
+ UNION ALL
+        
+        -- Tổng tiền đã thu từ bảng bill với trangthaihoadon = 1
+        SELECT SUM(sotienconthieu) AS tong_tien 
+        FROM bill 
+        WHERE YEAR(create_at) = $year 
+          AND MONTH(create_at) = $month 
+          AND trangthaihoadon = 1
+        
+        UNION ALL
+        
+        -- Tổng tiền còn nợ từ bảng bill với trangthaihoadon = 2 hoặc 3
+        SELECT SUM(sotienconthieu) AS tong_tien 
+        FROM bill 
+        WHERE YEAR(create_at) = $year 
+          AND MONTH(create_at) = $month 
+          AND trangthaihoadon IN (2, 3)
+            
+            UNION ALL
+            
+            -- Tổng tiền từ bảng contract khi không có receipt liên quan
+            SELECT SUM(contract.sotiencoc) AS tong_tien
+            FROM contract
+            LEFT JOIN receipt ON receipt.contract_id = contract.id
+            WHERE YEAR(contract.create_at) = $year 
+              AND MONTH(contract.create_at) = $month
+              AND receipt.contract_id IS NULL
+        ) AS combined
+    ");
+    
+        $tongthudukien = $sql['tong_tien'];
+        $tongthuconthieu = $tongthudukien - $tongthu;
+        // Tiền cọcS
         $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
         $tiencoc = $sql['tien_coc'];
+
+        // Truy vấn tổng tiền cọc từ bảng receipt
+        $sqlReceipt = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
+
+        $sqlContract = firstRaw("SELECT SUM(contract.sotiencoc) AS tien_coc_contract 
+        FROM contract 
+        WHERE YEAR(contract.create_at) = $year 
+        AND MONTH(contract.create_at) = $month 
+        AND NOT EXISTS (
+          SELECT 1 
+          FROM receipt 
+          WHERE receipt.contract_id = contract.id
+      )");
+
+        // Lấy tổng tiền cọc từ cả hai bảng
+        $tiencocdukien = ($sqlReceipt['tien_coc'] ?? 0) + ($sqlContract['tien_coc_contract'] ?? 0);
+        $tiencocconthieu = $tiencocdukien - $tiencoc;
 
         // Tiền chi
         $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) = $month");
@@ -41,85 +100,17 @@ if ($filterType && $dateInput) {
 
         $loinhuan = $tongthu - $tongchi - $tiencoc;
 
-        $labels = ["$year-$month"];
+        $labels[] = "$month-$year";
         $profits = [$loinhuan];
-
-    } elseif ($filterType == 'year') {
-        $year = date('Y', strtotime($dateInput));
-
-        for ($month = 1; $month <= 12; $month++) {
-            $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month");
-            $monthly_thu = $sql['tong_thu'] ?: 0;
-
-            // Tính tổng tiền đặt cọc hàng tháng
-            $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
-            $monthly_datcoc = $sql['tien_coc'] ?: 0;
-
-            $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) = $month");
-            $monthly_chi = $sql['tong_chi'] ?: 0;
-
-            $monthly_profit = $monthly_thu - $monthly_chi - $monthly_datcoc;
-
-            $labels[] = "$year-$month";
-            $profits[] = $monthly_profit;
-        }
-
-        $tongthu = array_sum(array_map(function($month) use ($year) {
-            $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month");
-            return $sql['tong_thu'] ?: 0;
-        }, range(1, 12)));
-
-        $tiencoc = array_sum(array_map(function($month) use ($year) {
-            $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) = $month AND danhmucthu_id = 2");
-            return $sql['tien_coc'] ?: 0;
-        }, range(1, 12)));
-
-        $tongchi = array_sum(array_map(function($month) use ($year) {
-            $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) = $month");
-            return $sql['tong_chi'] ?: 0;
-        }, range(1, 12)));
-
-        $loinhuan = $tongthu - $tongchi - $tiencoc;
-
-    } elseif ($filterType == 'quarter') {
-        $year = date('Y', strtotime($dateInput));
-
-        for ($quarter = 1; $quarter <= 4; $quarter++) {
-            $startMonth = ($quarter - 1) * 3 + 1;
-            $endMonth = $startMonth + 2;
-
-            $sql = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) BETWEEN $startMonth AND $endMonth");
-            $quarterly_thu = $sql['tong_thu'] ?: 0;
-
-            $sql = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaythu) = $year AND danhmucthu_id = 2 AND MONTH(ngaythu) BETWEEN $startMonth AND $endMonth");
-            $quarterly_coc = $sql['tien_coc'] ?: 0;
-
-            $sql = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) BETWEEN $startMonth AND $endMonth");
-            $quarterly_chi = $sql['tong_chi'] ?: 0;
-
-            $quarterly_profit = $quarterly_thu - $quarterly_chi - $quarterly_coc;
-
-            $labels[] = "Quý $quarter / $year";
-            $profits[] = $quarterly_profit;
-        }
-
-        $currentQuarter = ceil(date('n', strtotime($dateInput)) / 3);
-        $startMonth = ($currentQuarter - 1) * 3 + 1;
-        $endMonth = $startMonth + 2;
-
-        $tongthu = firstRaw("SELECT SUM(sotien) as tong_thu FROM receipt WHERE YEAR(ngaythu) = $year AND MONTH(ngaythu) BETWEEN $startMonth AND $endMonth")['tong_thu'];
-        $tongchi = firstRaw("SELECT SUM(sotien) as tong_chi FROM payment WHERE YEAR(ngaychi) = $year AND MONTH(ngaychi) BETWEEN $startMonth AND $endMonth")['tong_chi'];
-        $tiencoc = firstRaw("SELECT SUM(sotien) as tien_coc FROM receipt WHERE YEAR(ngaychi) = $year AND danhmucthu_id = 2 AND MONTH(ngaychi) BETWEEN $startMonth AND $endMonth")['tien_coc'];
-        $loinhuan = $tongthu - $tongchi - $tiencoc;
+        $loinhuandukien = $tongthudukien - $tongchi - $tiencocdukien;
     }
+    $year = date('Y', strtotime($dateInput));
 }
-
 $msg = getFlashData('msg');
 $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 ?>
-
 <?php
 layout('navbar', 'admin', $data);
 ?>
@@ -134,10 +125,8 @@ layout('navbar', 'admin', $data);
                 <div class="row">
                     <div class="col-3">
                         <select name="filter_type" class="form-select" onchange="toggleInputType()">
-                            <option value="">Tổng kết theo</option>
+                            <option value="" disabled selected>Tổng kết theo</option>
                             <option value="month" <?php echo ($filterType == 'month') ? 'selected' : ''; ?>>Theo tháng</option>
-                            <option value="quarter" <?php echo ($filterType == 'quarter') ? 'selected' : ''; ?>>Theo quý</option>
-                            <option value="year" <?php echo ($filterType == 'year') ? 'selected' : ''; ?>>Theo năm</option>
                         </select>
                     </div>
 
@@ -148,44 +137,87 @@ layout('navbar', 'admin', $data);
                     <div class="col">
                         <button style="height: 50px; width: 50px" type="submit" class="btn btn-secondary" <?php echo !$filterType ? 'disabled' : ''; ?>><i class="fa fa-search"></i></button>
                     </div>
+
                 </div>
             </form>
+            <a href="<?php echo getLinkAdmin('sumary', 'search') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Tra cứu</a>
+            <a href="<?php echo getLinkAdmin('sumary', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+            <h3 class="sumary-title">THỐNG KÊ DOANH THU</h3>
+            <!-- <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p> -->
+            <p style="color:red"><i>Lợi nhuận (thực tế) = ( Tổng đã thu - tổng chi - tổng tiền cọc ) </i></p>
 
-            <a href="<?php echo getLinkAdmin('collect'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý danh mục thu</a>
-            <a href="<?php echo getLinkAdmin('spend'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý danh mục chi</a>
-            <a href="<?php echo getLinkAdmin('receipt'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý phiếu thu</a>
-            <a href="<?php echo getLinkAdmin('payment'); ?>" class="btn btn-secondary"><i class="fa-solid fa-list-check"></i> Quản lý phiếu chi</a>
-
-            <h3 class="sumary-title">Thống kê doanh thu theo từng tháng</h3>
-            <p><i>Số liệu dưới đây mặc định được thống kê trong tháng hiện tại</i></p>
-            
             <div class="report-receipt-spend">
                 <div class="report-receipt">
-                    <p>Tổng khoản thu </p>
+                    <p>Tổng thu dự kiến </p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
-                        <p><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
+                        <p style="color: blue"><?php echo number_format($tongthudukien, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
-
+                <div class="report-receipt">
+                    <p>Tổng đã thu </p>
+                    <div class="report-ts">
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
+                        <p style="color: blue"><?php echo number_format($tongthu, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+                <div class="report-receipt">
+                    <p>Tổng chưa thu </p>
+                    <div class="report-ts">
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
+                        <p style="color: blue"><?php echo number_format($tongthuconthieu, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="report-receipt-spend">
                 <div class="report-spend">
-                    <p>Tổng khoản chi (tiền ra)</p>
+                    <p>Tổng tiền cọc (dự kiến)</p>
                     <div class="report-ts">
                         <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
-                        <p style="color: red"><?php echo number_format($tongchi, 0, ',', '.') . 'đ'; ?></p>
+                        <p style="color: red"><?php echo number_format($tiencocdukien, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
 
                 <div class="report-spend">
                     <p>Tổng tiền cọc (đã thu)</p>
                     <div class="report-ts">
-                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
-                        <p style="color: #ed6004"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
+                        <p style="color: red"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
                     </div>
                 </div>
 
                 <div class="report-spend">
-                    <p>Lợi nhuận</p>
+                    <p>Tổng tiền cọc (chưa thu)</p>
+                    <div class="report-ts">
+                        <img src="" alt="">
+                        <p style="color: red"><?php echo number_format($tiencocconthieu, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+            </div> -->
+            <div class="report-receipt-spend">
+                <div class="report-spend">
+                    <p>Tổng tiền cọc</p>
+                    <div class="report-ts">
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-up.svg" alt="">
+                        <p style="color: red"><?php echo number_format($tiencoc, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+                <div class="report-spend">
+                    <p>Tổng chi</p>
+                    <div class="report-ts">
+                        <img src="<?php echo _WEB_HOST_ADMIN_TEMPLATE; ?>/assets/img/trend-down.svg" alt="">
+                        <p style="color: orange"><?php echo number_format($tongchi, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+                <div class="report-spend">
+                    <p>Lợi nhuận (dự kiến)</p>
+                    <div class="report-ts">
+                        <img src="" alt="">
+                        <p><?php echo number_format($loinhuandukien, 0, ',', '.') . 'đ'; ?></p>
+                    </div>
+                </div>
+                <div class="report-spend">
+                    <p>Lợi nhuận (thực tế)</p>
                     <div class="report-ts">
                         <img src="" alt="">
                         <p><?php echo number_format($loinhuan, 0, ',', '.') . 'đ'; ?></p>
@@ -193,69 +225,9 @@ layout('navbar', 'admin', $data);
                 </div>
             </div>
         </div>
-
-        <div class="sumary-right">
-            <h3 class="">Biểu đồ lợi nhuận</h3>
-            <canvas id="profitChart" width="400" height="200"></canvas>
-        </div>
     </div>
 </div>
 
 <?php
 layout('footer', 'admin');
 ?>
-
-<script>
-    function toggleInputType() {
-        const filterType = document.querySelector('select[name="filter_type"]').value;
-        const dateInput = document.querySelector('input[name="date_input"]');
-        const submitButton = document.querySelector('button[type="submit"]');
-
-        if (!filterType) {
-            dateInput.disabled = true;
-            submitButton.disabled = true;
-        } else {
-            dateInput.disabled = false;
-            submitButton.disabled = false;
-        }
-
-        if (filterType === 'year') {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'year');
-        } else if (filterType === 'quarter') {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'quarter');
-        } else {
-            dateInput.type = 'month';
-            dateInput.setAttribute('data-filter-type', 'month');
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        toggleInputType();
-    });
-
-    const ctx = document.getElementById('profitChart').getContext('2d');
-    const profitChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($labels); ?>,
-            datasets: [{
-                label: 'Lợi nhuận',
-                data: <?php echo json_encode($profits); ?>,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-</script>
-
-       

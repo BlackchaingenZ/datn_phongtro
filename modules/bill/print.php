@@ -6,21 +6,34 @@ $id = $_GET['id'];
 // Truy vấn cơ sở dữ liệu
 $billDetail = firstRaw("SELECT * FROM bill WHERE id=$id");
 $date = firstRaw("SELECT MONTH(create_at) AS month, YEAR(create_at) AS year FROM bill WHERE id=$id");
-$tenantId = $billDetail['tenant_id'];
 $roomId = $billDetail['room_id'];
 
-$tenantDetail = firstRaw("SELECT * FROM tenant WHERE id = $tenantId");
-$roomDetail = firstRaw("SELECT * FROM room WHERE id = $roomId");
+$roomDetail = firstRaw("
+    SELECT room.*, cost.giathue, 
+           GROUP_CONCAT(tenant.tenkhach SEPARATOR ', ') AS tenkhach
+    FROM room
+    JOIN cost_room ON room.id = cost_room.room_id
+    JOIN cost ON cost_room.cost_id = cost.id
+    LEFT JOIN tenant ON room.id = tenant.room_id
+    LEFT JOIN contract_tenant ON tenant.id = contract_tenant.tenant_id_1
+    LEFT JOIN contract ON contract_tenant.contract_id_1 = contract.id
+    WHERE room.id = $roomId
+      AND contract.trangthaihopdong = 1
+    GROUP BY room.id
+");
 
 // Tạo một lớp con kế thừa từ TCPDF
-class PDF extends TCPDF {
+class PDF extends TCPDF
+{
     // Override phương thức Header nếu cần
-    public function Header() {
+    public function Header()
+    {
         // Thêm code Header ở đây nếu cần
     }
-    
+
     // Override phương thức Footer nếu cần
-    public function Footer() {
+    public function Footer()
+    {
         // Thêm code Footer ở đây nếu cần
     }
 }
@@ -43,17 +56,14 @@ $pdf->SetKeywords('Keywords');
 
 // HTML content
 $html = '
-
-<body  style="padding: 0; display: flex; justify-content: center;font-family: DejaVu Sans, Tahoma, Geneva, Verdana, sans-serif; ">
-    <div class="bill-content" style="width: 60%; height: auto; background: #fff;  text-align: center; line-height: 1.2;">
-       
-        <h2 style="font-size: 20px; margin: 10px 0;">Hóa đơn tiền thuê nhà</h2>
-        <h3 style="margin-top: 10px; font-size: 12px">Tháng ' . $date['month'] . '/' . $date['year'] . '</h3>
-        <p style="font-size: 12px;">Địa chỉ: 597 - Nguyễn Bỉnh Khiêm, Đằng Lâm, Hải An, Hải Phòng</p>
+<body  style="padding: 0; display: flex; justify-content: center;font-family: DejaVu Sans, Tahoma, Geneva, Verdana, sans-serif;">
+    <div class="bill-content" style="width: 60%; height: auto; background: #fff; text-align: center; line-height: 1.2;">
+        <h2 style="font-size: 20px; margin: 10px 0;">Hóa đơn tiền thuê phòng</h2>
+        <h3 style="margin-top: 10px; font-size: 12px;">Tháng ' . $date['month'] . '/' . $date['year'] . '</h3>
+        <p style="font-size: 12px;">Địa chỉ: 56 - Nam Pháp 1, Ngô Quyền, Hải Phòng</p>
         <p style="font-size: 12px;">Mã hóa đơn: <b style="color: red; font-size: 16px">' . $billDetail['mahoadon'] . '</b></p>
-        <p style="font-size: 12px; text-align: start">Kính gửi: <b>' . $tenantDetail['tenkhach'] . '</b></p>
+        <p style="font-size: 12px; text-align: start">Tên khách: <b>' . $roomDetail['tenkhach'] . '</b></p>
         <p style="font-size: 12px; text-align: start">Đơn vị: <b>' . $roomDetail['tenphong'] . '</b></p>
-        
 
         <table border="1" cellspacing="0" width="100%" cellpadding="10" style="text-align: start;">
             <tr>
@@ -63,12 +73,12 @@ $html = '
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tiền phòng</b></td>
-                <td style="font-size: 12px;">30 ngày x ' . number_format($roomDetail['giathue'], 0, ',', '.') . ' đ</td>
+                <td style="font-size: 12px;">Tính tiền:  ' . number_format($roomDetail['giathue'], 0, ',', '.') . ' đ / tháng</td>
                 <td style="font-size: 12px;"><b>' . number_format($roomDetail['giathue'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tiền điện (KWh)</b></td>
-                <td style="font-size: 12px;"> (Số cũ: ' . $billDetail['sodiencu'] . ' - Số mới: ' . $billDetail['sodienmoi'] . ') x 4.000đ</td>
+                <td style="font-size: 12px;">(Số cũ: ' . $billDetail['sodiencu'] . ' - Số mới: ' . $billDetail['sodienmoi'] . ') x 4.000đ</td>
                 <td style="font-size: 12px;"><b>' . number_format($billDetail['tiendien'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>
@@ -78,18 +88,13 @@ $html = '
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tiền rác (người)</b></td>
-                <td style="font-size: 12px;"> ' . $billDetail['songuoi'] . ' người x 10.000đ</td>
+                <td style="font-size: 12px;">' . $billDetail['songuoi'] . ' người x 10.000đ</td>
                 <td style="font-size: 12px;"><b>' . number_format($billDetail['tienrac'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tiền Wifi</b></td>
-                <td style="font-size: 12px;"> ' . $billDetail['chuky'] . ' tháng x 50.000đ</td>
+                <td style="font-size: 12px;">Tính tiền: 50.000đ / tháng</td>
                 <td style="font-size: 12px;"><b>' . number_format($billDetail['tienmang'], 0, ',', '.') . ' đ</b></td>
-            </tr>
-            <tr>
-                <td style="font-size: 10px;"><b>Nợ cũ</b></td>
-                <td style="font-size: 12px;"><b>' . number_format($billDetail['nocu'], 0, ',', '.') . ' đ</b></td>
-                <td style="font-size: 12px;"><b>' . number_format($billDetail['nocu'], 0, ',', '.') . ' đ</b></td>
             </tr>
             <tr>
                 <td style="font-size: 10px;"><b>Tổng tiền</b></td>
@@ -98,10 +103,10 @@ $html = '
             <tr>
                 <td style="font-size: 10px;"><b>Thanh toán</b></td>
                 <td colspan="2">
-                   <div>
-                        <img style="width: 80px; height: 80px;" src="https://jeju.com.vn/wp-content/uploads/2020/05/vnpay-qr-23-06-2020-2.jpg" alt="">
-                        <p style="font-size: 10px;"><i><b>Nội dung thanh toán: </b></i><strong style="color: red">Mã hóa đơn</strong></p>                           
-                   </div>
+                    <div>
+                        <img style="width: 80px; height: 80px;" src="/datn/templates/admin/assets/img/QR.jpg" alt="">
+                        <p style="font-size: 10px;"><i><b>Nội dung thanh toán: </b></i><strong style="color: red">THANH TOAN + MÃ HOÁ ĐƠN</strong></p>                           
+                    </div>
                 </td>
             </tr>
         </table>
@@ -115,5 +120,4 @@ $pdf->writeHTML($html, true, false, true, false, '');
 $tenphong = $roomDetail['tenphong'];
 $month = $date['month'];
 // Đóng và xuất PDF ra trình duyệt để tải xuống
-$pdf->Output('Tháng'.$month.' - '.$tenphong.'.pdf', 'I');
-?>
+$pdf->Output('Tháng' . $month . ' - ' . $tenphong . '.pdf', 'I');

@@ -15,11 +15,24 @@ if (isPost()) {
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
 
-    // Validate tên 
+    // Validate tên ss
+    // Kiểm tra nếu tên khu vực trống
     if (empty(trim($body['tenkhuvuc']))) {
         $errors['tenkhuvuc']['required'] = '** Bạn chưa nhập tên khu vực!';
     }
-
+    
+    // if (empty(trim($body['tenkhuvuc']))) {
+    //     $errors['tenkhuvuc']['required'] = '** Bạn chưa nhập tên khu vực!';
+    // } else {
+    //     $tenkhuvuc = trim($body['tenkhuvuc']);
+    //     $query = "SELECT COUNT(*) FROM area WHERE tenkhuvuc = '$tenkhuvuc'";
+    //     $count = $pdo->query($query)->fetchColumn();
+        
+    //     if ($count > 0) {
+    //         $errors['tenkhuvuc']['exists'] = '**!';
+    //     }
+    // }
+    
     // Validate mota
     if (empty(trim($body['mota']))) {
         $errors['mota']['required'] = '** Bạn chưa nhập mô tả!';

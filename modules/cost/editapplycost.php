@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('_INCODE')) die('Access denied...');
 
 $data = [
@@ -15,14 +15,6 @@ $roomId = isset($_GET['applycost']) ? (int)$_GET['applycost'] : 0;
 $roomDetail = firstRaw("SELECT * FROM room WHERE id = $roomId");
 if (empty($roomDetail)) {
     redirect('?module=cost&action=applycost');
-}
-
-// Kiểm tra xem phòng đã có giá chưa
-$costCheck = firstRaw("SELECT * FROM cost_room WHERE room_id = $roomId");
-if (empty($costCheck)) {
-    setFlashData('msg', 'Hãy thêm loại giá cho phòng trước!');
-    setFlashData('msg_type', 'err');
-    redirect('?module=cost&action=applyroom');
 }
 
 // Xử lý sửa thông tin khi gửi biểu mẫu
@@ -60,7 +52,6 @@ if (isPost()) {
             setFlashData('msg_type', 'err');
             redirect('?module=cost&action=applyroom');
         }
-        
     } else {
         // Nếu có lỗi, xử lý thông báo lỗi
         setFlashData('msg', 'Vui lòng kiểm tra chính xác thông tin nhập vào');
@@ -79,8 +70,10 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-if (!empty($costDetail) && empty($old)) {
-    $old = $costDetail;
+// Nếu không có dữ liệu cũ thì lấy từ cơ sở dữ liệu
+if (empty($old)) {
+    $costDetail = firstRaw("SELECT * FROM cost_room WHERE room_id = $roomId");
+    $old = $costDetail;  // Lưu thông tin cũ vào biến $old
 }
 ?>
 

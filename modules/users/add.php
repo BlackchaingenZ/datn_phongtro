@@ -1,7 +1,7 @@
 <?php
 
-if(!defined('_INCODE'))
-die('Access denied...');
+if (!defined('_INCODE'))
+    die('Access denied...');
 
 $data = [
     'pageTitle' => 'Thêm người dùng'
@@ -16,23 +16,23 @@ $allRoom = getRaw("SELECT id, tenphong, soluong FROM room ORDER BY tenphong");
 $allEmail = getRaw("SELECT email FROM users");
 
 // Xử lý thêm người dùng
-if(isPost()) {
+if (isPost()) {
     // Validate form
     $body = getBody(); // lấy tất cả dữ liệu trong form
     $errors = [];  // mảng lưu trữ các lỗi
-    
+
     //Valide họ tên: Bắt buộc phải nhập, >=5 ký tự
-    if(empty(trim($body['fullname']))) {
+    if (empty(trim($body['fullname']))) {
         $errors['fullname']['required'] = '** Bạn chưa nhập tên người dùng';
     }
 
     // Validate email
-    if(empty(trim($body['email']))) {
+    if (empty(trim($body['email']))) {
         $errors['email']['required'] = '** Bạn chưa nhập email';
     } else {
         $dataEmail = $body['email'];
-        foreach($allEmail as $item) {
-            if($dataEmail == $item['email']) {
+        foreach ($allEmail as $item) {
+            if ($dataEmail == $item['email']) {
                 $errors['email']['exits'] = '** Email này đã có người sử dụng';
                 break;
             }
@@ -40,19 +40,20 @@ if(isPost()) {
     }
 
     // Validate password
-    if(empty(trim($body['password']))) {
+    if (empty(trim($body['password']))) {
         $errors['password']['required'] = '** Bạn chưa nhập mật khẩu';
     }
+    
 
     // Validate confirm password
-    if(empty(trim($body['confirm_password']))) {
+    if (empty(trim($body['confirm_password']))) {
         $errors['confirm_password']['required'] = '** Bạn chưa nhập lại mật khẩu';
-    } elseif($body['password'] !== $body['confirm_password']) {
+    } elseif ($body['password'] !== $body['confirm_password']) {
         $errors['confirm_password']['match'] = '** Mật khẩu không khớp';
     }
-   
+
     // Kiểm tra mảng error
-    if(empty($errors)) {
+    if (empty($errors)) {
         // không có lỗi nào
         $room_id = !empty($body['room_id']) ? $body['room_id'] : NULL;
 
@@ -62,7 +63,7 @@ if(isPost()) {
             'group_id' => $body['group_id'],
             'password' => password_hash($body['password'], PASSWORD_DEFAULT),
             'room_id' => $room_id,
-            'status' => $body['status'], 
+            'status' => $body['status'],
             'create_at' => date('Y-m-d H:i:s'),
         ];
 
@@ -78,7 +79,7 @@ if(isPost()) {
         setFlashData('msg_type', 'err');
         setFlashData('errors', $errors);
         setFlashData('old', $body);  // giữ lại các trường dữ liệu hợp lệ khi nhập vào
-        redirect('?module=users&action=add'); 
+        redirect('?module=users&action=add');
     }
 }
 
@@ -93,7 +94,7 @@ layout('navbar', 'admin', $data);
 
 <div class="container">
     <div id="MessageFlash">
-        <?php getMsg($msg, $msgType);?> 
+        <?php getMsg($msg, $msgType); ?>
     </div>
 
     <div class="box-content">
@@ -128,15 +129,15 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Nhóm người dùng</label>
                     <select name="group_id" id="" class="form-control">
-                        <option value="">Chọn nhóm</option>
+                        <option value="" disabled selected>Chọn nhóm</option>
                         <?php
-                            if(!empty($allGroups)) {
-                                foreach($allGroups as $item) {
+                        if (!empty($allGroups)) {
+                            foreach ($allGroups as $item) {
                         ?>
-                            <option value="<?php echo $item['id'] ?>" <?php  echo (!empty($groupId) && $groupId == $item['id'])?'selected':false; ?>><?php echo $item['name'] ?></option> 
+                                <option value="<?php echo $item['id'] ?>" <?php echo (!empty($groupId) && $groupId == $item['id']) ? 'selected' : false; ?>><?php echo $item['name'] ?></option>
                         <?php
-                                }
                             }
+                        }
                         ?>
                     </select>
                     <?php echo form_error('group_id', $errors, '<span class="error">', '</span>'); ?>
@@ -145,15 +146,16 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Phòng đang ở</label>
                     <select name="room_id" id="" class="form-select">
-                        <option value="">Chọn phòng</option>
+                        <option value="" disabled selected>Chọn phòng</option>
+                        <option value="">Trống</option>
                         <?php
-                            if(!empty($allRoom)) {
-                                foreach($allRoom as $item) {                                   
+                        if (!empty($allRoom)) {
+                            foreach ($allRoom as $item) {
                         ?>
-                                    <option value="<?php echo $item['id'] ?>" <?php echo (!empty($roomId) && $roomId == $item['id'])?'selected':'' ?>><?php echo $item['tenphong'] ?></option> 
-                        <?php                                  
-                                }
+                                <option value="<?php echo $item['id'] ?>" <?php echo (!empty($roomId) && $roomId == $item['id']) ? 'selected' : '' ?>><?php echo $item['tenphong'] ?></option>
+                        <?php
                             }
+                        }
                         ?>
                     </select>
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
@@ -162,17 +164,17 @@ layout('navbar', 'admin', $data);
                 <div class="form-group">
                     <label for="">Trạng thái</label>
                     <select name="status" class="form-select">
-                        <option value="">Chọn trạng thái</option>
-                        <option value="0" <?php echo (old('status', $old==0)) ? 'selected':false;  ?>>Chưa kích hoạt</option>
-                        <option value="1" <?php echo (old('status', $old==1)) ? 'selected':false; ?>>Kích hoạt</option>
+                        <option value="" disabled selected>Chọn trạng thái</option>
+                        <option value="0" <?php echo (old('status', $old == 0)) ? 'selected' : false;  ?>>Chưa kích hoạt</option>
+                        <option value="1" <?php echo (old('status', $old == 1)) ? 'selected' : false; ?>>Kích hoạt</option>
                     </select>
-                </div>                  
-            </div>                  
-            <div class="from-group">                    
+                </div>
+            </div>
+            <div class="from-group">
                 <div class="btn-row">
-                <a style="margin-right: 20px " href="<?php echo getLinkAdmin('users') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
-                <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm người dùng</button>
-                    
+                    <a style="margin-right: 20px " href="<?php echo getLinkAdmin('users') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại </a>
+                    <button type="submit" class="btn btn-secondary"><i class="fa fa-edit"></i> Thêm người dùng</button>
+
                 </div>
             </div>
         </form>

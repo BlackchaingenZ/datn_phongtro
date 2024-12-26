@@ -75,21 +75,20 @@ $spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setVertical(Alig
 
 
 // set column with
-$spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(6);
+$spreadsheet->getActiveSheet()->getColumnDimension('A')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('B')->setWidth(20);
 $spreadsheet->getActiveSheet()->getColumnDimension('C')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('D')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('E')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+$spreadsheet->getActiveSheet()->getColumnDimension('F')->setWidth(60);
 $spreadsheet->getActiveSheet()->getColumnDimension('G')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('H')->setWidth(15);
 $spreadsheet->getActiveSheet()->getColumnDimension('I')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('J')->setWidth(15);
-$spreadsheet->getActiveSheet()->getColumnDimension('K')->setWidth(15);
+
 
 //header Text
 $spreadsheet->getActiveSheet()
-            ->setCellValue('A2', 'ID')
+            ->setCellValue('A2', 'Phòng ở')
             ->setCellValue('B2', 'Tên khách')
             ->setCellValue('C2', 'SDT')
             ->setCellValue('D2', 'Ngày sinh')
@@ -97,12 +96,10 @@ $spreadsheet->getActiveSheet()
             ->setCellValue('F2', 'Địa chỉ')
             ->setCellValue('G2', 'Nghề nghiệp')
             ->setCellValue('H2', 'CCCD/CMND')
-            ->setCellValue('I2', 'Ngày cấp')
-            ->setCellValue('J2', 'Phòng đang ở')
-            ->setCellValue('K2', 'Ngày vào ở');
+            ->setCellValue('I2', 'Ngày cấp');
 
 // background color
-$spreadsheet->getActiveSheet()->getStyle('A2:K2')->applyFromArray($tableHead);
+$spreadsheet->getActiveSheet()->getStyle('A2:I2')->applyFromArray($tableHead);
 
 //
 $spreadsheet->getActiveSheet()
@@ -125,7 +122,7 @@ $date = time();
 
 $row = 3;
 foreach($tenantFinal as $item) {
-      $spreadsheet->getActiveSheet()->setCellValue('A'.$row, $item['id']);
+      $spreadsheet->getActiveSheet()->setCellValue('A'.$row, $item['tenphong']);
       $spreadsheet->getActiveSheet()->setCellValue('B'.$row, $item['tenkhach']);
       $spreadsheet->getActiveSheet()->setCellValue('C'.$row, $item['sdt']);
       $spreadsheet->getActiveSheet()->setCellValue('D'.$row, $item['ngaysinh']);
@@ -133,15 +130,13 @@ foreach($tenantFinal as $item) {
       $spreadsheet->getActiveSheet()->setCellValue('F'.$row, $item['diachi']);
       $spreadsheet->getActiveSheet()->setCellValue('G'.$row, $item['nghenghiep']);
       $spreadsheet->getActiveSheet()->setCellValue('H'.$row, $item['cmnd']);
-      $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['ngaycap']);
-      $spreadsheet->getActiveSheet()->setCellValue('J'.$row, $item['tenphong']);    
-      $spreadsheet->getActiveSheet()->setCellValue('K'.$row, $item['ngayvao']);    
+      $spreadsheet->getActiveSheet()->setCellValue('I'.$row, $item['ngaycap']);      
 
                // set row style
              if($row % 2 == 0) {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($evenRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':I'.$row)->applyFromArray($evenRow);
              }else {
-                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':K'.$row)->applyFromArray($oddRow);
+                  $spreadsheet->getActiveSheet()->getStyle('A'.$row.':I'.$row)->applyFromArray($oddRow);
              }
 
              $row++;

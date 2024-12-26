@@ -4,7 +4,7 @@ if (!defined('_INCODE'))
     die('Access denied...');
 
 $data = [
-    'pageTitle' => 'Áp dụng'
+    'pageTitle' => 'Danh sách khu vực-phòng'
 ];
 
 layout('header', 'admin', $data);
@@ -16,26 +16,22 @@ $msgType = getFlashData('msg_type');
 $errors = getFlashData('errors');
 $old = getFlashData('old');
 
-
-// Lấy danh sách cơ sở vật chất và phòng trọ
-$listAllArea = getRaw("SELECT * FROM area ORDER BY tenkhuvuc ASC");
-$listAllRoom = getRaw("SELECT * FROM room ORDER BY tenphong ASC");
-
 // Hàm lấy danh sách phòng và khuvuc
 function getRoomAndAreaList()
 {
     $sql = "
-        SELECT r.id AS room_id, r.tenphong, 
-        GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc,
-        GROUP_CONCAT(e.mota SEPARATOR ', ') AS mota
-        FROM room r
-        LEFT JOIN area_room er ON r.id = er.room_id
-        LEFT JOIN area e ON er.area_id = e.id
-        GROUP BY r.id
-        ORDER BY r.id ASC
+        SELECT room.id AS room_id, room.tenphong, 
+        GROUP_CONCAT(area.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc,
+        GROUP_CONCAT(area.mota SEPARATOR ', ') AS mota
+        FROM room
+        LEFT JOIN area_room ON room.id = area_room.room_id
+        LEFT JOIN area ON area_room.area_id = area.id
+        GROUP BY room.id
+        ORDER BY room.id DESC
     ";
     return getRaw($sql);
 }
+
 
 $searchTerm = '';
 if (!empty($_POST['search_term'])) {
@@ -44,17 +40,18 @@ if (!empty($_POST['search_term'])) {
 
 // Truy vấn để tìm tên phòng và thiết bị theo từ khóa tìm kiếm
 $sqlSearchRooms = "
-    SELECT r.id AS room_id, 
-           r.tenphong, 
-           e.mota,
-           GROUP_CONCAT(e.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
-    FROM room r
-    JOIN area_room er ON r.id = er.room_id
-    JOIN area e ON er.area_id = e.id
-    WHERE r.tenphong LIKE '%$searchTerm%' OR e.tenkhuvuc LIKE '%$searchTerm%'
-    GROUP BY r.id, r.tenphong
-    ORDER BY r.tenphong ASC
+    SELECT room.id AS room_id, 
+           room.tenphong, 
+           area.mota,
+           GROUP_CONCAT(area.tenkhuvuc SEPARATOR ', ') AS tenkhuvuc
+    FROM room
+    JOIN area_room ON room.id = area_room.room_id
+    JOIN area ON area_room.area_id = area.id
+    WHERE room.tenphong LIKE '%$searchTerm%' OR area.tenkhuvuc LIKE '%$searchTerm%'
+    GROUP BY room.id, room.tenphong
+    ORDER BY room.tenphong ASC
 ";
+
 
 
 $searchResults = getRaw($sqlSearchRooms);
@@ -78,7 +75,7 @@ layout('navbar', 'admin', $data);
             <div class="row">
                 <div class="col-4"></div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng hoặc khu vực cần tìm" value="<?php echo htmlspecialchars($searchTerm); ?>">
+                    <input style="height: 50px" type="search" name="search_term" class="form-control" placeholder="Nhập tên phòng cần tìm" value="<?php echo htmlspecialchars($searchTerm); ?>">
                 </div>
 
                 <div class="col">
@@ -91,7 +88,6 @@ layout('navbar', 'admin', $data);
                 <a style="margin-right: 5px" href="<?php echo getLinkAdmin('area', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
                 <a href="<?php echo getLinkAdmin('area', 'addapply') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Áp dụng </a>
                 <a href="<?php echo getLinkAdmin('area', 'applyarea'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-                <a href="<?php echo getLinkAdmin('area', 'removeapplyarea') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-edit"></i> Gỡ bỏ</a>
             </div>
         </form>
 
@@ -99,11 +95,10 @@ layout('navbar', 'admin', $data);
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
-                        <!-- <th><input type="checkbox" id="check-all" onclick="toggle(this)"></th> -->
                         <th>STT</th>
                         <th>Mã phòng</th>
-                        <th>Tên Phòng</th>
                         <th>Tên khu vực</th>
+                        <th>Tên Phòng</th>
                         <th>Mô tả</th>
                         <th>Thao tác</th>
                     </tr>
@@ -117,18 +112,17 @@ layout('navbar', 'admin', $data);
                         foreach ($resultsToDisplay as $item):
                             $count++;
                     ?>
+                            <!-- <tr <?php if ($item['tenkhuvuc'] === 'Khu A') echo 'style="background-color: red; color: white;"'; ?>> -->
                             <tr>
-                                <!-- <td><input type="checkbox" name="records[]" value="<?php echo $item['room_id']; ?>"></td> -->
+                                <!-- <tr style="background-color:<?php echo (in_array($count, [1, 2, 3])) ? 'red' : (in_array($count, [4, 6]) ? 'green' : 'transparent'); ?>;"> -->
                                 <td><?php echo $count; ?></td>
                                 <td><?php echo $item['room_id']; ?></td>
-                                <td><?php echo $item['tenphong']; ?></td>
                                 <td><b><?php echo $item['tenkhuvuc']; ?></b></td>
+                                <td><?php echo $item['tenphong']; ?></td>
                                 <td><?php echo $item['mota']; ?></td>
 
-                                <td class="" style="width: 100px; height: 50px;">
-
+                                <td class="" style="width: 100px; height: 50px;text-align:center">
                                     <a href="<?php echo getLinkAdmin('area', 'editapplyarea', ['applyarea' => $item['room_id']]); ?>" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a>
-
                                     <a href="<?php echo getLinkAdmin('area', 'deleteapplyarea', ['room_id' => $item['room_id']]); ?>"
                                         class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i></a>
                                 </td>
@@ -147,12 +141,3 @@ layout('navbar', 'admin', $data);
     </div>
 </div>
 <?php layout('footer', 'admin'); ?>
-<script>
-    function toggle(__this) {
-        let isChecked = __this.checked;
-        let checkbox = document.querySelectorAll('input[name="records[]"]');
-        for (let index = 0; index < checkbox.length; index++) {
-            checkbox[index].checked = isChecked;
-        }
-    }
-</script>
