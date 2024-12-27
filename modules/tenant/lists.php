@@ -153,8 +153,7 @@ layout('navbar', 'admin', $data);
                     <?php echo form_error('room_id', $errors, '<span class="error">', '</span>'); ?>
                 </div>
                 <div class="col-4">
-                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
-                    <!-- <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách, số điện thoại hoặc cmnd/cccd để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>"> -->
+                    <input style="height: 50px" type="search" name="keyword" class="form-control" placeholder="Nhập tên khách, số điện thoại hoặc cmnd/cccd để tìm" value="<?php echo (!empty($keyword)) ? $keyword : false; ?>">
                 </div>
 
                 <div class="col">
@@ -169,7 +168,7 @@ layout('navbar', 'admin', $data);
 
             </div>
             <a href="<?php echo getLinkAdmin('tenant', 'lists'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-
+            <a href="<?php echo getLinkAdmin('tenant', 'export'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Xuất Excel</a>
             <table class="table table-bordered mt-3" id="dataTable">
                 <thead>
                     <tr>

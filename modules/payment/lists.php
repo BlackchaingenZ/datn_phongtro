@@ -88,6 +88,7 @@ layout('navbar', 'admin', $data);
             <a style="margin-right: 5px" href="<?php echo getLinkAdmin('receipt', '') ?>" class="btn btn-secondary"><i class="fa fa-arrow-circle-left"></i> Quay lại</a>
             <a href="<?php echo getLinkAdmin('payment', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm</a>
             <a href="<?php echo getLinkAdmin('payment'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
+            <a href="<?php echo getLinkAdmin('payment','export'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i>Xuất Excel</a>
             <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
@@ -127,6 +128,7 @@ layout('navbar', 'admin', $data);
                                             <a title="Xem phiếu chi" target="_blank" href="<?php echo getLinkAdmin('payment', 'view', ['id' => $item['id']]) ?>" class="btn btn-primary btn-sm"><i class="nav-icon fas fa-solid fa-eye"></i> </a>
                                             <a href="<?php echo getLinkAdmin('payment', 'edit', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i> </a>
                                             <a href="<?php echo getLinkAdmin('payment', 'delete', ['id' => $item['id']]); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa không ?')"><i class="fa fa-trash"></i> </a>
+                                            <a href="<?php echo getLinkAdmin('payment', 'print', ['id' => $item['id']]); ?>" class="btn btn-warning btn-sm"><i class="fa-solid fa-print"></i></a>
                                         </div>
                                 </td>
                             <?php endforeach;

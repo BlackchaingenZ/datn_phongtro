@@ -185,8 +185,7 @@ layout('navbar', 'admin', $data);
                 </div>
                 
                 <div class="col-4"> <!-- Cột chứa ô tìm kiếm tên phòng, tên khách hoặc cmnd -->
-                    <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng tìm kiếm" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
-                    <!-- <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>"> -->
+                    <input style="height: 50px" type="search" name="search_contract" class="form-control" placeholder="Nhập tên phòng, tên khách hoặc cmnd để tìm hợp đồng" value="<?php echo isset($_POST['search_contract']) ? $_POST['search_contract'] : ''; ?>">
                 </div>
 
                 <div class="col"> <!-- Cột chứa nút tìm kiếm -->
@@ -199,7 +198,7 @@ layout('navbar', 'admin', $data);
 
             <a href="<?php echo getLinkAdmin('contract', 'add') ?>" class="btn btn-secondary" style="color: #fff"><i class="fa fa-plus"></i> Thêm mới</a>
             <a href="<?php echo getLinkAdmin('contract'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
-
+            <a href="<?php echo getLinkAdmin('contract','export'); ?>" class="btn btn-secondary"><i class="fa fa-history"></i> Refresh</a>
             <table class="table table-bordered mt-4">
                 <thead>
                     <tr>
